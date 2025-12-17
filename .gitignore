@@ -6,5 +6,9 @@ dist
 .DS_Store
 .env
 .env.local
+
+# Local Prisma/SQLite dev databases (ignore both direct and nested paths)
 prisma/dev.db
 prisma/dev.db-journal
+prisma/**/dev.db
+prisma/**/dev.db-journal
