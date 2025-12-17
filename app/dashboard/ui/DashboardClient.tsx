@@ -81,6 +81,50 @@ function timeAgo(dateStr: string): string {
   return `${diffDays}d ago`;
 }
 
+// Fun emoji pool for athlete avatars
+const ATHLETE_EMOJIS = [
+  '🦈', '🐬', '🐳', '🦭', '🐙', '🦑', '🦀', '🦞', '🐠', '🐟',
+  '🦋', '🐝', '🐢', '🦎', '🐍', '🦖', '🦕', '🐲', '🦩', '🦚',
+  '🦜', '🦢', '🦉', '🐧', '🐼', '🐨', '🦁', '🐯', '🐻', '🦊',
+  '🐺', '🦝', '🐵', '🦍', '🦧', '🐘', '🦛', '🦏', '🐪', '🦒',
+  '🦬', '🐂', '🐃', '🦌', '🐎', '🦄', '🐕', '🐈', '🐓', '🦃',
+];
+
+// Background colors that pair well with emojis
+const EMOJI_BACKGROUNDS = [
+  'rgba(34, 197, 94, 0.15)',   // green
+  'rgba(59, 130, 246, 0.15)',  // blue
+  'rgba(168, 85, 247, 0.15)',  // purple
+  'rgba(236, 72, 153, 0.15)',  // pink
+  'rgba(249, 115, 22, 0.15)',  // orange
+  'rgba(234, 179, 8, 0.15)',   // yellow
+  'rgba(6, 182, 212, 0.15)',   // cyan
+  'rgba(239, 68, 68, 0.15)',   // red
+  'rgba(132, 204, 22, 0.15)',  // lime
+  'rgba(99, 102, 241, 0.15)',  // indigo
+];
+
+// Simple hash function to get consistent index for a name
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function getAthleteEmoji(name: string): string {
+  const hash = hashString(name);
+  return ATHLETE_EMOJIS[hash % ATHLETE_EMOJIS.length];
+}
+
+function getAthleteEmojiBackground(name: string): string {
+  const hash = hashString(name);
+  return EMOJI_BACKGROUNDS[hash % EMOJI_BACKGROUNDS.length];
+}
+
 function ChartTooltip({ active, payload, label, metricLabel }: any) {
   if (!active || !payload?.length) return null;
   const val = payload[0]?.value ?? 0;
@@ -539,7 +583,12 @@ export default function DashboardClient() {
         <div className="latestRunsGrid">
           {latestRuns?.runs.map((run, idx) => (
             <div key={idx} className="latestRunItem">
-              <div className="latestRunIcon">🏃</div>
+              <div
+                className="latestRunIcon"
+                style={{ background: getAthleteEmojiBackground(run.athleteName) }}
+              >
+                {getAthleteEmoji(run.athleteName)}
+              </div>
               <div className="latestRunInfo">
                 <div style={{ fontWeight: 600 }}>{run.athleteName}</div>
                 <div className="muted" style={{ fontSize: 12 }}>{run.activityName}</div>
