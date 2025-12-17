@@ -8,7 +8,7 @@ This is intentionally a **club-feed MVP**:
 
 ## Tech stack
 - Next.js (App Router)
-- Prisma (SQLite for local dev)
+- Prisma (Postgres via Neon/Vercel)
 - Recharts (charts)
 
 ## Local setup
@@ -27,12 +27,14 @@ Required:
 - `STRAVA_SERVICE_ATHLETE_ID` (set after the one-time OAuth step)
 - `APP_BASE_URL` (e.g. `http://localhost:3000`)
 - `APP_ENCRYPTION_KEY` (32-byte base64)
-- `DATABASE_URL` (default uses local sqlite)
+- `DATABASE_URL` (Postgres connection string)
 
 Recommended (especially in production):
 - `JOBS_RUNNER_SECRET` (protects the poll endpoint)
 
 ### 3) Initialize DB
+You need a Postgres DB (local Postgres or Neon).
+
 ```sh
 npx prisma migrate dev
 ```
@@ -81,11 +83,16 @@ Health:
 
 ## Deploying (Vercel)
 High-level steps:
-1) Deploy the Next.js project to Vercel.
-2) Use a hosted DB (recommended) instead of local SQLite.
-3) Configure environment variables in Vercel.
-4) Set up a Vercel Cron (every 15 minutes) to call:
-   - `POST https://<your-domain>/api/cron/club-poll?secret=<JOBS_RUNNER_SECRET>`
+1) Create a Vercel project from this GitHub repo.
+2) Create a Neon/Vercel Postgres database and set `DATABASE_URL` in Vercel env.
+3) Set `APP_BASE_URL=https://bullshark-analytics.vercel.app` (or your custom domain).
+4) Ensure your Strava app settings match:
+   - Website: `https://bullshark-analytics.vercel.app`
+   - Authorization Callback Domain: `bullshark-analytics.vercel.app`
+5) Deploy.
+   - This repo runs `prisma migrate deploy` during the Vercel build.
+6) Set up a Vercel Cron (every 15 minutes) to call:
+   - `POST https://bullshark-analytics.vercel.app/api/cron/club-poll?secret=<JOBS_RUNNER_SECRET>`
 
 ## Notes / limitations
 - Club feed responses may not include stable activity IDs or timestamps. This means:
