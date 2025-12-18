@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/club-poll",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 10 * * *"
     }
   ]
 }
