@@ -121,6 +121,17 @@ This repo includes `vercel.json` cron configuration.
 The cron should invoke:
 - `POST https://bullshark-analytics.vercel.app/api/cron/club-poll?secret=<JOBS_RUNNER_SECRET>`
 
+## Troubleshooting
+- **500 with** `Invalid environment configuration: APP_BASE_URL: Invalid URL`
+  - `APP_BASE_URL` must include `https://` (or `http://` in local dev).
+- **Strava OAuth error:** `{"message":"Bad Request","errors":[{"field":"redirect_uri","code":"invalid"...}]}`
+  - In your Strava app settings, set:
+    - Website: `https://YOUR_DOMAIN`
+    - Authorization Callback Domain: `YOUR_DOMAIN` (no scheme, no path)
+  - Ensure `APP_BASE_URL` matches that domain.
+- **Poll endpoint error:** `No token found for STRAVA_SERVICE_ATHLETE_ID=...`
+  - Run the one-time OAuth on the deployed domain (`/api/auth/strava/start`) and set `STRAVA_SERVICE_ATHLETE_ID` to the returned `athleteId`.
+
 ## Notes / limitations
 - Club feed responses may not include stable activity IDs or timestamps. This means:
   - Deduping is best-effort.
