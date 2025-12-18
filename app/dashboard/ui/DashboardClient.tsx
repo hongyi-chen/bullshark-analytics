@@ -363,7 +363,7 @@ export default function DashboardClient() {
             onClick={triggerRefresh}
             title="Triggers a lightweight refresh (rate limited)"
           >
-            {refreshing ? 'Refreshing…' : 'Refresh'}
+            {refreshing ? 'Refreshing…' : 'Refresh data'}
           </button>
         </div>
       </header>

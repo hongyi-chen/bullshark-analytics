@@ -103,7 +103,7 @@ async function runPoll(req: NextRequest) {
   const e = env();
   const url = new URL(req.url);
   const perPage = Math.min(Math.max(Number(url.searchParams.get('perPage') ?? '30'), 1), 200);
-  const pages = Math.min(Math.max(Number(url.searchParams.get('pages') ?? '3'), 1), 20);
+  const pages = Math.min(Math.max(Number(url.searchParams.get('pages') ?? '3'), 1), 100);
 
   let accessToken: string;
   try {
