@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="14" fill="#0f1620" />
-  <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" font-size="40">🦈</text>
+  <!-- Emoji glyphs can render slightly off-center; dy nudges it into visual center. -->
+  <text x="50%" y="50%" dy="2" dominant-baseline="central" text-anchor="middle" font-size="40">🦈</text>
 </svg>
