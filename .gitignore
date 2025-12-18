@@ -12,3 +12,4 @@ prisma/dev.db
 prisma/dev.db-journal
 prisma/**/dev.db
 prisma/**/dev.db-journal
+.vercel

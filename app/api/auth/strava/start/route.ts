@@ -2,6 +2,9 @@ import crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { env } from '@/lib/env';
 
+// Uses Node crypto; must not run on the Edge runtime.
+export const runtime = 'nodejs';
+
 export async function GET(req: NextRequest) {
   const e = env();
 

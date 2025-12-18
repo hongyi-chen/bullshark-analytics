@@ -4,6 +4,9 @@ import { encryptString } from '@/lib/crypto';
 import { db } from '@/lib/db';
 import { exchangeAuthorizationCode } from '@/lib/strava';
 
+// Uses Prisma; must not run on the Edge runtime.
+export const runtime = 'nodejs';
+
 export async function GET(req: NextRequest) {
   const e = env();
   const url = new URL(req.url);

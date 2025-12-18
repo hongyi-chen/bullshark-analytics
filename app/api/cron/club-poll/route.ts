@@ -5,6 +5,9 @@ import { db } from '@/lib/db';
 import { decryptString, encryptString } from '@/lib/crypto';
 import { listClubActivities, refreshAccessToken, StravaClubActivity } from '@/lib/strava';
 
+// Uses Prisma + Node crypto; must not run on the Edge runtime.
+export const runtime = 'nodejs';
+
 function isAuthorized(req: NextRequest): boolean {
   const e = env();
 
