@@ -350,23 +350,25 @@ export default function DashboardClient() {
       <header className="dashboardHeader">
         <div className="headerMain">
           <h1 className="h1">Bullshark Analytics 🦈</h1>
-          <p className="headerSubtitle">{lastUpdatedText}</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <p className="headerSubtitle">{lastUpdatedText}</p>
+            <span className="badge">Public club dashboard</span>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          <div className="badge badgeLarge">Public club dashboard</div>
+        <div className="headerActions">
           <button
-            className="pill"
+            className="primaryButton"
             type="button"
             disabled={refreshing}
             onClick={triggerRefresh}
             title="Triggers a lightweight refresh (rate limited)"
           >
-            {refreshing ? 'Refreshing…' : 'Refresh data'}
+            {refreshing ? 'Refreshing…' : 'Refresh'}
           </button>
         </div>
       </header>
       {refreshMsg ? (
-        <div className="muted" style={{ marginTop: -6, marginBottom: 10 }}>
+        <div className="muted" style={{ marginTop: -10, marginBottom: 12 }}>
           {refreshMsg}
         </div>
       ) : null}
