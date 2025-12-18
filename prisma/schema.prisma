@@ -58,3 +58,11 @@ model ClubFeedActivity {
   @@index([athleteName])
   @@unique([clubId, dedupeHash])
 }
+
+// Singleton table for public refresh rate limiting.
+model PublicRefreshState {
+  id              String   @id
+  lastTriggeredAt DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

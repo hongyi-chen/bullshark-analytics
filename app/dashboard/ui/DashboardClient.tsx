@@ -155,6 +155,10 @@ export default function DashboardClient() {
   const [aggregation, setAggregation] = useState<'daily' | 'weekly'>('daily');
   const [minRuns, setMinRuns] = useState<number>(0);
 
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshMsg, setRefreshMsg] = useState<string | null>(null);
+  const [refreshNonce, setRefreshNonce] = useState(0);
+
   const [timeseries, setTimeseries] = useState<TimeseriesResponse | null>(null);
   const [stats, setStats] = useState<ClubStatsResponse | null>(null);
   const [latestRuns, setLatestRuns] = useState<LatestRunsResponse | null>(null);
@@ -200,7 +204,38 @@ export default function DashboardClient() {
     return () => {
       cancelled = true;
     };
-  }, [days]);
+  }, [days, refreshNonce]);
+
+  async function triggerRefresh() {
+    setRefreshing(true);
+    setRefreshMsg(null);
+
+    try {
+      const res = await fetch('/api/public/refresh', { method: 'POST' });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        const msg = data?.error ?? `Refresh failed (${res.status})`;
+        setRefreshMsg(msg);
+        return;
+      }
+
+      const inserted = data?.result?.inserted;
+      const fetched = data?.result?.fetched;
+      setRefreshMsg(
+        typeof inserted === 'number' && typeof fetched === 'number'
+          ? `Refreshed: fetched ${fetched}, inserted ${inserted}`
+          : 'Refresh triggered',
+      );
+
+      // Kick the dashboard to refetch its data.
+      setRefreshNonce((x) => x + 1);
+    } catch (e: any) {
+      setRefreshMsg(e?.message ?? 'Refresh failed');
+    } finally {
+      setRefreshing(false);
+    }
+  }
 
   const chartData = useMemo(() => {
     const pts = timeseries?.points ?? [];
@@ -317,8 +352,24 @@ export default function DashboardClient() {
           <h1 className="h1">Bullshark Analytics 🦈</h1>
           <p className="headerSubtitle">{lastUpdatedText}</p>
         </div>
-        <div className="badge badgeLarge">Public club dashboard</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div className="badge badgeLarge">Public club dashboard</div>
+          <button
+            className="pill"
+            type="button"
+            disabled={refreshing}
+            onClick={triggerRefresh}
+            title="Triggers a lightweight refresh (rate limited)"
+          >
+            {refreshing ? 'Refreshing…' : 'Refresh data'}
+          </button>
+        </div>
       </header>
+      {refreshMsg ? (
+        <div className="muted" style={{ marginTop: -6, marginBottom: 10 }}>
+          {refreshMsg}
+        </div>
+      ) : null}
 
       <div className="filtersCard">
         <div className="filterGroup">
