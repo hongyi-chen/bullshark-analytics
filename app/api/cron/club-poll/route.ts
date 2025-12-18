@@ -60,6 +60,12 @@ async function getServiceAccessToken(): Promise<string> {
   const e = env();
   const athleteId = e.STRAVA_SERVICE_ATHLETE_ID;
 
+  if (!athleteId) {
+    throw new Error(
+      'STRAVA_SERVICE_ATHLETE_ID is not set. First connect the service account via /api/auth/strava/start, then set STRAVA_SERVICE_ATHLETE_ID in your environment.',
+    );
+  }
+
   const tokenRow = await db.athleteToken.findUnique({ where: { athleteId } });
   if (!tokenRow) {
     throw new Error(
@@ -99,7 +105,12 @@ async function runPoll(req: NextRequest) {
   const perPage = Math.min(Math.max(Number(url.searchParams.get('perPage') ?? '30'), 1), 200);
   const pages = Math.min(Math.max(Number(url.searchParams.get('pages') ?? '3'), 1), 20);
 
-  const accessToken = await getServiceAccessToken();
+  let accessToken: string;
+  try {
+    accessToken = await getServiceAccessToken();
+  } catch (err: any) {
+    return NextResponse.json({ ok: false, error: err?.message ?? 'Failed to get access token' }, { status: 400 });
+  }
 
   let fetched = 0;
   let inserted = 0;

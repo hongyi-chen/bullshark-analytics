@@ -13,7 +13,8 @@ const EnvSchema = z.object({
 
   // Club-feed MVP configuration (single service account polls the club feed)
   STRAVA_CLUB_ID: z.string().min(1),
-  STRAVA_SERVICE_ATHLETE_ID: z.string().min(1),
+  // Set after completing the one-time OAuth flow.
+  STRAVA_SERVICE_ATHLETE_ID: optionalNonEmptyString(),
 
   APP_BASE_URL: z.string().url(),
   APP_ENCRYPTION_KEY: z.string().min(1),
