@@ -81,6 +81,13 @@ function timeAgo(dateStr: string): string {
   return `${diffDays}d ago`;
 }
 
+function formatSeconds(s: number): string {
+  const secs = Math.max(0, Math.floor(s));
+  const m = Math.floor(secs / 60);
+  const r = secs % 60;
+  return m > 0 ? `${m}m ${r}s` : `${r}s`;
+}
+
 // Fun emoji pool for athlete avatars
 const ATHLETE_EMOJIS = [
   '🦈', '🐬', '🐳', '🦭', '🐙', '🦑', '🦀', '🦞', '🐠', '🐟',
@@ -157,6 +164,7 @@ export default function DashboardClient() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [refreshMsg, setRefreshMsg] = useState<string | null>(null);
+  const [refreshCooldownUntil, setRefreshCooldownUntil] = useState<number | null>(null);
   const [refreshNonce, setRefreshNonce] = useState(0);
 
   const [timeseries, setTimeseries] = useState<TimeseriesResponse | null>(null);
@@ -206,6 +214,23 @@ export default function DashboardClient() {
     };
   }, [days, refreshNonce]);
 
+  useEffect(() => {
+    if (!refreshCooldownUntil) return;
+
+    const t = setInterval(() => {
+      const remaining = Math.ceil((refreshCooldownUntil - Date.now()) / 1000);
+      if (remaining <= 0) {
+        setRefreshCooldownUntil(null);
+        // Don't overwrite any newer message.
+        setRefreshMsg((prev) => (prev?.startsWith('Refresh is on cooldown') ? null : prev));
+      } else {
+        setRefreshMsg(`Refresh is on cooldown. Try again in ${formatSeconds(remaining)}.`);
+      }
+    }, 1000);
+
+    return () => clearInterval(t);
+  }, [refreshCooldownUntil]);
+
   async function triggerRefresh() {
     setRefreshing(true);
     setRefreshMsg(null);
@@ -215,10 +240,19 @@ export default function DashboardClient() {
       const data = await res.json().catch(() => null);
 
       if (!res.ok) {
+        if (res.status === 429 && typeof data?.retryAfterSeconds === 'number') {
+          const until = Date.now() + data.retryAfterSeconds * 1000;
+          setRefreshCooldownUntil(until);
+          setRefreshMsg(`Refresh is on cooldown. Try again in ${formatSeconds(data.retryAfterSeconds)}.`);
+          return;
+        }
+
         const msg = data?.error ?? `Refresh failed (${res.status})`;
         setRefreshMsg(msg);
         return;
       }
+
+      setRefreshCooldownUntil(null);
 
       const inserted = data?.result?.inserted;
       const fetched = data?.result?.fetched;
@@ -666,6 +700,10 @@ export default function DashboardClient() {
           </div>
           <div className="footerLinks">
             <span className="muted">Powered by Strava</span>
+            <span className="footerDivider">·</span>
+            <a className="muted" href="https://warp.dev/careers" target="_blank" rel="noreferrer">
+              warp.dev/careers
+            </a>
             <span className="footerDivider">·</span>
             <span className="muted">© {new Date().getFullYear()}</span>
           </div>
