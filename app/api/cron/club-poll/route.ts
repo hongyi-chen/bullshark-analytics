@@ -86,7 +86,7 @@ async function getServiceAccessToken(): Promise<string> {
   return refreshed.access_token;
 }
 
-export async function POST(req: NextRequest) {
+async function runPoll(req: NextRequest) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   }
@@ -141,4 +141,13 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true, clubId: e.STRAVA_CLUB_ID, fetched, inserted, perPage, pages });
+}
+
+// Vercel Cron (configured via vercel.json) invokes your endpoint with GET.
+export async function GET(req: NextRequest) {
+  return runPoll(req);
+}
+
+export async function POST(req: NextRequest) {
+  return runPoll(req);
 }
