@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { startOfDay } from 'date-fns';
-import { db } from '@/lib/db';
+import { fetchActivities } from '@/lib/server-api';
 
-function isRun(a: { type: string | null; sportType: string | null }): boolean {
-  return a.sportType === 'Run' || a.type === 'Run';
+function isRun(sportType: string): boolean {
+  return sportType === 'Run';
 }
 
 export async function GET(req: NextRequest) {
@@ -11,36 +11,38 @@ export async function GET(req: NextRequest) {
   const days = Math.min(Math.max(Number(url.searchParams.get('days') ?? '30'), 1), 365);
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-  const rows = await db.clubFeedActivity.findMany({
-    where: { fetchedAt: { gte: since } },
-    select: {
-      fetchedAt: true,
-      athleteName: true,
-      distanceM: true,
-      type: true,
-      sportType: true,
-    },
-    orderBy: { fetchedAt: 'asc' },
-  });
+  try {
+    const activities = await fetchActivities();
 
-  // Because ClubActivity may not include a real activity timestamp, we bucket by fetchedAt (when we first saw it).
-  const byDayAthlete = new Map<string, number>();
+    // Filter for runs within the time period
+    const runs = activities.filter((a) => {
+      const activityDate = new Date(a.date);
+      return isRun(a.sport_type) && activityDate >= since && a.athlete_name;
+    });
 
-  for (const r of rows) {
-    if (!isRun(r)) continue;
-    if (!r.athleteName) continue;
+    // Group by day and athlete
+    const byDayAthlete = new Map<string, number>();
 
-    const day = startOfDay(r.fetchedAt).toISOString().slice(0, 10);
-    const key = `${day}:${r.athleteName}`;
-    byDayAthlete.set(key, (byDayAthlete.get(key) ?? 0) + (r.distanceM ?? 0));
+    for (const r of runs) {
+      const activityDate = new Date(r.date);
+      const day = startOfDay(activityDate).toISOString().slice(0, 10);
+      const key = `${day}:${r.athlete_name}`;
+      byDayAthlete.set(key, (byDayAthlete.get(key) ?? 0) + r.distance);
+    }
+
+    const points = Array.from(byDayAthlete.entries())
+      .map(([key, meters]) => {
+        const [day, athleteName] = key.split(':');
+        return { day, athleteName, km: meters / 1000 };
+      })
+      .sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : a.athleteName.localeCompare(b.athleteName)));
+
+    return NextResponse.json({ ok: true, days, since: since.toISOString(), points });
+  } catch (err: any) {
+    console.error('Failed to fetch activities from server:', err);
+    return NextResponse.json(
+      { ok: false, error: 'Failed to fetch activities from server' },
+      { status: 502 }
+    );
   }
-
-  const points = Array.from(byDayAthlete.entries())
-    .map(([key, meters]) => {
-      const [day, athleteName] = key.split(':');
-      return { day, athleteName, km: meters / 1000 };
-    })
-    .sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : a.athleteName.localeCompare(b.athleteName)));
-
-  return NextResponse.json({ ok: true, days, since: since.toISOString(), points });
 }

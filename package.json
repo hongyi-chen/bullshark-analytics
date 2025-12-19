@@ -5,15 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/build.mjs",
-    "start": "next start",
-    "postinstall": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio",
-    "db:generate": "prisma generate"
+    "start": "next start"
   },
   "dependencies": {
-    "@prisma/client": "^6.12.0",
     "date-fns": "^4.1.0",
     "next": "^16.0.10",
     "react": "^19.2.3",
@@ -25,7 +19,6 @@
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "prisma": "^6.12.0",
     "typescript": "^5.9.3"
   }
 }

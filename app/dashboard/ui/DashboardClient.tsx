@@ -88,6 +88,9 @@ function formatSeconds(s: number): string {
   return m > 0 ? `${m}m ${r}s` : `${r}s`;
 }
 
+// Date cutoff - only show runs from 12/15/2025 onwards
+const DATE_CUTOFF = new Date('2025-12-15T00:00:00Z');
+
 // Fun emoji pool for athlete avatars
 const ATHLETE_EMOJIS = [
   '🦈', '🐬', '🐳', '🦭', '🐙', '🦑', '🦀', '🦞', '🐠', '🐟',
@@ -164,7 +167,6 @@ export default function DashboardClient() {
 
   const [refreshing, setRefreshing] = useState(false);
   const [refreshMsg, setRefreshMsg] = useState<string | null>(null);
-  const [refreshCooldownUntil, setRefreshCooldownUntil] = useState<number | null>(null);
   const [refreshNonce, setRefreshNonce] = useState(0);
 
   const [timeseries, setTimeseries] = useState<TimeseriesResponse | null>(null);
@@ -185,7 +187,7 @@ export default function DashboardClient() {
       try {
         const [tsRes, statsRes, latestRes] = await Promise.all([
           fetch(`/api/club/timeseries?days=${days}`),
-          fetch(`/api/club/stats?days=${days}`),
+          fetch(`/api/club/stats?mode=week`), // Current week data for Top Athletes
           fetch(`/api/club/latest?limit=8`),
         ]);
 
@@ -195,6 +197,17 @@ export default function DashboardClient() {
 
         if (!ts.ok) throw new Error('Failed to load timeseries');
         if (!st.ok) throw new Error('Failed to load club stats');
+
+        // Filter data to only include runs from DATE_CUTOFF onwards
+        if (ts.ok) {
+          ts.points = ts.points.filter((p) => new Date(p.day) >= DATE_CUTOFF);
+        }
+
+        // Stats are already filtered by the API (week mode + date cutoff)
+
+        if (lt.ok) {
+          lt.runs = lt.runs.filter((r) => new Date(r.fetchedAt) >= DATE_CUTOFF);
+        }
 
         if (!cancelled) {
           setTimeseries(ts);
@@ -214,61 +227,20 @@ export default function DashboardClient() {
     };
   }, [days, refreshNonce]);
 
-  useEffect(() => {
-    if (!refreshCooldownUntil) return;
-
-    const t = setInterval(() => {
-      const remaining = Math.ceil((refreshCooldownUntil - Date.now()) / 1000);
-      if (remaining <= 0) {
-        setRefreshCooldownUntil(null);
-        // Don't overwrite any newer message.
-        setRefreshMsg((prev) => (prev?.startsWith('Refresh is on cooldown') ? null : prev));
-      } else {
-        setRefreshMsg(`Refresh is on cooldown. Try again in ${formatSeconds(remaining)}.`);
-      }
-    }, 1000);
-
-    return () => clearInterval(t);
-  }, [refreshCooldownUntil]);
-
-  async function triggerRefresh() {
+  function triggerRefresh() {
     setRefreshing(true);
-    setRefreshMsg(null);
+    setRefreshMsg('Refreshing data...');
 
-    try {
-      const res = await fetch('/api/public/refresh', { method: 'POST' });
-      const data = await res.json().catch(() => null);
+    // Kick the dashboard to refetch its data from the server
+    setRefreshNonce((x) => x + 1);
 
-      if (!res.ok) {
-        if (res.status === 429 && typeof data?.retryAfterSeconds === 'number') {
-          const until = Date.now() + data.retryAfterSeconds * 1000;
-          setRefreshCooldownUntil(until);
-          setRefreshMsg(`Refresh is on cooldown. Try again in ${formatSeconds(data.retryAfterSeconds)}.`);
-          return;
-        }
-
-        const msg = data?.error ?? `Refresh failed (${res.status})`;
-        setRefreshMsg(msg);
-        return;
-      }
-
-      setRefreshCooldownUntil(null);
-
-      const inserted = data?.result?.inserted;
-      const fetched = data?.result?.fetched;
-      setRefreshMsg(
-        typeof inserted === 'number' && typeof fetched === 'number'
-          ? `Refreshed: fetched ${fetched}, inserted ${inserted}`
-          : 'Refresh triggered',
-      );
-
-      // Kick the dashboard to refetch its data.
-      setRefreshNonce((x) => x + 1);
-    } catch (e: any) {
-      setRefreshMsg(e?.message ?? 'Refresh failed');
-    } finally {
+    // Clear refreshing state after a brief delay to show feedback
+    setTimeout(() => {
       setRefreshing(false);
-    }
+      setRefreshMsg('Data refreshed');
+      // Clear message after a few seconds
+      setTimeout(() => setRefreshMsg(null), 3000);
+    }, 500);
   }
 
   const chartData = useMemo(() => {
@@ -699,7 +671,7 @@ export default function DashboardClient() {
             <span>Bullshark Analytics</span>
           </div>
           <div className="footerLinks">
-            <span className="muted">Powered by Strava</span>
+            <span className="muted">Powered by Bullsharks Server</span>
             <span className="footerDivider">·</span>
             <a className="muted" href="https://warp.dev/careers" target="_blank" rel="noreferrer">
               warp.dev/careers
