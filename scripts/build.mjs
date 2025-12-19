@@ -7,14 +7,5 @@ function run(cmd, args, opts = {}) {
   }
 }
 
-run('npx', ['prisma', 'generate']);
-
-const dbUrl = process.env.DATABASE_URL || '';
-const isPostgres = dbUrl.startsWith('postgres://') || dbUrl.startsWith('postgresql://');
-
-// On Vercel/CI with a Postgres DATABASE_URL, ensure migrations are applied.
-if (isPostgres) {
-  run('npx', ['prisma', 'migrate', 'deploy']);
-}
-
+// Build the Next.js application
 run('npx', ['next', 'build']);
