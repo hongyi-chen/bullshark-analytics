@@ -165,10 +165,6 @@ export default function DashboardClient() {
   const [aggregation, setAggregation] = useState<'daily' | 'weekly'>('daily');
   const [minRuns, setMinRuns] = useState<number>(0);
 
-  const [refreshing, setRefreshing] = useState(false);
-  const [refreshMsg, setRefreshMsg] = useState<string | null>(null);
-  const [refreshNonce, setRefreshNonce] = useState(0);
-
   const [timeseries, setTimeseries] = useState<TimeseriesResponse | null>(null);
   const [stats, setStats] = useState<ClubStatsResponse | null>(null);
   const [latestRuns, setLatestRuns] = useState<LatestRunsResponse | null>(null);
@@ -225,23 +221,7 @@ export default function DashboardClient() {
     return () => {
       cancelled = true;
     };
-  }, [days, refreshNonce]);
-
-  function triggerRefresh() {
-    setRefreshing(true);
-    setRefreshMsg('Refreshing data...');
-
-    // Kick the dashboard to refetch its data from the server
-    setRefreshNonce((x) => x + 1);
-
-    // Clear refreshing state after a brief delay to show feedback
-    setTimeout(() => {
-      setRefreshing(false);
-      setRefreshMsg('Data refreshed');
-      // Clear message after a few seconds
-      setTimeout(() => setRefreshMsg(null), 3000);
-    }, 500);
-  }
+  }, [days]);
 
   const chartData = useMemo(() => {
     const pts = timeseries?.points ?? [];
@@ -361,23 +341,7 @@ export default function DashboardClient() {
             <span className="badge">Public club dashboard</span>
           </div>
         </div>
-        <div className="headerActions">
-          <button
-            className="primaryButton"
-            type="button"
-            disabled={refreshing}
-            onClick={triggerRefresh}
-            title="Triggers a lightweight refresh (rate limited)"
-          >
-            {refreshing ? 'Refreshing…' : 'Refresh data'}
-          </button>
-        </div>
       </header>
-      {refreshMsg ? (
-        <div className="muted" style={{ marginTop: -10, marginBottom: 12 }}>
-          {refreshMsg}
-        </div>
-      ) : null}
 
       <div className="filtersCard">
         <div className="filterGroup">

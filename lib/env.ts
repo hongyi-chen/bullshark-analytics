@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 const EnvSchema = z.object({
   SERVER_ACTIVITIES_URL: z.string().url(),
-  APP_BASE_URL: z.string().url(),
+  // Optional: used for generating absolute URLs in metadata/social cards.
+  APP_BASE_URL: z.string().url().optional(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
