@@ -18,7 +18,10 @@ export type ServerActivity = {
 export async function fetchActivities(): Promise<ServerActivity[]> {
   const e = env();
 
-  const res = await fetch(e.SERVER_ACTIVITIES_URL, {
+  // Use /read endpoint for legacy compatibility (old API routes)
+  const url = `${e.BASE_SERVER_URL}/read`;
+
+  const res = await fetch(url, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',

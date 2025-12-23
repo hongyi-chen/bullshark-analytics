@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import JotaiProvider from '@/lib/providers/JotaiProvider';
 
 function getMetadataBase(): URL | undefined {
   const raw = process.env.APP_BASE_URL;
@@ -39,7 +40,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <JotaiProvider>{children}</JotaiProvider>
+      </body>
     </html>
   );
 }
