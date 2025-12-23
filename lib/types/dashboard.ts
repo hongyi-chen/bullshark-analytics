@@ -40,4 +40,5 @@ export type ActivityData = {
   };
 };
 
-export type TimeFilter = 'week' | 'month';
+export const TIME_FILTERS = ['week', 'month'] as const;
+export type TimeFilter = typeof TIME_FILTERS[number];
