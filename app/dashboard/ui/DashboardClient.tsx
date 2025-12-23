@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useAtom } from 'jotai';
 import {
   Bar,
   BarChart,
@@ -12,18 +13,13 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { timeFilterState, activitiesState, loadingState, errorState } from '@/lib/state/atoms';
+import { fetchActivities } from '@/lib/state/api';
 
 type TimeseriesPoint = {
   day: string;
   athleteName: string;
   km: number;
-};
-
-type TimeseriesResponse = {
-  ok: boolean;
-  days: number;
-  since: string;
-  points: TimeseriesPoint[];
 };
 
 type AthleteStats = {
@@ -34,32 +30,11 @@ type AthleteStats = {
   shortestKm: number;
 };
 
-type ClubStatsResponse = {
-  ok: boolean;
-  days: number;
-  since: string;
-  lastFetchedAt: string | null;
-  overall: {
-    totalRuns: number;
-    totalKm: number;
-    longest: { athleteName: string; km: number } | null;
-    shortest: { athleteName: string; km: number } | null;
-    mostRuns: { athleteName: string; runs: number } | null;
-  };
-  athletes: AthleteStats[];
-};
-
 type LatestRun = {
   athleteName: string;
   km: number;
   activityName: string;
   fetchedAt: string;
-};
-
-type LatestRunsResponse = {
-  ok: boolean;
-  lastPoll: string | null;
-  runs: LatestRun[];
 };
 
 function fmtKm(km: number): string {
@@ -87,9 +62,6 @@ function formatSeconds(s: number): string {
   const r = secs % 60;
   return m > 0 ? `${m}m ${r}s` : `${r}s`;
 }
-
-// Date cutoff - only show runs from 12/15/2025 onwards
-const DATE_CUTOFF = new Date('2025-12-15T00:00:00Z');
 
 // Fun emoji pool for athlete avatars
 const ATHLETE_EMOJIS = [
@@ -159,15 +131,16 @@ function ChartTooltip({ active, payload, label, metricLabel }: any) {
 
 export default function DashboardClient() {
   const [mounted, setMounted] = useState(false);
-  const [days, setDays] = useState<number>(30);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [err, setErr] = useState<string | null>(null);
+
+  // Jotai state
+  const [timeFilter, setTimeFilter] = useAtom(timeFilterState);
+  const [activities, setActivities] = useAtom(activitiesState);
+  const [loading, setLoading] = useAtom(loadingState);
+  const [err, setErr] = useAtom(errorState);
+
+  // Keep as local state (UI-only filters)
   const [aggregation, setAggregation] = useState<'daily' | 'weekly'>('daily');
   const [minRuns, setMinRuns] = useState<number>(0);
-
-  const [timeseries, setTimeseries] = useState<TimeseriesResponse | null>(null);
-  const [stats, setStats] = useState<ClubStatsResponse | null>(null);
-  const [latestRuns, setLatestRuns] = useState<LatestRunsResponse | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -181,50 +154,142 @@ export default function DashboardClient() {
       setErr(null);
 
       try {
-        const [tsRes, statsRes, latestRes] = await Promise.all([
-          fetch(`/api/club/timeseries?days=${days}`),
-          fetch(`/api/club/stats?mode=week`), // Current week data for Top Athletes
-          fetch(`/api/club/latest?limit=8`),
-        ]);
-
-        const ts = (await tsRes.json()) as TimeseriesResponse;
-        const st = (await statsRes.json()) as ClubStatsResponse;
-        const lt = (await latestRes.json()) as LatestRunsResponse;
-
-        if (!ts.ok) throw new Error('Failed to load timeseries');
-        if (!st.ok) throw new Error('Failed to load club stats');
-
-        // Filter data to only include runs from DATE_CUTOFF onwards
-        if (ts.ok) {
-          ts.points = ts.points.filter((p) => new Date(p.day) >= DATE_CUTOFF);
-        }
-
-        // Stats are already filtered by the API (week mode + date cutoff)
-
-        if (lt.ok) {
-          lt.runs = lt.runs.filter((r) => new Date(r.fetchedAt) >= DATE_CUTOFF);
-        }
+        const data = await fetchActivities(timeFilter);
 
         if (!cancelled) {
-          setTimeseries(ts);
-          setStats(st);
-          if (lt.ok) setLatestRuns(lt);
+          setActivities(data);
         }
       } catch (e: any) {
-        if (!cancelled) setErr(e?.message ?? String(e));
+        if (!cancelled) {
+          setErr(e?.message ?? String(e));
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
     load();
+
     return () => {
       cancelled = true;
     };
-  }, [days]);
+  }, [timeFilter, setActivities, setLoading, setErr]);
+
+  // Process raw activities into structures needed by components
+  const timeseries = useMemo(() => {
+    return activities
+      .filter((a) => a.sport_type === 'Run')
+      .map((a) => ({
+        day: a.date.split('T')[0],
+        athleteName: a.athlete_name,
+        km: a.distance / 1000,
+      }));
+  }, [activities]);
+
+  const stats = useMemo(() => {
+    const runs = activities.filter((a) => a.sport_type === 'Run');
+
+    if (runs.length === 0) {
+      return {
+        overall: {
+          totalRuns: 0,
+          totalKm: 0,
+          longest: null,
+          shortest: null,
+          mostRuns: null,
+        },
+        athletes: [],
+        lastFetchedAt: null,
+      };
+    }
+
+    // Group by athlete
+    const athleteMap = new Map<string, {
+      runs: number;
+      totalKm: number;
+      longestKm: number;
+      shortestKm: number;
+    }>();
+
+    let longestRun = { athleteName: '', km: 0 };
+    let shortestRun = { athleteName: '', km: Infinity };
+
+    for (const run of runs) {
+      const km = run.distance / 1000;
+      const existing = athleteMap.get(run.athlete_name) || {
+        runs: 0,
+        totalKm: 0,
+        longestKm: 0,
+        shortestKm: Infinity,
+      };
+
+      existing.runs++;
+      existing.totalKm += km;
+      existing.longestKm = Math.max(existing.longestKm, km);
+      existing.shortestKm = Math.min(existing.shortestKm, km);
+
+      athleteMap.set(run.athlete_name, existing);
+
+      if (km > longestRun.km) {
+        longestRun = { athleteName: run.athlete_name, km };
+      }
+      if (km < shortestRun.km) {
+        shortestRun = { athleteName: run.athlete_name, km };
+      }
+    }
+
+    // Convert to array and sort by total km
+    const athletes = Array.from(athleteMap.entries())
+      .map(([athleteName, data]) => ({
+        athleteName,
+        runs: data.runs,
+        totalKm: data.totalKm,
+        longestKm: data.longestKm,
+        shortestKm: data.shortestKm === Infinity ? 0 : data.shortestKm,
+      }))
+      .sort((a, b) => b.totalKm - a.totalKm);
+
+    // Find athlete with most runs
+    const mostRuns = athletes.reduce(
+      (max, a) => (a.runs > max.runs ? a : max),
+      { athleteName: '', runs: 0 }
+    );
+
+    return {
+      overall: {
+        totalRuns: runs.length,
+        totalKm: runs.reduce((sum, r) => sum + r.distance / 1000, 0),
+        longest: longestRun.km > 0 ? longestRun : null,
+        shortest: shortestRun.km < Infinity ? shortestRun : null,
+        mostRuns: mostRuns.runs > 0 ? mostRuns : null,
+      },
+      athletes,
+      lastFetchedAt: runs[0]?.date || null,
+    };
+  }, [activities]);
+
+  const latestRuns = useMemo(() => {
+    const runs = activities
+      .filter((a) => a.sport_type === 'Run')
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, 8)
+      .map((a) => ({
+        athleteName: a.athlete_name,
+        km: a.distance / 1000,
+        activityName: a.name,
+        fetchedAt: a.date,
+      }));
+
+    return {
+      runs,
+      lastPoll: activities[0]?.date || null,
+    };
+  }, [activities]);
 
   const chartData = useMemo(() => {
-    const pts = timeseries?.points ?? [];
+    const pts = timeseries;
     const byPeriod = new Map<string, number>();
 
     for (const p of pts) {
@@ -254,7 +319,7 @@ export default function DashboardClient() {
   }, [filteredAthletes]);
 
   const athleteLastRunDate = useMemo(() => {
-    const pts = timeseries?.points ?? [];
+    const pts = timeseries;
     const lastRun = new Map<string, string>();
     for (const p of pts) {
       if (p.athleteName) {
@@ -345,19 +410,24 @@ export default function DashboardClient() {
 
       <div className="filtersCard">
         <div className="filterGroup">
-          <span className="filterLabel">Time range</span>
+          <span className="filterLabel">Time period</span>
           <div className="pillRow">
-            {[7, 30, 90].map((d) => (
-              <button
-                key={d}
-                className="pill"
-                aria-pressed={days === d}
-                onClick={() => setDays(d)}
-                type="button"
-              >
-                {d} days
-              </button>
-            ))}
+            <button
+              className="pill"
+              aria-pressed={timeFilter === 'week'}
+              onClick={() => setTimeFilter('week')}
+              type="button"
+            >
+              This Week
+            </button>
+            <button
+              className="pill"
+              aria-pressed={timeFilter === 'month'}
+              onClick={() => setTimeFilter('month')}
+              type="button"
+            >
+              This Month
+            </button>
           </div>
         </div>
 
@@ -417,7 +487,7 @@ export default function DashboardClient() {
           <div className="cardHeader">
             <div>
               <div style={{ fontWeight: 650 }}>Top athletes</div>
-              <div className="muted">By total distance (last {days} days)</div>
+              <div className="muted">By total distance (this {timeFilter})</div>
             </div>
             <div className="badge">Runs: {stats?.overall.totalRuns ?? 0}</div>
           </div>
@@ -473,7 +543,7 @@ export default function DashboardClient() {
           <div className="cardHeader">
             <div>
               <div style={{ fontWeight: 650 }}>Club km per {aggregation === 'daily' ? 'day' : 'week'}</div>
-              <div className="muted">Total distance {aggregation === 'daily' ? 'per day' : 'per week'} (last {days} days)</div>
+              <div className="muted">Total distance {aggregation === 'daily' ? 'per day' : 'per week'} (this {timeFilter})</div>
             </div>
             <div className="badge">Total: {fmtKm(stats?.overall.totalKm ?? 0)} km</div>
           </div>
@@ -501,7 +571,7 @@ export default function DashboardClient() {
           <div className="cardHeader">
             <div>
               <div style={{ fontWeight: 650 }}>Runs per athlete</div>
-              <div className="muted">Top 10 by run count (last {days} days)</div>
+              <div className="muted">Top 10 by run count (this {timeFilter})</div>
             </div>
           </div>
 
@@ -529,7 +599,7 @@ export default function DashboardClient() {
           <div className="cardHeader">
             <div>
               <div style={{ fontWeight: 650 }}>Highlights</div>
-              <div className="muted">Notable stats (last {days} days)</div>
+              <div className="muted">Notable stats (this {timeFilter})</div>
             </div>
           </div>
 
