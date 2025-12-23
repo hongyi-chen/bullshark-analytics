@@ -403,8 +403,10 @@ export default function DashboardClient() {
           <h1 className="h1">Bullshark Analytics 🦈</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <p className="headerSubtitle">{lastUpdatedText}</p>
-            <span className="badge">Public club dashboard</span>
           </div>
+        </div>
+        <div className="headerActions">
+          <span className="badge">Public club dashboard</span>
         </div>
       </header>
 
@@ -511,14 +513,29 @@ export default function DashboardClient() {
                       <td>
                         <span className="athleteNameCell">
                           {r.athleteName}
-                          {status === 'today' && (
-                            <span className="statusChip statusChipToday">ran today</span>
+{status === 'today' && (
+                            <span
+                              className="statusChip statusChipToday"
+                              title="Ran today"
+                            >
+                              ran today
+                            </span>
                           )}
                           {status === 'recent' && (
-                            <span className="statusChip statusChipRecent">recent</span>
+                            <span
+                              className="statusChip statusChipRecent"
+                              title="Last run within the past 3 days"
+                            >
+                              recent
+                            </span>
                           )}
                           {status === 'inactive' && (
-                            <span className="statusChip statusChipInactive">inactive</span>
+                            <span
+                              className="statusChip statusChipInactive"
+                              title="No runs in the past 4+ days"
+                            >
+                              inactive
+                            </span>
                           )}
                         </span>
                       </td>
