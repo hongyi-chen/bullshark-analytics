@@ -494,7 +494,7 @@ export default function DashboardClient() {
             <div className="badge">Runs: {stats?.overall.totalRuns ?? 0}</div>
           </div>
 
-          <div className="tableScroll">
+          <div className="tableScroll tableScrollFixed">
             <table className="table">
               <thead>
                 <tr>
@@ -514,25 +514,25 @@ export default function DashboardClient() {
                         <span className="athleteNameCell">
                           {r.athleteName}
 {status === 'today' && (
-                            <span
+<span
                               className="statusChip statusChipToday"
-                              title="Ran today"
+                              data-tooltip="Ran today"
                             >
                               ran today
                             </span>
                           )}
                           {status === 'recent' && (
-                            <span
+<span
                               className="statusChip statusChipRecent"
-                              title="Last run within the past 3 days"
+                              data-tooltip="Last run within the past 3 days"
                             >
                               recent
                             </span>
                           )}
                           {status === 'inactive' && (
-                            <span
+<span
                               className="statusChip statusChipInactive"
-                              title="No runs in the past 4+ days"
+                              data-tooltip="No runs in the past 4+ days"
                             >
                               inactive
                             </span>

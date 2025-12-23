@@ -244,6 +244,56 @@ a:hover {
   background: rgba(231, 237, 246, 0.25);
 }
 
+/* Fixed-height variant for Top Athletes table */
+.tableScrollFixed {
+  max-height: 360px; /* ~8 rows + header */
+}
+
+/* Lightweight CSS tooltip for status chips */
+.statusChip[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+.statusChip[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 22, 32, 0.95);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  z-index: 10;
+}
+
+.statusChip[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0 6px;
+  border-style: solid;
+  border-color: var(--border) transparent transparent transparent;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  z-index: 9;
+}
+
+.statusChip[data-tooltip]:hover::after,
+.statusChip[data-tooltip]:hover::before {
+  opacity: 1;
+}
+
 .athleteNameCell {
   display: inline-flex;
   align-items: center;
