@@ -61,6 +61,27 @@ a:hover {
   padding: 14px 14px;
 }
 
+/* Equal-height cards for the first row */
+.cardFixedTall {
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Utility to let child fill remaining space */
+.flexFill {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Center content in highlight cards and equalize heights */
+.highlightCard {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .cardHeader {
   display: flex;
   align-items: baseline;
