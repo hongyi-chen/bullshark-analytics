@@ -403,8 +403,10 @@ export default function DashboardClient() {
           <h1 className="h1">Bullshark Analytics 🦈</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <p className="headerSubtitle">{lastUpdatedText}</p>
-            <span className="badge">Public club dashboard</span>
           </div>
+        </div>
+        <div className="headerActions">
+          <span className="badge">Public club dashboard</span>
         </div>
       </header>
 
@@ -483,7 +485,7 @@ export default function DashboardClient() {
       ) : null}
 
       <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
-        <div className="card">
+        <div className="card cardFixedTall">
           <div className="cardHeader">
             <div>
               <div style={{ fontWeight: 650 }}>Top athletes</div>
@@ -492,7 +494,7 @@ export default function DashboardClient() {
             <div className="badge">Runs: {stats?.overall.totalRuns ?? 0}</div>
           </div>
 
-          <div className="tableScroll">
+          <div className="tableScroll tableScrollFixed flexFill">
             <table className="table">
               <thead>
                 <tr>
@@ -511,14 +513,29 @@ export default function DashboardClient() {
                       <td>
                         <span className="athleteNameCell">
                           {r.athleteName}
-                          {status === 'today' && (
-                            <span className="statusChip statusChipToday">ran today</span>
+{status === 'today' && (
+<span
+                              className="statusChip statusChipToday"
+                              data-tooltip="Ran today"
+                            >
+                              ran today
+                            </span>
                           )}
                           {status === 'recent' && (
-                            <span className="statusChip statusChipRecent">recent</span>
+<span
+                              className="statusChip statusChipRecent"
+                              data-tooltip="Last run within the past 3 days"
+                            >
+                              recent
+                            </span>
                           )}
                           {status === 'inactive' && (
-                            <span className="statusChip statusChipInactive">inactive</span>
+<span
+                              className="statusChip statusChipInactive"
+                              data-tooltip="No runs in the past 4+ days"
+                            >
+                              inactive
+                            </span>
                           )}
                         </span>
                       </td>
@@ -539,7 +556,7 @@ export default function DashboardClient() {
           </div>
         </div>
 
-        <div className="card">
+        <div className="card cardFixedTall">
           <div className="cardHeader">
             <div>
               <div style={{ fontWeight: 650 }}>Club km per {aggregation === 'daily' ? 'day' : 'week'}</div>
@@ -548,9 +565,9 @@ export default function DashboardClient() {
             <div className="badge">Total: {fmtKm(stats?.overall.totalKm ?? 0)} km</div>
           </div>
 
-          <div style={{ width: '100%', height: 320, minHeight: 320 }}>
+          <div style={{ width: '100%', height: '100%', minHeight: 0 }} className="flexFill">
             {mounted ? (
-              <ResponsiveContainer>
+              <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
                   <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
                   <XAxis dataKey="day" tick={{ fontSize: 12, fill: 'rgba(231,237,246,0.7)' }} />
@@ -603,8 +620,8 @@ export default function DashboardClient() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-            <div className="card" style={{ padding: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, gridAutoRows: '1fr' }}>
+            <div className="card highlightCard" style={{ padding: 12 }}>
               <div className="muted">Longest run</div>
               <div className="highlightValue">
                 {stats?.overall.longest ? `${fmtKm(stats.overall.longest.km)} km` : '—'}
@@ -613,7 +630,7 @@ export default function DashboardClient() {
                 {stats?.overall.longest?.athleteName ?? ''}
               </div>
             </div>
-            <div className="card" style={{ padding: 12 }}>
+            <div className="card highlightCard" style={{ padding: 12 }}>
               <div className="muted">Most dedicated</div>
               <div className="highlightValue">
                 {highlights.mostDedicated ? `${fmtKm(highlights.mostDedicated.avgKm)} km/run` : '—'}
@@ -622,7 +639,7 @@ export default function DashboardClient() {
                 {highlights.mostDedicated?.name ?? ''}
               </div>
             </div>
-            <div className="card" style={{ padding: 12 }}>
+            <div className="card highlightCard" style={{ padding: 12 }}>
               <div className="muted">Most runs</div>
               <div className="highlightValue">
                 {stats?.overall.mostRuns ? `${stats.overall.mostRuns.runs} runs` : '—'}
@@ -631,21 +648,21 @@ export default function DashboardClient() {
                 {stats?.overall.mostRuns?.athleteName ?? ''}
               </div>
             </div>
-            <div className="card" style={{ padding: 12 }}>
+            <div className="card highlightCard" style={{ padding: 12 }}>
               <div className="muted">Average run</div>
               <div className="highlightValue">
                 {fmtKm(highlights.avgRunKm)} km
               </div>
               <div className="highlightAthlete">per run</div>
             </div>
-            <div className="card" style={{ padding: 12 }}>
+            <div className="card highlightCard" style={{ padding: 12 }}>
               <div className="muted">Active athletes</div>
               <div className="highlightValue">
                 {highlights.activeAthletes}
               </div>
               <div className="highlightAthlete">runners</div>
             </div>
-            <div className="card" style={{ padding: 12 }}>
+            <div className="card highlightCard" style={{ padding: 12 }}>
               <div className="muted">Busiest day</div>
               <div className="highlightValue">
                 {highlights.busiestDay ? `${fmtKm(highlights.busiestDay.km)} km` : '—'}
