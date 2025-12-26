@@ -8,12 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "jotai": "^2.16.0",
     "next": "^16.0.10",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "recharts": "^3.6.0",
+    "sass": "^1.97.1",
     "zod": "^4.2.1"
   },
   "devDependencies": {

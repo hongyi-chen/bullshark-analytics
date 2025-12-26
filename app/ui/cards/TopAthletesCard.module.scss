@@ -1,0 +1,124 @@
+
+.tableScroll {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.tableScroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.tableScroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tableScroll::-webkit-scrollbar-thumb {
+    background: rgba(231, 237, 246, 0.15);
+    border-radius: 3px;
+}
+
+.tableScroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(231, 237, 246, 0.25);
+}
+
+/* Fixed-height variant for Top Athletes table */
+.tableScrollFixed {
+    max-height: 360px; /* ~8 rows + header */
+}
+
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.table th {
+    color: var(--muted);
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Lightweight CSS tooltip for status chips */
+.statusChip[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+.statusChip[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 22, 32, 0.95);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 11px;
+    white-space: nowrap;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    z-index: 10;
+}
+
+.statusChip[data-tooltip]::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
+    border-style: solid;
+    border-color: var(--border) transparent transparent transparent;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    z-index: 9;
+}
+
+.statusChip[data-tooltip]:hover::after,
+.statusChip[data-tooltip]:hover::before {
+    opacity: 1;
+}
+
+.athleteNameCell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.statusChip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.statusChipToday {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+}
+
+.statusChipRecent {
+    background: rgba(234, 179, 8, 0.15);
+    color: #eab308;
+}
+
+.statusChipInactive {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+  
