@@ -177,10 +177,15 @@ export default function Dashboard() {
     return (stats?.athletes ?? []).filter((a) => a.runs >= minRuns);
   }, [stats, minRuns]);
 
-  const lastUpdatedText = useMemo(() => {
-    if (!stats?.lastFetchedAt) return "No data yet";
-    return `Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`;
-  }, [stats]);
+  const [lastUpdatedText, setLastUpdatedText] = useState("No data yet");
+
+  useEffect(() => {
+    if (!stats?.lastFetchedAt) {
+      setLastUpdatedText("No data yet");
+    } else {
+      setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
+    }
+  }, [stats?.lastFetchedAt]);
 
   return (
     <div className="container">

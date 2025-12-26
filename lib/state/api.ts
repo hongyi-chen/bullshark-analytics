@@ -1,4 +1,5 @@
 import { ServerActivity } from '@/lib/server-api';
+import { TeamStatsData } from '@/lib/types/dashboard';
 
 export async function fetchActivities(timeFilter: 'week' | 'month'): Promise<ServerActivity[]> {
   const endpoint = `/api/activities/${timeFilter}`;
@@ -16,4 +17,16 @@ export async function fetchActivities(timeFilter: 'week' | 'month'): Promise<Ser
   }
 
   return data as ServerActivity[];
+}
+
+export async function fetchTeamStats(): Promise<TeamStatsData> {
+  const endpoint = '/api/team_stats';
+
+  const response = await fetch(endpoint);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch team stats: ${response.status}`);
+  }
+
+  return await response.json();
 }

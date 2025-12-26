@@ -1,4 +1,4 @@
-import { CSSProperties, useCallback, useMemo } from "react";
+import { CSSProperties, useCallback, useEffect, useMemo, useState } from "react";
 import Card from "./Card";
 import { AthleteStats, TimeFilter, Timeseries } from "../types";
 import clsx from "clsx";
@@ -22,6 +22,14 @@ export default function TopAthletesCard({
   topAthletes,
   totalRuns,
 }: TopAthletesCardProps) {
+  const [todayTimestamp, setTodayTimestamp] = useState<number | null>(null);
+
+  useEffect(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    setTodayTimestamp(today.getTime());
+  }, []);
+
   const athleteLastRunDate = useMemo(() => {
     const pts = timeseries;
     const lastRun = new Map<string, string>();
@@ -38,23 +46,22 @@ export default function TopAthletesCard({
 
   const getAthleteStatus = useCallback(
     (athleteName: string): "today" | "recent" | "inactive" | null => {
+      if (todayTimestamp === null) return null;
       const lastRun = athleteLastRunDate.get(athleteName);
       if (!lastRun) return null;
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
       const lastRunDate = new Date(lastRun);
       lastRunDate.setHours(0, 0, 0, 0);
 
       const diffDays = Math.floor(
-        (today.getTime() - lastRunDate.getTime()) / (1000 * 60 * 60 * 24)
+        (todayTimestamp - lastRunDate.getTime()) / (1000 * 60 * 60 * 24)
       );
 
       if (diffDays === 0) return "today";
       if (diffDays <= 3) return "recent";
       return "inactive";
     },
-    []
+    [todayTimestamp, athleteLastRunDate]
   );
 
   return (

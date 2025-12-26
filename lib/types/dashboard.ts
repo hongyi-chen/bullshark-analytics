@@ -42,3 +42,27 @@ export type ActivityData = {
 
 export const TIME_FILTERS = ['week', 'month'] as const;
 export type TimeFilter = typeof TIME_FILTERS[number];
+
+export type TeamWeeklyData = {
+  weekStart: string;
+  weekly_team_kilometers: number;
+  weekly_running_sum: number;
+};
+
+export type TeamAthleteKilometers = Record<string, number>;
+
+export type TeamStats = {
+  athleteKilometers: TeamAthleteKilometers;
+  weeklyKilometers: TeamWeeklyData[];
+};
+
+export type TeamStatsData = {
+  bulls: TeamStats;
+  sharks: TeamStats;
+};
+
+export type TeamComparisonChartData = {
+  weekStart: string;
+  bullsKm: number;
+  sharksKm: number;
+};
