@@ -1,6 +1,8 @@
 import { fmtKm } from "@/app/utils/fmtKm";
-import { TeamComparisonChartData } from "@/lib/types/dashboard";
+import { TeamComparisonChartData, AthleteBreakdownChartData } from "@/lib/types/dashboard";
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
   Legend,
   Line,
@@ -12,21 +14,29 @@ import {
 } from "recharts";
 import ChartTooltip from "./ChartTooltip";
 import Card from "./Card";
+import { getAthleteColor } from "@/app/utils/getAthleteColor";
 
 interface TeamPerformanceCardProps {
-  chartData: TeamComparisonChartData[];
+  viewMode: 'comparison' | 'bulls-breakdown' | 'sharks-breakdown';
+  chartData: TeamComparisonChartData[] | AthleteBreakdownChartData[];
+  athleteNames?: string[];
+  team?: 'bulls' | 'sharks';
   totalBullsKm: number;
   totalSharksKm: number;
 }
 
 export default function TeamPerformanceCard({
+  viewMode,
   chartData,
+  athleteNames,
+  team,
   totalBullsKm,
   totalSharksKm,
 }: TeamPerformanceCardProps) {
   return (
     <Card
       fixedTall={true}
+      style={{ height: 600 }}
       header={
         <>
           <div>
@@ -42,92 +52,178 @@ export default function TeamPerformanceCard({
     >
       <div className="flexFill">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
-            <XAxis
-              dataKey="weekStart"
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return `${date.getMonth() + 1}/${date.getDate()}`;
-              }}
-            />
-            <YAxis
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-              width={34}
-            />
-            <Tooltip
-              content={({ active, payload, label }) => {
-                if (!active || !payload?.length || !label) return null;
-                return (
-                  <div
-                    style={{
-                      background: "rgba(15, 22, 32, 0.95)",
-                      border: "1px solid rgba(231, 237, 246, 0.12)",
-                      borderRadius: 10,
-                      padding: "10px 10px",
-                    }}
-                  >
+          {viewMode === 'comparison' ? (
+            <LineChart
+              data={chartData}
+              margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
+              <XAxis
+                dataKey="weekStart"
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return `${date.getMonth() + 1}/${date.getDate()}`;
+                }}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+                width={34}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (!active || !payload?.length || !label) return null;
+                  return (
                     <div
                       style={{
-                        fontSize: 12,
-                        color: "var(--muted)",
-                        marginBottom: 4,
+                        background: "rgba(15, 22, 32, 0.95)",
+                        border: "1px solid rgba(231, 237, 246, 0.12)",
+                        borderRadius: 10,
+                        padding: "10px 10px",
                       }}
                     >
-                      Week
-                    </div>
-                    <div style={{ fontSize: 13, marginBottom: 8 }}>
-                      {new Date(label).toLocaleDateString()}
-                    </div>
-                    {payload.map((entry: any, index: number) => (
                       <div
-                        key={index}
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          gap: 12,
+                          fontSize: 12,
+                          color: "var(--muted)",
                           marginBottom: 4,
                         }}
                       >
-                        <div style={{ fontSize: 12, color: entry.color }}>
-                          {entry.name}
-                        </div>
-                        <div style={{ fontSize: 13 }}>
-                          {fmtKm(entry.value)} km
-                        </div>
+                        Week
                       </div>
-                    ))}
-                  </div>
-                );
-              }}
-            />
-            <Legend
-              verticalAlign="top"
-              height={36}
-              iconType="line"
-              wrapperStyle={{ fontSize: 12 }}
-            />
-            <Line
-              type="monotone"
-              dataKey="bullsKm"
-              stroke="var(--accent)"
-              strokeWidth={2}
-              dot={false}
-              name="Bulls"
-            />
-            <Line
-              type="monotone"
-              dataKey="sharksKm"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              dot={false}
-              name="Sharks"
-            />
-          </LineChart>
+                      <div style={{ fontSize: 13, marginBottom: 8 }}>
+                        {new Date(label).toLocaleDateString()}
+                      </div>
+                      {payload.map((entry: any, index: number) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            gap: 12,
+                            marginBottom: 4,
+                          }}
+                        >
+                          <div style={{ fontSize: 12, color: entry.color }}>
+                            {entry.name}
+                          </div>
+                          <div style={{ fontSize: 13 }}>
+                            {fmtKm(entry.value)} km
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }}
+              />
+              <Legend
+                verticalAlign="top"
+                height={36}
+                iconType="line"
+                wrapperStyle={{ fontSize: 12 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="bullsKm"
+                stroke="var(--accent)"
+                strokeWidth={2}
+                dot={false}
+                name="Bulls"
+              />
+              <Line
+                type="monotone"
+                dataKey="sharksKm"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                dot={false}
+                name="Sharks"
+              />
+            </LineChart>
+          ) : (
+            <AreaChart
+              data={chartData}
+              margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
+              <XAxis
+                dataKey="weekStart"
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return `${date.getMonth() + 1}/${date.getDate()}`;
+                }}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+                width={34}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (!active || !payload?.length || !label) return null;
+                  return (
+                    <div
+                      style={{
+                        background: "rgba(15, 22, 32, 0.95)",
+                        border: "1px solid rgba(231, 237, 246, 0.12)",
+                        borderRadius: 10,
+                        padding: "10px 10px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: 12,
+                          color: "var(--muted)",
+                          marginBottom: 4,
+                        }}
+                      >
+                        Week
+                      </div>
+                      <div style={{ fontSize: 13, marginBottom: 8 }}>
+                        {new Date(label).toLocaleDateString()}
+                      </div>
+                      {[...payload].reverse().map((entry: any, index: number) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            gap: 12,
+                            marginBottom: 4,
+                          }}
+                        >
+                          <div style={{ fontSize: 12, color: entry.fill }}>
+                            {entry.name}
+                          </div>
+                          <div style={{ fontSize: 13 }}>
+                            {fmtKm(entry.value)} km
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }}
+              />
+              <Legend
+                verticalAlign="top"
+                height={36}
+                iconType="square"
+                wrapperStyle={{ fontSize: 12 }}
+              />
+              {athleteNames?.map((name) => (
+                <Area
+                  key={name}
+                  type="linear"
+                  dataKey={name}
+                  stackId="1"
+                  stroke={getAthleteColor(name, team!)}
+                  fill={getAthleteColor(name, team!)}
+                  fillOpacity={0.8}
+                  strokeWidth={2}
+                  name={name}
+                />
+              ))}
+            </AreaChart>
+          )}
         </ResponsiveContainer>
       </div>
     </Card>

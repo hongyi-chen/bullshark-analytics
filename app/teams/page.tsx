@@ -7,6 +7,7 @@ import {
   teamLoadingState,
   teamErrorState,
   teamChartModeState,
+  teamViewModeState,
 } from "@/lib/state/atoms";
 import { fetchTeamStats } from "@/lib/state/api";
 import Header from "@/app/ui/Header";
@@ -25,6 +26,7 @@ export default function TeamsPage() {
   const [loading, setLoading] = useAtom(teamLoadingState);
   const [err, setErr] = useAtom(teamErrorState);
   const [chartMode, setChartMode] = useAtom(teamChartModeState);
+  const [viewMode, setViewMode] = useAtom(teamViewModeState);
 
   useEffect(() => {
     let cancelled = false;
@@ -64,7 +66,7 @@ export default function TeamsPage() {
 
     for (const point of teamStats.bulls.weeklyKilometers) {
       combined.set(point.weekStart, {
-        bullsKm: point.weekly_team_kilometers,
+        bullsKm: point.weeklyTeamKilometers,
         sharksKm: 0,
       });
     }
@@ -74,7 +76,7 @@ export default function TeamsPage() {
         bullsKm: 0,
         sharksKm: 0,
       };
-      existing.sharksKm = point.weekly_team_kilometers;
+      existing.sharksKm = point.weeklyTeamKilometers;
       combined.set(point.weekStart, existing);
     }
 
@@ -90,7 +92,7 @@ export default function TeamsPage() {
 
     for (const point of teamStats.bulls.weeklyKilometers) {
       combined.set(point.weekStart, {
-        bullsKm: point.weekly_running_sum,
+        bullsKm: point.weeklyRunningSum,
         sharksKm: 0,
       });
     }
@@ -100,7 +102,7 @@ export default function TeamsPage() {
         bullsKm: 0,
         sharksKm: 0,
       };
-      existing.sharksKm = point.weekly_running_sum;
+      existing.sharksKm = point.weeklyRunningSum;
       combined.set(point.weekStart, existing);
     }
 
@@ -108,10 +110,6 @@ export default function TeamsPage() {
       .map(([weekStart, data]) => ({ weekStart, ...data }))
       .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
   }, [teamStats]);
-
-  const displayChartData = useMemo(() => {
-    return chartMode === "weekly" ? chartData : runningTotalsData;
-  }, [chartMode, chartData, runningTotalsData]);
 
   const bullsAthletes = useMemo(() => {
     if (!teamStats) return [];
@@ -135,6 +133,116 @@ export default function TeamsPage() {
       .sort((a, b) => b.totalKm - a.totalKm);
   }, [teamStats]);
 
+  // Bulls breakdown data - weekly mode
+  const bullsBreakdownWeekly = useMemo(() => {
+    if (!teamStats) return [];
+
+    const athleteOrder = bullsAthletes.map((a) => a.athleteName);
+
+    return teamStats.bulls.weeklyKilometers
+      .map((week) => {
+        const point: any = { weekStart: week.weekStart };
+        athleteOrder.forEach((name) => {
+          point[name] = week.weeklyAthleteKilometers?.[name] || 0;
+        });
+        return point;
+      })
+      .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  }, [teamStats, bullsAthletes]);
+
+  // Bulls breakdown data - running total mode
+  const bullsBreakdownRunning = useMemo(() => {
+    if (!teamStats) return [];
+
+    const athleteOrder = bullsAthletes.map((a) => a.athleteName);
+    const runningTotals: Record<string, number> = {};
+    athleteOrder.forEach((name) => (runningTotals[name] = 0));
+
+    return teamStats.bulls.weeklyKilometers
+      .map((week) => {
+        const point: any = { weekStart: week.weekStart };
+        athleteOrder.forEach((name) => {
+          runningTotals[name] += week.weeklyAthleteKilometers?.[name] || 0;
+          point[name] = runningTotals[name];
+        });
+        return point;
+      })
+      .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  }, [teamStats, bullsAthletes]);
+
+  // Sharks breakdown data - weekly mode
+  const sharksBreakdownWeekly = useMemo(() => {
+    if (!teamStats) return [];
+
+    const athleteOrder = sharksAthletes.map((a) => a.athleteName);
+
+    return teamStats.sharks.weeklyKilometers
+      .map((week) => {
+        const point: any = { weekStart: week.weekStart };
+        athleteOrder.forEach((name) => {
+          point[name] = week.weeklyAthleteKilometers?.[name] || 0;
+        });
+        return point;
+      })
+      .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  }, [teamStats, sharksAthletes]);
+
+  // Sharks breakdown data - running total mode
+  const sharksBreakdownRunning = useMemo(() => {
+    if (!teamStats) return [];
+
+    const athleteOrder = sharksAthletes.map((a) => a.athleteName);
+    const runningTotals: Record<string, number> = {};
+    athleteOrder.forEach((name) => (runningTotals[name] = 0));
+
+    return teamStats.sharks.weeklyKilometers
+      .map((week) => {
+        const point: any = { weekStart: week.weekStart };
+        athleteOrder.forEach((name) => {
+          runningTotals[name] += week.weeklyAthleteKilometers?.[name] || 0;
+          point[name] = runningTotals[name];
+        });
+        return point;
+      })
+      .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  }, [teamStats, sharksAthletes]);
+
+  const displayChartData = useMemo(() => {
+    if (viewMode === "bulls-breakdown") {
+      return chartMode === "weekly" ? bullsBreakdownWeekly : bullsBreakdownRunning;
+    } else if (viewMode === "sharks-breakdown") {
+      return chartMode === "weekly"
+        ? sharksBreakdownWeekly
+        : sharksBreakdownRunning;
+    }
+    // comparison mode
+    return chartMode === "weekly" ? chartData : runningTotalsData;
+  }, [
+    viewMode,
+    chartMode,
+    chartData,
+    runningTotalsData,
+    bullsBreakdownWeekly,
+    bullsBreakdownRunning,
+    sharksBreakdownWeekly,
+    sharksBreakdownRunning,
+  ]);
+
+  const displayAthleteNames = useMemo(() => {
+    if (viewMode === "bulls-breakdown") {
+      return bullsAthletes.map((a) => a.athleteName);
+    } else if (viewMode === "sharks-breakdown") {
+      return sharksAthletes.map((a) => a.athleteName);
+    }
+    return undefined;
+  }, [viewMode, bullsAthletes, sharksAthletes]);
+
+  const displayTeam = useMemo(() => {
+    if (viewMode === "bulls-breakdown") return "bulls";
+    if (viewMode === "sharks-breakdown") return "sharks";
+    return undefined;
+  }, [viewMode]);
+
   const totalBullsKm = useMemo(() => {
     return bullsAthletes.reduce((sum, athlete) => sum + athlete.totalKm, 0);
   }, [bullsAthletes]);
@@ -156,7 +264,39 @@ export default function TeamsPage() {
 
       <div className={css.card}>
         <div className={css.group}>
-          <span className={css.label}>Chart Mode</span>
+          <span className={css.label}>View</span>
+          <div className={css.pillRow}>
+            <button
+              className={css.pill}
+              aria-pressed={viewMode === "comparison"}
+              onClick={() => setViewMode("comparison")}
+              type="button"
+            >
+              Team Comparison
+            </button>
+            <button
+              className={css.pill}
+              aria-pressed={viewMode === "bulls-breakdown"}
+              onClick={() => setViewMode("bulls-breakdown")}
+              type="button"
+            >
+              Bulls Breakdown
+            </button>
+            <button
+              className={css.pill}
+              aria-pressed={viewMode === "sharks-breakdown"}
+              onClick={() => setViewMode("sharks-breakdown")}
+              type="button"
+            >
+              Sharks Breakdown
+            </button>
+          </div>
+        </div>
+
+        <div className={css.divider} />
+
+        <div className={css.group}>
+          <span className={css.label}>Metric</span>
           <div className={css.pillRow}>
             <button
               className={css.pill}
@@ -184,7 +324,10 @@ export default function TeamsPage() {
 
       <div style={{ opacity: loading ? 0.7 : 1 }}>
         <TeamPerformanceCard
+          viewMode={viewMode}
           chartData={displayChartData}
+          athleteNames={displayAthleteNames}
+          team={displayTeam}
           totalBullsKm={totalBullsKm}
           totalSharksKm={totalSharksKm}
         />
