@@ -6,6 +6,7 @@ import {
   teamStatsState,
   teamLoadingState,
   teamErrorState,
+  teamChartModeState,
 } from "@/lib/state/atoms";
 import { fetchTeamStats } from "@/lib/state/api";
 import Header from "@/app/ui/Header";
@@ -19,13 +20,11 @@ import css from "@/app/ui/Filters.module.scss";
 
 export const dynamic = "force-dynamic";
 
-type ChartMode = "weekly" | "running";
-
 export default function TeamsPage() {
   const [teamStats, setTeamStats] = useAtom(teamStatsState);
   const [loading, setLoading] = useAtom(teamLoadingState);
   const [err, setErr] = useAtom(teamErrorState);
-  const [chartMode, setChartMode] = useState<ChartMode>("running");
+  const [chartMode, setChartMode] = useAtom(teamChartModeState);
 
   useEffect(() => {
     let cancelled = false;

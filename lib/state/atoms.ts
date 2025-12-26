@@ -15,3 +15,7 @@ export const teamStatsState = atom<TeamStatsData | null>(null);
 export const teamLoadingState = atom<boolean>(true);
 
 export const teamErrorState = atom<string | null>(null);
+
+export type TeamChartMode = 'weekly' | 'running';
+
+export const teamChartModeState = atom<TeamChartMode>('running');
