@@ -25,7 +25,7 @@ export default function TeamsPage() {
   const [teamStats, setTeamStats] = useAtom(teamStatsState);
   const [loading, setLoading] = useAtom(teamLoadingState);
   const [err, setErr] = useAtom(teamErrorState);
-  const [chartMode, setChartMode] = useState<ChartMode>("weekly");
+  const [chartMode, setChartMode] = useState<ChartMode>("running");
 
   useEffect(() => {
     let cancelled = false;
@@ -136,8 +136,10 @@ export default function TeamsPage() {
     return sharksAthletes.reduce((sum, athlete) => sum + athlete.totalKm, 0);
   }, [sharksAthletes]);
 
-  const lastUpdatedText = useMemo(() => {
-    return `Last updated: ${new Date().toLocaleString()}`;
+  const [lastUpdatedText, setLastUpdatedText] = useState("");
+
+  useEffect(() => {
+    setLastUpdatedText(`Last updated: ${new Date().toLocaleString()}`);
   }, []);
 
   return (
@@ -151,19 +153,19 @@ export default function TeamsPage() {
           <div className={css.pillRow}>
             <button
               className={css.pill}
-              aria-pressed={chartMode === "weekly"}
-              onClick={() => setChartMode("weekly")}
-              type="button"
-            >
-              Weekly Totals
-            </button>
-            <button
-              className={css.pill}
               aria-pressed={chartMode === "running"}
               onClick={() => setChartMode("running")}
               type="button"
             >
               Running Total
+            </button>
+            <button
+              className={css.pill}
+              aria-pressed={chartMode === "weekly"}
+              onClick={() => setChartMode("weekly")}
+              type="button"
+            >
+              Weekly Totals
             </button>
           </div>
         </div>

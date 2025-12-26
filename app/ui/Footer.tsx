@@ -1,8 +1,15 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import css from "./Footer.module.scss";
 
-const YEAR = new Date().getFullYear();
-
 export default function Footer() {
+  const [year, setYear] = useState("");
+
+  useEffect(() => {
+    setYear(new Date().getFullYear().toString());
+  }, []);
+
   return (
     <footer className={css.footer}>
       <div className={css.content}>
@@ -22,7 +29,7 @@ export default function Footer() {
             warp.dev/careers
           </a>
           <span className={css.divider}>·</span>
-          <span className="muted">© {YEAR}</span>
+          <span className="muted">© {year}</span>
         </div>
       </div>
     </footer>

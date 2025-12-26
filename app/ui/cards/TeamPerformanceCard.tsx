@@ -61,7 +61,7 @@ export default function TeamPerformanceCard({
             />
             <Tooltip
               content={({ active, payload, label }) => {
-                if (!active || !payload?.length) return null;
+                if (!active || !payload?.length || !label) return null;
                 return (
                   <div
                     style={{
