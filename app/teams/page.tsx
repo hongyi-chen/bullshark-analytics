@@ -64,7 +64,7 @@ export default function TeamsPage() {
 
     for (const point of teamStats.bulls.weeklyKilometers) {
       combined.set(point.weekStart, {
-        bullsKm: point.team_kilometers,
+        bullsKm: point.weekly_team_kilometers,
         sharksKm: 0,
       });
     }
@@ -74,7 +74,7 @@ export default function TeamsPage() {
         bullsKm: 0,
         sharksKm: 0,
       };
-      existing.sharksKm = point.team_kilometers;
+      existing.sharksKm = point.weekly_team_kilometers;
       combined.set(point.weekStart, existing);
     }
 
@@ -84,22 +84,30 @@ export default function TeamsPage() {
   }, [teamStats]);
 
   const runningTotalsData = useMemo(() => {
-    if (chartData.length === 0) return [];
+    if (!teamStats) return [];
 
-    let bullsRunningTotal = 0;
-    let sharksRunningTotal = 0;
+    const combined = new Map<string, { bullsKm: number; sharksKm: number }>();
 
-    return chartData.map((point) => {
-      bullsRunningTotal += point.bullsKm;
-      sharksRunningTotal += point.sharksKm;
+    for (const point of teamStats.bulls.weeklyKilometers) {
+      combined.set(point.weekStart, {
+        bullsKm: point.weekly_running_sum,
+        sharksKm: 0,
+      });
+    }
 
-      return {
-        weekStart: point.weekStart,
-        bullsKm: bullsRunningTotal,
-        sharksKm: sharksRunningTotal,
+    for (const point of teamStats.sharks.weeklyKilometers) {
+      const existing = combined.get(point.weekStart) ?? {
+        bullsKm: 0,
+        sharksKm: 0,
       };
-    });
-  }, [chartData]);
+      existing.sharksKm = point.weekly_running_sum;
+      combined.set(point.weekStart, existing);
+    }
+
+    return Array.from(combined.entries())
+      .map(([weekStart, data]) => ({ weekStart, ...data }))
+      .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  }, [teamStats]);
 
   const displayChartData = useMemo(() => {
     return chartMode === "weekly" ? chartData : runningTotalsData;

@@ -45,7 +45,8 @@ export type TimeFilter = typeof TIME_FILTERS[number];
 
 export type TeamWeeklyData = {
   weekStart: string;
-  team_kilometers: number;
+  weekly_team_kilometers: number;
+  weekly_running_sum: number;
 };
 
 export type TeamAthleteKilometers = Record<string, number>;
