@@ -1,0 +1,19 @@
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10;
+    grid-auto-rows: 1fr;
+}
+
+.highlightValue {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 8px;
+    line-height: 1.2;
+}
+
+.highlightAthlete {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+}

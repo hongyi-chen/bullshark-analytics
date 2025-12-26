@@ -1,0 +1,49 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+}
+
+@media (max-width: 700px) {
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin: 0;
+}
+
+.subtitleContainer {
+    display: flex;
+    align-items: center;
+    gap: 10;
+    flex-wrap: wrap; 
+}
+
+.subtitle {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+  

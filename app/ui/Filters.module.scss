@@ -1,0 +1,70 @@
+.card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 20px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 4px;
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.pillRow {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+  
+.pill {
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.pill:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+}
+  
+.pill[aria-pressed='true'] {
+    border-color: rgba(34, 197, 94, 0.5);
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--accent);
+}
+
+.divider {
+    width: 1px;
+    height: 32px;
+    background: var(--border);
+}
+
+@media (max-width: 700px) {
+    .card {
+        gap: 16px;
+    }
+
+    .divider {
+        display: none;
+    }
+}

@@ -1,0 +1,35 @@
+.card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 14px;
+}
+  
+/* Equal-height cards for the first row */
+.fixedTall {
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Center content in highlight cards and equalize heights */
+.highlighted {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.header > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
