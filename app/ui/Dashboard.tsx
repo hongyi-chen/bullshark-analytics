@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAtom } from "jotai";
 import {
   timeFilterState,
@@ -34,19 +34,45 @@ export default function Dashboard() {
   const [aggregation, setAggregation] = useState<Aggregation>("daily");
   const [minRuns, setMinRuns] = useState<number>(0);
 
+  const athletesFetchedRef = useRef(false);
+
   useEffect(() => {
     let cancelled = false;
 
-    async function load() {
+    async function loadData() {
+      const shouldFetchAthletes = !athletesFetchedRef.current;
+
       setLoading(true);
       setErr(null);
 
       try {
-        const data = await fetchActivities(timeFilter);
+        // Always fetch activities when timeFilter changes
+        const promises: Promise<void>[] = [
+          fetchActivities(timeFilter).then((data) => {
+            if (!cancelled) {
+              setActivities(data);
+            }
+          }),
+        ];
 
-        if (!cancelled) {
-          setActivities(data);
+        // Fetch athletes only on first load
+        if (shouldFetchAthletes) {
+          promises.push(
+            fetchAthletes()
+              .then((data) => {
+                if (!cancelled) {
+                  setAthletes(data);
+                  athletesFetchedRef.current = true;
+                }
+              })
+              .catch((e: any) => {
+                console.error("Failed to fetch athletes:", e);
+                // Athletes are optional, so we don't set the main error state
+              })
+          );
         }
+
+        await Promise.all(promises);
       } catch (e: any) {
         if (!cancelled) {
           setErr(e?.message ?? String(e));
@@ -58,35 +84,12 @@ export default function Dashboard() {
       }
     }
 
-    load();
+    loadData();
 
     return () => {
       cancelled = true;
     };
-  }, [timeFilter, setActivities, setLoading, setErr]);
-
-  // Fetch athletes on mount
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadAthletes() {
-      try {
-        const data = await fetchAthletes();
-        if (!cancelled) {
-          setAthletes(data);
-        }
-      } catch (e: any) {
-        console.error('Failed to fetch athletes:', e);
-        // Athletes are optional, so we don't set the main error state
-      }
-    }
-
-    loadAthletes();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [setAthletes]);
+  }, [timeFilter, setActivities, setAthletes, setLoading, setErr]);
 
   // Process raw activities into structures needed by components
   const timeseries = useMemo(() => {
