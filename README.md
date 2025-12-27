@@ -5,6 +5,9 @@ This repo is **frontend + serverless API only**:
 - The source-of-truth activities come from the Bullsharks backend server (Cloud Run).
 - This Next.js app calls that backend from server-side API routes, then computes summary stats + timeseries for the UI.
 
+## Documentation
+For details on the backend server API endpoints, see the [Server API Documentation](https://github.com/BraydenRoyston/bullsharks.online/blob/main/docs/API_DOCUMENTATION.md).
+
 ## Tech stack
 - Next.js (App Router)
 - Jotai (global state)
