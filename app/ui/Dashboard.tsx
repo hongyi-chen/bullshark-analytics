@@ -8,7 +8,7 @@ import {
   loadingState,
   errorState,
 } from "@/lib/state/atoms";
-import { fetchActivities } from "@/lib/state/api";
+import { fetchActivities, hasFreshActivitiesCache } from "@/lib/state/api";
 import Header from "./Header";
 import Filters from "./Filters";
 import { Aggregation, AthleteStats } from "./types";
@@ -36,12 +36,12 @@ export default function Dashboard() {
     let cancelled = false;
 
     async function load() {
-      setLoading(true);
+      const hasFresh = hasFreshActivitiesCache(timeFilter);
+      setLoading(!hasFresh);
       setErr(null);
 
       try {
         const data = await fetchActivities(timeFilter);
-
         if (!cancelled) {
           setActivities(data);
         }

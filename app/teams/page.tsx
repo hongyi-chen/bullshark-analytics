@@ -9,7 +9,7 @@ import {
   teamChartModeState,
   teamViewModeState,
 } from "@/lib/state/atoms";
-import { fetchTeamStats } from "@/lib/state/api";
+import { fetchTeamStats, hasFreshTeamStatsCache } from "@/lib/state/api";
 import Header from "@/app/ui/Header";
 import Footer from "@/app/ui/Footer";
 import Divider from "@/app/ui/Divider";
@@ -32,7 +32,8 @@ export default function TeamsPage() {
     let cancelled = false;
 
     async function load() {
-      setLoading(true);
+      const hasFresh = hasFreshTeamStatsCache();
+      setLoading(!hasFresh);
       setErr(null);
 
       try {
