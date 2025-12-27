@@ -189,7 +189,7 @@ export default function Dashboard() {
 
   return (
     <div className="container">
-      <Header lastUpdatedText={lastUpdatedText} />
+      <Header lastUpdatedText={lastUpdatedText} active="dashboard" />
       <Filters
         aggregation={aggregation}
         minRuns={minRuns}

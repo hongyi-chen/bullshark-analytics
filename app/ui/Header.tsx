@@ -2,9 +2,10 @@ import css from "./Header.module.scss";
 
 interface HeaderProps {
   lastUpdatedText: string;
+  active?: "dashboard" | "teams";
 }
 
-export default function Header({ lastUpdatedText }: HeaderProps) {
+export default function Header({ lastUpdatedText, active = "dashboard" }: HeaderProps) {
   return (
     <header className={css.header}>
       <div className={css.main}>
@@ -13,12 +14,26 @@ export default function Header({ lastUpdatedText }: HeaderProps) {
           <p className={css.subtitle}>{lastUpdatedText}</p>
         </div>
       </div>
-      <div className={css.actions}>
-        <a href="/teams" className={css.navButton} aria-label="View teams page">
-          Teams
-        </a>
-        <span className="badge">Public club dashboard</span>
-      </div>
+      <nav className={css.actions} aria-label="Primary">
+        <div className={css.navGroup} role="tablist" aria-label="Views">
+          <a
+            href="/"
+            className={`${css.navPill} ${active === "dashboard" ? css.navPillActive : ""}`}
+            aria-current={active === "dashboard" ? "page" : undefined}
+            role="tab"
+          >
+            Dashboard
+          </a>
+          <a
+            href="/teams"
+            className={`${css.navPill} ${active === "teams" ? css.navPillActive : ""}`}
+            aria-current={active === "teams" ? "page" : undefined}
+            role="tab"
+          >
+            Teams
+          </a>
+        </div>
+      </nav>
     </header>
   );
 }
