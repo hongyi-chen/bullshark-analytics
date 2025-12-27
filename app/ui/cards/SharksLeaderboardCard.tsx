@@ -1,8 +1,10 @@
-import { CSSProperties } from "react";
+import { CSSProperties, useMemo } from "react";
 import Card from "./Card";
 import clsx from "clsx";
 import css from "./SharksLeaderboardCard.module.scss";
 import { fmtKm } from "@/app/utils/fmtKm";
+import { athletesState } from "@/lib/state/atoms";
+import { useAtom } from "jotai";
 
 const TEXT_ALIGN_RIGHT: CSSProperties = { textAlign: "right" };
 
@@ -20,6 +22,14 @@ export default function SharksLeaderboardCard({
   athletes,
   totalKm,
 }: SharksLeaderboardCardProps) {
+  const [athleteTeamState] = useAtom(athletesState);
+  const athleteEventMap = useMemo(() => {
+    const eventMap = new Map<string, "half" | "full">();
+    for (const athlete of athleteTeamState) {
+      eventMap.set(athlete.name, athlete.event);
+    }
+    return eventMap;
+  }, [athletes]);
   return (
     <Card
       header={
@@ -47,6 +57,21 @@ export default function SharksLeaderboardCard({
               <tr key={`${athlete.athleteName}-${idx}`}>
                 <td className="muted">{idx + 1}</td>
                 <td>{athlete.athleteName}</td>
+                {(() => {
+                        const event = athleteEventMap.get(athlete.athleteName);
+                        if (!event) return null;
+                        return (
+                          <span
+                            className={clsx(
+                              css.eventChip,
+                              event === "half" ? css.eventChipHalf : css.eventChipFull
+                            )}
+                            data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+                          >
+                            {event}
+                          </span>
+                        )
+                      })()}
                 <td style={TEXT_ALIGN_RIGHT}>{fmtKm(athlete.totalKm)}</td>
               </tr>
             ))}
