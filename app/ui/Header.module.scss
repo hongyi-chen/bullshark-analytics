@@ -46,4 +46,26 @@
     align-items: center;
     gap: 10px;
 }
-  
+
+.navButton {
+  border: 1px solid rgba(231, 237, 246, 0.18);
+  background: rgba(231, 237, 246, 0.06);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+}
+
+.navButton:hover {
+  background: rgba(231, 237, 246, 0.10);
+  border-color: rgba(231, 237, 246, 0.28);
+  text-decoration: none;
+}
+
+.navButton:active {
+  transform: translateY(1px);
+}

@@ -14,6 +14,9 @@ export default function Header({ lastUpdatedText }: HeaderProps) {
         </div>
       </div>
       <div className={css.actions}>
+        <a href="/teams" className={css.navButton} aria-label="View teams page">
+          Teams
+        </a>
         <span className="badge">Public club dashboard</span>
       </div>
     </header>
