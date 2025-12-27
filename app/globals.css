@@ -48,8 +48,15 @@ a:hover {
   gap: 14px;
 }
 
+/* Equal two-column grid variant */
+.rowEqual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
 @media (max-width: 900px) {
-  .row {
+  .row, .rowEqual {
     grid-template-columns: 1fr;
   }
 }

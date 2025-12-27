@@ -1,0 +1,41 @@
+.chartContainer {
+  height: 600px;
+}
+
+.badgeContainer {
+  display: flex;
+  gap: 12px;
+}
+
+.tooltip {
+  background: rgba(15, 22, 32, 0.95);
+  border: 1px solid rgba(231, 237, 246, 0.12);
+  border-radius: 10px;
+  padding: 10px 10px;
+}
+
+.tooltipWeekLabel {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.tooltipDate {
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.tooltipEntry {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.tooltipName {
+  font-size: 12px;
+}
+
+.tooltipValue {
+  font-size: 13px;
+}

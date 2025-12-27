@@ -9,7 +9,7 @@ import {
   errorState,
   athletesState,
 } from "@/lib/state/atoms";
-import { fetchActivities, fetchAthletes } from "@/lib/state/api";
+import { fetchActivities, hasFreshActivitiesCache } from "@/lib/state/api";
 import Header from "./Header";
 import Filters from "./Filters";
 import { Aggregation, AthleteStats } from "./types";
@@ -39,40 +39,16 @@ export default function Dashboard() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadData() {
-      const shouldFetchAthletes = !athletesFetchedRef.current;
-
-      setLoading(true);
+    async function load() {
+      const hasFresh = hasFreshActivitiesCache(timeFilter);
+      setLoading(!hasFresh);
       setErr(null);
 
       try {
-        // Always fetch activities when timeFilter changes
-        const promises: Promise<void>[] = [
-          fetchActivities(timeFilter).then((data) => {
-            if (!cancelled) {
-              setActivities(data);
-            }
-          }),
-        ];
-
-        // Fetch athletes only on first load
-        if (shouldFetchAthletes) {
-          promises.push(
-            fetchAthletes()
-              .then((data) => {
-                if (!cancelled) {
-                  setAthletes(data);
-                  athletesFetchedRef.current = true;
-                }
-              })
-              .catch((e: any) => {
-                console.error("Failed to fetch athletes:", e);
-                // Athletes are optional, so we don't set the main error state
-              })
-          );
+        const data = await fetchActivities(timeFilter);
+        if (!cancelled) {
+          setActivities(data);
         }
-
-        await Promise.all(promises);
       } catch (e: any) {
         if (!cancelled) {
           setErr(e?.message ?? String(e));
@@ -84,12 +60,12 @@ export default function Dashboard() {
       }
     }
 
-    loadData();
+    load();
 
     return () => {
       cancelled = true;
     };
-  }, [timeFilter, setActivities, setAthletes, setLoading, setErr]);
+  }, [timeFilter, setActivities, setLoading, setErr]);
 
   // Process raw activities into structures needed by components
   const timeseries = useMemo(() => {
@@ -217,7 +193,7 @@ export default function Dashboard() {
 
   return (
     <div className="container">
-      <Header lastUpdatedText={lastUpdatedText} />
+      <Header lastUpdatedText={lastUpdatedText} active="dashboard" />
       <Filters
         aggregation={aggregation}
         minRuns={minRuns}
