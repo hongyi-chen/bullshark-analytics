@@ -20,7 +20,7 @@ export async function GET() {
     }
 
     const data = await response.json();
-
+    
     return NextResponse.json(data);
   } catch (error: any) {
     console.error('Error fetching team stats:', error);

@@ -45,8 +45,9 @@ export type TimeFilter = typeof TIME_FILTERS[number];
 
 export type TeamWeeklyData = {
   weekStart: string;
-  weekly_team_kilometers: number;
-  weekly_running_sum: number;
+  weeklyTeamKilometers: number;
+  weeklyRunningSum: number;
+  weeklyAthleteKilometers: Record<string, number>;
 };
 
 export type TeamAthleteKilometers = Record<string, number>;
@@ -65,4 +66,9 @@ export type TeamComparisonChartData = {
   weekStart: string;
   bullsKm: number;
   sharksKm: number;
+};
+
+export type AthleteBreakdownChartData = {
+  weekStart: string;
+  [athleteName: string]: string | number;
 };

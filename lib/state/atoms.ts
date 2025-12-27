@@ -19,3 +19,7 @@ export const teamErrorState = atom<string | null>(null);
 export type TeamChartMode = 'weekly' | 'running';
 
 export const teamChartModeState = atom<TeamChartMode>('running');
+
+export type TeamViewMode = 'comparison' | 'bulls-breakdown' | 'sharks-breakdown';
+
+export const teamViewModeState = atom<TeamViewMode>('comparison');
