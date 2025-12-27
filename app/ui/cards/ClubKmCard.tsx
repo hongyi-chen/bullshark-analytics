@@ -10,7 +10,6 @@ import {
   YAxis,
 } from "recharts";
 import ChartTooltip from "./ChartTooltip";
-import { useMemo } from "react";
 import Card from "./Card";
 
 interface ClubKmCardProps {

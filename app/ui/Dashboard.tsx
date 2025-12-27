@@ -21,6 +21,7 @@ import RunsPerAtheleteCard from "./cards/RunsPerAthleteCard";
 import HighlightsCard from "./cards/HighlightsCard";
 import LatestRunsCard from "./cards/LatestRunsCard";
 import Divider from "./Divider";
+import { getTimeseries } from "../utils/activityUtils";
 
 export default function Dashboard() {
   // Jotai state
@@ -54,15 +55,8 @@ export default function Dashboard() {
     loadData();
   }, [timeFilter, setActivities, setAthletes, setLoading, setErr]);
 
-  // Process raw activities into structures needed by components
   const timeseries = useMemo(() => {
-    return activities
-      .filter((a) => a.sport_type === "Run")
-      .map((a) => ({
-        day: a.date.split("T")[0],
-        athleteName: a.athlete_name,
-        km: a.distance / 1000,
-      }));
+    return getTimeseries(activities); 
   }, [activities]);
 
   const stats = useMemo(() => {
