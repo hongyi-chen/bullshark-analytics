@@ -12,9 +12,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import ChartTooltip from "./ChartTooltip";
 import Card from "./Card";
-import { getAthleteColor } from "@/app/utils/getAthleteColor";
+import { getAthleteColour } from "@/app/utils/getAthleteEmojiAndBackground";
+import css from "./TeamPerformanceCard.module.scss";
 
 interface TeamPerformanceCardProps {
   viewMode: 'comparison' | 'bulls-breakdown' | 'sharks-breakdown';
@@ -36,14 +36,14 @@ export default function TeamPerformanceCard({
   return (
     <Card
       fixedTall={true}
-      style={{ height: 600 }}
+      className={css.chartContainer}
       header={
         <>
           <div>
             <div className="bold">Team Performance</div>
             <div className="muted">Weekly kilometers by team</div>
           </div>
-          <div style={{ display: "flex", gap: 12 }}>
+          <div className={css.badgeContainer}>
             <div className="badge">Bulls: {fmtKm(totalBullsKm)} km</div>
             <div className="badge">Sharks: {fmtKm(totalSharksKm)} km</div>
           </div>
@@ -74,40 +74,19 @@ export default function TeamPerformanceCard({
                 content={({ active, payload, label }) => {
                   if (!active || !payload?.length || !label) return null;
                   return (
-                    <div
-                      style={{
-                        background: "rgba(15, 22, 32, 0.95)",
-                        border: "1px solid rgba(231, 237, 246, 0.12)",
-                        borderRadius: 10,
-                        padding: "10px 10px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: 12,
-                          color: "var(--muted)",
-                          marginBottom: 4,
-                        }}
-                      >
+                    <div className={css.tooltip}>
+                      <div className={css.tooltipWeekLabel}>
                         Week
                       </div>
-                      <div style={{ fontSize: 13, marginBottom: 8 }}>
+                      <div className={css.tooltipDate}>
                         {new Date(label).toLocaleDateString()}
                       </div>
                       {payload.map((entry: any, index: number) => (
-                        <div
-                          key={index}
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            gap: 12,
-                            marginBottom: 4,
-                          }}
-                        >
-                          <div style={{ fontSize: 12, color: entry.color }}>
+                        <div key={index} className={css.tooltipEntry}>
+                          <div className={css.tooltipName} style={{ color: entry.color }}>
                             {entry.name}
                           </div>
-                          <div style={{ fontSize: 13 }}>
+                          <div className={css.tooltipValue}>
                             {fmtKm(entry.value)} km
                           </div>
                         </div>
@@ -161,40 +140,19 @@ export default function TeamPerformanceCard({
                 content={({ active, payload, label }) => {
                   if (!active || !payload?.length || !label) return null;
                   return (
-                    <div
-                      style={{
-                        background: "rgba(15, 22, 32, 0.95)",
-                        border: "1px solid rgba(231, 237, 246, 0.12)",
-                        borderRadius: 10,
-                        padding: "10px 10px",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: 12,
-                          color: "var(--muted)",
-                          marginBottom: 4,
-                        }}
-                      >
+                    <div className={css.tooltip}>
+                      <div className={css.tooltipWeekLabel}>
                         Week
                       </div>
-                      <div style={{ fontSize: 13, marginBottom: 8 }}>
+                      <div className={css.tooltipDate}>
                         {new Date(label).toLocaleDateString()}
                       </div>
                       {[...payload].reverse().map((entry: any, index: number) => (
-                        <div
-                          key={index}
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            gap: 12,
-                            marginBottom: 4,
-                          }}
-                        >
-                          <div style={{ fontSize: 12, color: entry.fill }}>
+                        <div key={index} className={css.tooltipEntry}>
+                          <div className={css.tooltipName} style={{ color: entry.fill }}>
                             {entry.name}
                           </div>
-                          <div style={{ fontSize: 13 }}>
+                          <div className={css.tooltipValue}>
                             {fmtKm(entry.value)} km
                           </div>
                         </div>
@@ -215,8 +173,8 @@ export default function TeamPerformanceCard({
                   type="linear"
                   dataKey={name}
                   stackId="1"
-                  stroke={getAthleteColor(name, team!)}
-                  fill={getAthleteColor(name, team!)}
+                  stroke={getAthleteColour(name)}
+                  fill={getAthleteColour(name)}
                   fillOpacity={0.8}
                   strokeWidth={2}
                   name={name}
