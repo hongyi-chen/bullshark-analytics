@@ -7,8 +7,9 @@ import {
   activitiesState,
   loadingState,
   errorState,
+  athletesState,
 } from "@/lib/state/atoms";
-import { fetchActivities } from "@/lib/state/api";
+import { fetchActivities, fetchAthletes } from "@/lib/state/api";
 import Header from "./Header";
 import Filters from "./Filters";
 import { Aggregation, AthleteStats } from "./types";
@@ -27,6 +28,7 @@ export default function Dashboard() {
   const [activities, setActivities] = useAtom(activitiesState);
   const [loading, setLoading] = useAtom(loadingState);
   const [err, setErr] = useAtom(errorState);
+  const [athletes, setAthletes] = useAtom(athletesState);
 
   // Keep as local state (UI-only filters)
   const [aggregation, setAggregation] = useState<Aggregation>("daily");
@@ -62,6 +64,29 @@ export default function Dashboard() {
       cancelled = true;
     };
   }, [timeFilter, setActivities, setLoading, setErr]);
+
+  // Fetch athletes on mount
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadAthletes() {
+      try {
+        const data = await fetchAthletes();
+        if (!cancelled) {
+          setAthletes(data);
+        }
+      } catch (e: any) {
+        console.error('Failed to fetch athletes:', e);
+        // Athletes are optional, so we don't set the main error state
+      }
+    }
+
+    loadAthletes();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setAthletes]);
 
   // Process raw activities into structures needed by components
   const timeseries = useMemo(() => {

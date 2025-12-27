@@ -1,5 +1,6 @@
 import { ServerActivity } from '@/lib/server-api';
 import { TeamStatsData } from '@/lib/types/dashboard';
+import { Athlete } from '@/app/ui/types';
 
 export async function fetchActivities(timeFilter: 'week' | 'month'): Promise<ServerActivity[]> {
   const endpoint = `/api/activities/${timeFilter}`;
@@ -29,4 +30,22 @@ export async function fetchTeamStats(): Promise<TeamStatsData> {
   }
 
   return await response.json();
+}
+
+export async function fetchAthletes(): Promise<Athlete[]> {
+  const endpoint = '/api/athletes';
+
+  const response = await fetch(endpoint);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch athletes: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (!Array.isArray(data)) {
+    throw new Error('Server response is not an array');
+  }
+
+  return data as Athlete[];
 }
