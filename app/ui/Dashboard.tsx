@@ -4,12 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import {
   timeFilterState,
-  activitiesState,
   loadingState,
   errorState,
-  athletesState,
 } from "@/lib/state/atoms";
-import { fetchActivities, fetchAthletes, hasFreshActivitiesCache, hasFreshAthletesCache } from "@/lib/state/api";
+import { useActivities, useAthletes, useTimeseries, useActivityStats } from "@/lib/hooks";
 import Header from "./Header";
 import Filters from "./Filters";
 import { Aggregation, AthleteStats } from "./types";
@@ -21,124 +19,22 @@ import RunsPerAthleteCard from "./cards/RunsPerAthleteCard";
 import HighlightsCard from "./cards/HighlightsCard";
 import LatestRunsCard from "./cards/LatestRunsCard";
 import Divider from "./Divider";
-import { getTimeseries } from "../utils/activityUtils";
 
 export default function Dashboard() {
-  // Jotai state
+  // Global state
   const [timeFilter, setTimeFilter] = useAtom(timeFilterState);
-  const [activities, setActivities] = useAtom(activitiesState);
-  const [loading, setLoading] = useAtom(loadingState);
-  const [err, setErr] = useAtom(errorState);
-  const [athletes, setAthletes] = useAtom(athletesState);
+  const [loading] = useAtom(loadingState);
+  const [err] = useAtom(errorState);
 
-  // Keep as local state (UI-only filters)
+  // Data fetching hooks
+  const activities = useActivities(timeFilter);
+  const athletes = useAthletes();
+  const timeseries = useTimeseries();
+  const stats = useActivityStats();
+
+  // Local state (UI-only filters)
   const [aggregation, setAggregation] = useState<Aggregation>("daily");
   const [minRuns, setMinRuns] = useState<number>(0);
-
-  useEffect(() => {
-    async function load() {
-      const hasFreshActivities = hasFreshActivitiesCache(timeFilter);
-      const hasFreshAthletes = hasFreshAthletesCache();
-
-      // TODO: fine-grained loading state
-      setLoading(!hasFreshActivities|| !hasFreshAthletes);
-      setErr(null);
-
-      try {
-        const activityData = await fetchActivities(timeFilter);
-        const athleteData = await fetchAthletes();
-        setActivities(activityData);
-        setAthletes(athleteData);
-      } catch (e: any) {
-          setErr(e?.message ?? String(e));
-      } finally {
-          setLoading(false);
-      }
-    }
-
-    load();
-  }, [timeFilter, setActivities, setAthletes, setLoading, setErr]);
-
-  const timeseries = useMemo(() => {
-    return getTimeseries(activities); 
-  }, [activities]);
-
-  const stats = useMemo(() => {
-    const runs = activities.filter((a) => a.sport_type === "Run");
-
-    if (runs.length === 0) {
-      return {
-        overall: {
-          totalRuns: 0,
-          totalKm: 0,
-          longest: null,
-          shortest: null,
-          mostRuns: null,
-        },
-        athletes: [],
-        lastFetchedAt: null,
-      };
-    }
-
-    // Group by athlete
-    const athleteMap = new Map<string, Omit<AthleteStats, "athleteName">>();
-
-    let longestRun = { athleteName: "", km: 0 };
-    let shortestRun = { athleteName: "", km: Infinity };
-
-    for (const run of runs) {
-      const km = run.distance / 1000;
-      const existing = athleteMap.get(run.athlete_name) || {
-        runs: 0,
-        totalKm: 0,
-        longestKm: 0,
-        shortestKm: Infinity,
-      };
-
-      existing.runs++;
-      existing.totalKm += km;
-      existing.longestKm = Math.max(existing.longestKm, km);
-      existing.shortestKm = Math.min(existing.shortestKm, km);
-
-      athleteMap.set(run.athlete_name, existing);
-
-      if (km > longestRun.km) {
-        longestRun = { athleteName: run.athlete_name, km };
-      }
-      if (km < shortestRun.km) {
-        shortestRun = { athleteName: run.athlete_name, km };
-      }
-    }
-
-    // Convert to array and sort by total km
-    const athletes = Array.from(athleteMap.entries())
-      .map(([athleteName, data]) => ({
-        athleteName,
-        runs: data.runs,
-        totalKm: data.totalKm,
-        longestKm: data.longestKm,
-        shortestKm: data.shortestKm === Infinity ? 0 : data.shortestKm,
-      }))
-      .sort((a, b) => b.totalKm - a.totalKm);
-
-    // Find athlete with most runs
-    const mostRuns = athletes.reduce(
-      (max, a) => (a.runs > max.runs ? a : max),
-      { athleteName: "", runs: 0 }
-    );
-
-    return {
-      overall: {
-        totalRuns: runs.length,
-        totalKm: runs.reduce((sum, r) => sum + r.distance / 1000, 0),
-        longest: longestRun.km > 0 ? longestRun : null,
-        shortest: shortestRun.km < Infinity ? shortestRun : null,
-        mostRuns: mostRuns.runs > 0 ? mostRuns : null,
-      },
-      athletes,
-      lastFetchedAt: runs[0]?.date || null,
-    };
-  }, [activities]);
 
   const chartData = useMemo(() => {
     const pts = timeseries;
