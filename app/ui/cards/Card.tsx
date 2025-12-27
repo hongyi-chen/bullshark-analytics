@@ -7,6 +7,7 @@ interface CardProps extends React.PropsWithChildren {
   header?: React.JSX.Element;
   highlighted?: boolean;
   style?: CSSProperties;
+  className?: string;
 }
 
 export default function Card({
@@ -15,10 +16,11 @@ export default function Card({
   header,
   highlighted = false,
   style,
+  className,
 }: CardProps) {
   return (
     <div
-      className={clsx(css.card, {
+      className={clsx(css.card, className, {
         [css.fixedTall]: fixedTall,
         [css.highlighted]: highlighted,
       })}
