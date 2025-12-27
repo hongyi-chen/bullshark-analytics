@@ -1,11 +1,12 @@
+"use client";
+
+import { useAtom } from "jotai";
+import { activeTabState, lastUpdatedTextState } from "@/lib/state/atoms";
 import css from "./Header.module.scss";
 
-interface HeaderProps {
-  lastUpdatedText: string;
-  active?: "dashboard" | "teams";
-}
-
-export default function Header({ lastUpdatedText, active = "dashboard" }: HeaderProps) {
+export default function Header() {
+  const [activeTab, setActiveTab] = useAtom(activeTabState);
+  const [lastUpdatedText] = useAtom(lastUpdatedTextState);
   return (
     <header className={css.header}>
       <div className={css.main}>
@@ -16,22 +17,24 @@ export default function Header({ lastUpdatedText, active = "dashboard" }: Header
       </div>
       <nav className={css.actions} aria-label="Primary">
         <div className={css.navGroup} role="tablist" aria-label="Views">
-          <a
-            href="/"
-            className={`${css.navPill} ${active === "dashboard" ? css.navPillActive : ""}`}
-            aria-current={active === "dashboard" ? "page" : undefined}
+          <button
+            className={`${css.navPill} ${activeTab === "dashboard" ? css.navPillActive : ""}`}
+            aria-current={activeTab === "dashboard" ? "page" : undefined}
+            onClick={() => setActiveTab('dashboard')}
             role="tab"
+            type="button"
           >
             Dashboard
-          </a>
-          <a
-            href="/teams"
-            className={`${css.navPill} ${active === "teams" ? css.navPillActive : ""}`}
-            aria-current={active === "teams" ? "page" : undefined}
+          </button>
+          <button
+            className={`${css.navPill} ${activeTab === "teams" ? css.navPillActive : ""}`}
+            aria-current={activeTab === "teams" ? "page" : undefined}
+            onClick={() => setActiveTab('teams')}
             role="tab"
+            type="button"
           >
             Teams
-          </a>
+          </button>
         </div>
       </nav>
     </header>

@@ -5,6 +5,17 @@ import { Athlete } from '@/app/ui/types';
 
 export const timeFilterState = atom<TimeFilter>('week');
 
+// Active tab state for SPA navigation
+export const activeTabState = atom<'dashboard' | 'teams'>('dashboard');
+
+// Shared last updated text for Header display
+export const lastUpdatedTextState = atom<string>('');
+
+// Dashboard-specific filters (moved from local state for persistence)
+export type Aggregation = 'daily' | 'weekly';
+export const dashboardAggregationState = atom<Aggregation>('daily');
+export const dashboardMinRunsState = atom<number>(0);
+
 export const activitiesState = atom<ServerActivity[]>([]);
 
 // Backward compatible derived atoms
