@@ -335,7 +335,7 @@ export default function TeamsPage() {
 
       <Divider size={12} />
 
-      <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
+      <div className="rowEqual" style={{ opacity: loading ? 0.7 : 1 }}>
         <BullsLeaderboardCard athletes={bullsAthletes} totalKm={totalBullsKm} />
         <SharksLeaderboardCard
           athletes={sharksAthletes}
