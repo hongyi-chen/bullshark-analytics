@@ -36,8 +36,12 @@ export default function Dashboard() {
   const [minRuns, setMinRuns] = useState<number>(0);
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
+    async function load() {
+      const hasFreshActivities = hasFreshActivitiesCache(timeFilter);
+      const hasFreshAthletes = hasFreshAthletesCache();
+
+      // TODO: fine-grained loading state
+      setLoading(!hasFreshActivities|| !hasFreshAthletes);
       setErr(null);
 
       try {
@@ -52,7 +56,7 @@ export default function Dashboard() {
       }
     }
 
-    loadData();
+    load();
   }, [timeFilter, setActivities, setAthletes, setLoading, setErr]);
 
   const timeseries = useMemo(() => {
