@@ -271,7 +271,7 @@ export default function TeamsPage() {
               aria-pressed={viewMode === "comparison"}
               onClick={() => setViewMode("comparison")}
               type="button"
-            >
+>
               Team Comparison
             </button>
             <button
@@ -279,16 +279,16 @@ export default function TeamsPage() {
               aria-pressed={viewMode === "bulls-breakdown"}
               onClick={() => setViewMode("bulls-breakdown")}
               type="button"
-            >
-              Bulls Breakdown
+>
+              🐂 Bulls Breakdown
             </button>
             <button
               className={css.pill}
               aria-pressed={viewMode === "sharks-breakdown"}
               onClick={() => setViewMode("sharks-breakdown")}
               type="button"
-            >
-              Sharks Breakdown
+>
+              🦈 Sharks Breakdown
             </button>
           </div>
         </div>
