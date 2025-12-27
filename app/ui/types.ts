@@ -16,3 +16,9 @@ export type ChartData = {
   day: string;
   km: number;
 };
+export type Athlete = {
+  id: string;
+  name: string;
+  team: "bulls" | "sharks";
+  event: "half" | "full";
+};

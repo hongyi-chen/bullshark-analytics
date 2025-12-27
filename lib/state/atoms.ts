@@ -1,6 +1,7 @@
 import { atom } from 'jotai';
 import { TimeFilter, TeamStatsData } from '@/lib/types/dashboard';
 import { ServerActivity } from '@/lib/server-api';
+import { Athlete } from '@/app/ui/types';
 
 export const timeFilterState = atom<TimeFilter>('week');
 
@@ -23,3 +24,5 @@ export const teamChartModeState = atom<TeamChartMode>('running');
 export type TeamViewMode = 'comparison' | 'bulls-breakdown' | 'sharks-breakdown';
 
 export const teamViewModeState = atom<TeamViewMode>('comparison');
+
+export const athletesState = atom<Athlete[]>([]);

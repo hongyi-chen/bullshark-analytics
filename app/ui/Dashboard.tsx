@@ -7,8 +7,9 @@ import {
   activitiesState,
   loadingState,
   errorState,
+  athletesState,
 } from "@/lib/state/atoms";
-import { fetchActivities, hasFreshActivitiesCache } from "@/lib/state/api";
+import { fetchActivities, fetchAthletes, hasFreshActivitiesCache, hasFreshAthletesCache } from "@/lib/state/api";
 import Header from "./Header";
 import Filters from "./Filters";
 import { Aggregation, AthleteStats } from "./types";
@@ -27,41 +28,35 @@ export default function Dashboard() {
   const [activities, setActivities] = useAtom(activitiesState);
   const [loading, setLoading] = useAtom(loadingState);
   const [err, setErr] = useAtom(errorState);
+  const [athletes, setAthletes] = useAtom(athletesState);
 
   // Keep as local state (UI-only filters)
   const [aggregation, setAggregation] = useState<Aggregation>("daily");
   const [minRuns, setMinRuns] = useState<number>(0);
 
   useEffect(() => {
-    let cancelled = false;
-
     async function load() {
-      const hasFresh = hasFreshActivitiesCache(timeFilter);
-      setLoading(!hasFresh);
+      const hasFreshActivities = hasFreshActivitiesCache(timeFilter);
+      const hasFreshAthletes = hasFreshAthletesCache();
+
+      // TODO: fine-grained loading state
+      setLoading(!hasFreshActivities|| !hasFreshAthletes);
       setErr(null);
 
       try {
-        const data = await fetchActivities(timeFilter);
-        if (!cancelled) {
-          setActivities(data);
-        }
+        const activityData = await fetchActivities(timeFilter);
+        const athleteData = await fetchAthletes();
+        setActivities(activityData);
+        setAthletes(athleteData);
       } catch (e: any) {
-        if (!cancelled) {
           setErr(e?.message ?? String(e));
-        }
       } finally {
-        if (!cancelled) {
           setLoading(false);
-        }
       }
     }
 
     load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [timeFilter, setActivities, setLoading, setErr]);
+  }, [timeFilter, setActivities, setAthletes, setLoading, setErr]);
 
   // Process raw activities into structures needed by components
   const timeseries = useMemo(() => {

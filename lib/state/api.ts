@@ -1,5 +1,6 @@
 import { ServerActivity } from '@/lib/server-api';
 import { TeamStatsData } from '@/lib/types/dashboard';
+import { Athlete } from '@/app/ui/types';
 
 // Simple in-memory cache with SWR-like behavior
 // Not persisted across hard refreshes; sufficient to smooth client-side route transitions
@@ -19,6 +20,12 @@ function getKey(path: string) {
 
 export function hasFreshActivitiesCache(timeFilter: 'week' | 'month'): boolean {
   const key = getKey(`/api/activities/${timeFilter}`);
+  const entry = cache.get(key);
+  return !!entry && Date.now() - entry.ts < CACHE_TTL_MS && entry.data != null;
+}
+
+export function hasFreshAthletesCache(): boolean {
+  const key = getKey('/api/athletes');
   const entry = cache.get(key);
   return !!entry && Date.now() - entry.ts < CACHE_TTL_MS && entry.data != null;
 }
@@ -71,4 +78,14 @@ export async function fetchActivities(timeFilter: 'week' | 'month'): Promise<Ser
 export async function fetchTeamStats(): Promise<TeamStatsData> {
   const endpoint = '/api/team_stats';
   return fetchWithCache<TeamStatsData>(endpoint, (raw) => raw as TeamStatsData);
+}
+
+export async function fetchAthletes(): Promise<Athlete[]> {
+  const endpoint = '/api/athletes';
+  return fetchWithCache<Athlete[]>(endpoint, (raw) => {
+    if (!Array.isArray(raw)) {
+      throw new Error('Server response is not an array');
+    }
+    return raw as Athlete[];
+  });
 }
