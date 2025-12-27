@@ -9,7 +9,7 @@ import {
   teamChartModeState,
   teamViewModeState,
 } from "@/lib/state/atoms";
-import { fetchTeamStats } from "@/lib/state/api";
+import { fetchTeamStats, hasFreshTeamStatsCache } from "@/lib/state/api";
 import Header from "@/app/ui/Header";
 import Footer from "@/app/ui/Footer";
 import Divider from "@/app/ui/Divider";
@@ -32,7 +32,8 @@ export default function TeamsPage() {
     let cancelled = false;
 
     async function load() {
-      setLoading(true);
+      const hasFresh = hasFreshTeamStatsCache();
+      setLoading(!hasFresh);
       setErr(null);
 
       try {
@@ -259,8 +260,7 @@ export default function TeamsPage() {
 
   return (
     <div className="container">
-      <Header lastUpdatedText={lastUpdatedText} />
-      <Divider size={16} />
+      <Header lastUpdatedText={lastUpdatedText} active="teams" />
 
       <div className={css.card}>
         <div className={css.group}>
@@ -271,7 +271,7 @@ export default function TeamsPage() {
               aria-pressed={viewMode === "comparison"}
               onClick={() => setViewMode("comparison")}
               type="button"
-            >
+>
               Team Comparison
             </button>
             <button
@@ -279,16 +279,16 @@ export default function TeamsPage() {
               aria-pressed={viewMode === "bulls-breakdown"}
               onClick={() => setViewMode("bulls-breakdown")}
               type="button"
-            >
-              Bulls Breakdown
+>
+              🐂 Bulls Breakdown
             </button>
             <button
               className={css.pill}
               aria-pressed={viewMode === "sharks-breakdown"}
               onClick={() => setViewMode("sharks-breakdown")}
               type="button"
-            >
-              Sharks Breakdown
+>
+              🦈 Sharks Breakdown
             </button>
           </div>
         </div>
@@ -335,7 +335,7 @@ export default function TeamsPage() {
 
       <Divider size={12} />
 
-      <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
+      <div className="rowEqual" style={{ opacity: loading ? 0.7 : 1 }}>
         <BullsLeaderboardCard athletes={bullsAthletes} totalKm={totalBullsKm} />
         <SharksLeaderboardCard
           athletes={sharksAthletes}

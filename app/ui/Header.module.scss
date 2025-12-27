@@ -46,4 +46,40 @@
     align-items: center;
     gap: 10px;
 }
-  
+
+/* Segmented primary nav */
+.navGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.navPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.navPill:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  text-decoration: none !important;
+}
+
+.navPillActive {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(34, 197, 94, 0.5);
+}
