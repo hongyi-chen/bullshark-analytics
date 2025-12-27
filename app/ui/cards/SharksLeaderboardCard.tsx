@@ -25,7 +25,7 @@ export default function SharksLeaderboardCard({
       header={
         <>
           <div>
-            <div className="bold">Sharks Leaderboard</div>
+            <div className="bold">🦈 Sharks Leaderboard</div>
             <div className="muted">Top athletes by distance</div>
           </div>
           <div className="badge">Total: {fmtKm(totalKm)} km</div>
