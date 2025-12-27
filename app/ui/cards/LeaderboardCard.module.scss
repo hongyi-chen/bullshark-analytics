@@ -1,3 +1,4 @@
+/* === BASE TABLE STYLES === */
 
 .tableScroll {
     max-height: 400px;
@@ -26,7 +27,6 @@
     max-height: 360px; /* ~8 rows + header */
 }
 
-
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -45,50 +45,7 @@
     text-align: left;
 }
 
-/* Lightweight CSS tooltip for status chips */
-.statusChip[data-tooltip] {
-    position: relative;
-    cursor: help;
-}
-
-.statusChip[data-tooltip]::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(15, 22, 32, 0.95);
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 6px 8px;
-    font-size: 11px;
-    white-space: nowrap;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.12s ease;
-    z-index: 10;
-}
-
-.statusChip[data-tooltip]::before {
-    content: '';
-    position: absolute;
-    bottom: calc(100% + 2px);
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 6px 6px 0 6px;
-    border-style: solid;
-    border-color: var(--border) transparent transparent transparent;
-    opacity: 0;
-    transition: opacity 0.12s ease;
-    z-index: 9;
-}
-
-.statusChip[data-tooltip]:hover::after,
-.statusChip[data-tooltip]:hover::before {
-    opacity: 1;
-}
+/* === ATHLETE NAME CELL === */
 
 .athleteNameCell {
     display: inline-flex;
@@ -96,7 +53,9 @@
     gap: 8px;
 }
 
-.statusChip {
+/* === CHIP STYLES === */
+
+.chip {
     display: inline-flex;
     align-items: center;
     font-size: 10px;
@@ -105,6 +64,28 @@
     letter-spacing: 0.03em;
     padding: 2px 6px;
     border-radius: 4px;
+    position: relative;
+    cursor: help;
+}
+
+/* Event chip variants */
+.eventChip {
+    composes: chip;
+}
+
+.eventChipHalf {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+}
+
+.eventChipFull {
+    background: rgba(168, 85, 247, 0.15);
+    color: #a855f7;
+}
+
+/* Status chip variants */
+.statusChip {
+    composes: chip;
 }
 
 .statusChipToday {
@@ -122,31 +103,9 @@
     color: #ef4444;
 }
 
-.eventChip {
-    display: inline-flex;
-    align-items: center;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    padding: 2px 6px;
-    border-radius: 4px;
-    position: relative;
-    cursor: help;
-}
+/* === TOOLTIP STYLES === */
 
-.eventChipHalf {
-    background: rgba(59, 130, 246, 0.15);
-    color: #3b82f6;
-}
-
-.eventChipFull {
-    background: rgba(168, 85, 247, 0.15);
-    color: #a855f7;
-}
-
-/* Tooltip support - inherits from statusChip pattern */
-.eventChip[data-tooltip]::after {
+.chip[data-tooltip]::after {
     content: attr(data-tooltip);
     position: absolute;
     bottom: calc(100% + 6px);
@@ -166,7 +125,7 @@
     z-index: 10;
 }
 
-.eventChip[data-tooltip]::before {
+.chip[data-tooltip]::before {
     content: '';
     position: absolute;
     bottom: calc(100% + 2px);
@@ -180,7 +139,7 @@
     z-index: 9;
 }
 
-.eventChip[data-tooltip]:hover::after,
-.eventChip[data-tooltip]:hover::before {
+.chip[data-tooltip]:hover::after,
+.chip[data-tooltip]:hover::before {
     opacity: 1;
 }

@@ -15,8 +15,8 @@ import Footer from "@/app/ui/Footer";
 import Divider from "@/app/ui/Divider";
 import ErrorCard from "@/app/ui/cards/ErrorCard";
 import TeamPerformanceCard from "@/app/ui/cards/TeamPerformanceCard";
-import BullsLeaderboardCard from "@/app/ui/cards/BullsLeaderboardCard";
-import SharksLeaderboardCard from "@/app/ui/cards/SharksLeaderboardCard";
+import LeaderboardCard from "@/app/ui/cards/LeaderboardCard";
+import { fmtKm } from "@/app/utils/fmtKm";
 import css from "@/app/ui/Filters.module.scss";
 
 export const dynamic = "force-dynamic";
@@ -335,11 +335,20 @@ export default function TeamsPage() {
 
       <Divider size={12} />
 
-      <div className="rowEqual" style={{ opacity: loading ? 0.7 : 1 }}>
-        <BullsLeaderboardCard athletes={bullsAthletes} totalKm={totalBullsKm} />
-        <SharksLeaderboardCard
+      <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
+        <LeaderboardCard
+          title="Bulls Leaderboard"
+          subtitle="Top athletes by distance"
+          badgeLabel="Total"
+          badgeValue={`${fmtKm(totalBullsKm)} km`}
+          athletes={bullsAthletes}
+        />
+        <LeaderboardCard
+          title="Sharks Leaderboard"
+          subtitle="Top athletes by distance"
+          badgeLabel="Total"
+          badgeValue={`${fmtKm(totalSharksKm)} km`}
           athletes={sharksAthletes}
-          totalKm={totalSharksKm}
         />
       </div>
 

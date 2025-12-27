@@ -15,7 +15,7 @@ import Filters from "./Filters";
 import { Aggregation, AthleteStats } from "./types";
 import ErrorCard from "./cards/ErrorCard";
 import Footer from "./Footer";
-import TopAthletesCard from "./cards/TopAthletesCard";
+import LeaderboardCard from "./cards/LeaderboardCard";
 import ClubKmCard from "./cards/ClubKmCard";
 import RunsPerAtheleteCard from "./cards/RunsPerAthleteCard";
 import HighlightsCard from "./cards/HighlightsCard";
@@ -194,12 +194,20 @@ export default function Dashboard() {
       {err != null ? <ErrorCard errorMessage={err} /> : null}
 
       <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
-        <TopAthletesCard
+        <LeaderboardCard
+          title="Top athletes"
+          subtitle={`By total distance (this ${timeFilter})`}
+          badgeLabel="Runs"
+          badgeValue={stats.overall.totalRuns}
+          athletes={filteredAthletes}
+          columns={[
+            { type: "rank" },
+            { type: "athlete", showEventChips: true, showStatusChips: true },
+            { type: "runs" },
+            { type: "distance" },
+          ]}
+          chipDataSources={{ timeseries, athleteMetadata: athletes }}
           loading={loading}
-          timeFilter={timeFilter}
-          timeseries={timeseries}
-          topAthletes={filteredAthletes}
-          totalRuns={stats.overall.totalRuns}
         />
         <ClubKmCard
           aggregation={aggregation}
