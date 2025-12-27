@@ -4,6 +4,8 @@ import { AthleteStats, TimeFilter, Timeseries } from "../types";
 import clsx from "clsx";
 import css from "./TopAthletesCard.module.scss";
 import { fmtKm } from "@/app/utils/fmtKm";
+import { useAtom } from "jotai";
+import { athletesState } from "@/lib/state/atoms";
 
 const TEXT_ALIGN_RIGHT: CSSProperties = { textAlign: "right" };
 
@@ -22,6 +24,7 @@ export default function TopAthletesCard({
   topAthletes,
   totalRuns,
 }: TopAthletesCardProps) {
+  const [athletes] = useAtom(athletesState);
   const [todayTimestamp, setTodayTimestamp] = useState<number | null>(null);
 
   useEffect(() => {
@@ -43,6 +46,14 @@ export default function TopAthletesCard({
     }
     return lastRun;
   }, [timeseries]);
+
+  const athleteEventMap = useMemo(() => {
+    const eventMap = new Map<string, "half" | "full">();
+    for (const athlete of athletes) {
+      eventMap.set(athlete.name, athlete.event);
+    }
+    return eventMap;
+  }, [athletes]);
 
   const getAthleteStatus = useCallback(
     (athleteName: string): "today" | "recent" | "inactive" | null => {
@@ -96,6 +107,21 @@ export default function TopAthletesCard({
                   <td>
                     <span className={css.athleteNameCell}>
                       {r.athleteName}
+                      {(() => {
+                        const event = athleteEventMap.get(r.athleteName);
+                        if (!event) return null;
+                        return (
+                          <span
+                            className={clsx(
+                              css.eventChip,
+                              event === "half" ? css.eventChipHalf : css.eventChipFull
+                            )}
+                            data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+                          >
+                            {event}
+                          </span>
+                        )
+                      })()}
                       {status === "today" && (
                         <span
                           className={clsx(css.statusChip, css.statusChipToday)}
