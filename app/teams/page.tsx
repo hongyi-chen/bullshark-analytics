@@ -260,7 +260,6 @@ export default function TeamsPage() {
   return (
     <div className="container">
       <Header lastUpdatedText={lastUpdatedText} active="teams" />
-      <Divider size={16} />
 
       <div className={css.card}>
         <div className={css.group}>
