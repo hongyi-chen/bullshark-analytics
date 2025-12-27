@@ -35,12 +35,8 @@ export default function Dashboard() {
   const [minRuns, setMinRuns] = useState<number>(0);
 
   useEffect(() => {
-    async function load() {
-      const hasFreshActivities = hasFreshActivitiesCache(timeFilter);
-      const hasFreshAthletes = hasFreshAthletesCache();
-
-      // TODO: fine-grained loading state
-      setLoading(!hasFreshActivities|| !hasFreshAthletes);
+    async function loadData() {
+      setLoading(true);
       setErr(null);
 
       try {
@@ -55,7 +51,7 @@ export default function Dashboard() {
       }
     }
 
-    load();
+    loadData();
   }, [timeFilter, setActivities, setAthletes, setLoading, setErr]);
 
   // Process raw activities into structures needed by components
