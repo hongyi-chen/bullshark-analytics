@@ -24,6 +24,12 @@ export function hasFreshActivitiesCache(timeFilter: 'week' | 'month'): boolean {
   return !!entry && Date.now() - entry.ts < CACHE_TTL_MS && entry.data != null;
 }
 
+export function hasFreshAthletesCache(): boolean {
+  const key = getKey('/api/athletes');
+  const entry = cache.get(key);
+  return !!entry && Date.now() - entry.ts < CACHE_TTL_MS && entry.data != null;
+}
+
 export function hasFreshTeamStatsCache(): boolean {
   const key = getKey('/api/team_stats');
   const entry = cache.get(key);
@@ -76,18 +82,10 @@ export async function fetchTeamStats(): Promise<TeamStatsData> {
 
 export async function fetchAthletes(): Promise<Athlete[]> {
   const endpoint = '/api/athletes';
-
-  const response = await fetch(endpoint);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch athletes: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  if (!Array.isArray(data)) {
-    throw new Error('Server response is not an array');
-  }
-
-  return data as Athlete[];
+  return fetchWithCache<Athlete[]>(endpoint, (raw) => {
+    if (!Array.isArray(raw)) {
+      throw new Error('Server response is not an array');
+    }
+    return raw as Athlete[];
+  });
 }
