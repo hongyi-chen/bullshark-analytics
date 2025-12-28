@@ -6,13 +6,14 @@ import {
   timeFilterState,
   loadingState,
   errorState,
+  dashboardAggregationState,
+  dashboardMinRunsState,
+  lastUpdatedTextState,
 } from "@/lib/state/atoms";
 import { useActivities, useAthletes, useTimeseries, useActivityStats } from "@/lib/hooks";
-import Header from "./Header";
 import Filters from "./Filters";
-import { Aggregation, AthleteStats } from "./types";
+import { AthleteStats } from "./types";
 import ErrorCard from "./cards/ErrorCard";
-import Footer from "./Footer";
 import LeaderboardCard from "./cards/LeaderboardCard";
 import ClubKmCard from "./cards/ClubKmCard";
 import RunsPerAthleteCard from "./cards/RunsPerAthleteCard";
@@ -20,21 +21,21 @@ import HighlightsCard from "./cards/HighlightsCard";
 import LatestRunsCard from "./cards/LatestRunsCard";
 import Divider from "./Divider";
 
-export default function Dashboard() {
+export default function DashboardView() {
   // Global state
   const [timeFilter, setTimeFilter] = useAtom(timeFilterState);
   const [loading] = useAtom(loadingState);
   const [err] = useAtom(errorState);
+
+  // Dashboard-specific state (now using atoms for persistence)
+  const [aggregation, setAggregation] = useAtom(dashboardAggregationState);
+  const [minRuns, setMinRuns] = useAtom(dashboardMinRunsState);
 
   // Data fetching hooks
   const activities = useActivities(timeFilter);
   const athletes = useAthletes();
   const timeseries = useTimeseries();
   const stats = useActivityStats();
-
-  // Local state (UI-only filters)
-  const [aggregation, setAggregation] = useState<Aggregation>("daily");
-  const [minRuns, setMinRuns] = useState<number>(0);
 
   const chartData = useMemo(() => {
     const pts = timeseries;
@@ -62,7 +63,7 @@ export default function Dashboard() {
     return (stats?.athletes ?? []).filter((a) => a.runs >= minRuns);
   }, [stats, minRuns]);
 
-  const [lastUpdatedText, setLastUpdatedText] = useState("No data yet");
+  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
 
   useEffect(() => {
     if (!stats?.lastFetchedAt) {
@@ -70,11 +71,10 @@ export default function Dashboard() {
     } else {
       setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
     }
-  }, [stats?.lastFetchedAt]);
+  }, [stats?.lastFetchedAt, setLastUpdatedText]);
 
   return (
-    <div className="container">
-      <Header lastUpdatedText={lastUpdatedText} active="dashboard" />
+    <>
       <Filters
         aggregation={aggregation}
         minRuns={minRuns}
@@ -129,7 +129,6 @@ export default function Dashboard() {
       <Divider size={12} />
 
       <LatestRunsCard activities={activities} loading={loading} />
-      <Footer />
-    </div>
+    </>
   );
 }

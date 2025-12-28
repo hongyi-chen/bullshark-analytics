@@ -7,10 +7,10 @@ import {
   teamErrorState,
   teamChartModeState,
   teamViewModeState,
+  timeFilterState,
+  lastUpdatedTextState,
 } from "@/lib/state/atoms";
-import { useActivities, useAthletes, useTimeseries, useTeamStats } from "@/lib/hooks";
-import Header from "@/app/ui/Header";
-import Footer from "@/app/ui/Footer";
+import { useActivities, useAthletes, useTimeseries, useTeamStats, useActivityStats } from "@/lib/hooks";
 import Divider from "@/app/ui/Divider";
 import ErrorCard from "@/app/ui/cards/ErrorCard";
 import TeamPerformanceCard from "@/app/ui/cards/TeamPerformanceCard";
@@ -18,19 +18,19 @@ import LeaderboardCard from "@/app/ui/cards/LeaderboardCard";
 import { fmtKm } from "@/app/utils/fmtKm";
 import css from "@/app/ui/Filters.module.scss";
 
-export const dynamic = "force-dynamic";
-
-export default function TeamsPage() {
+export default function TeamsView() {
   const [loading] = useAtom(teamLoadingState);
   const [err] = useAtom(teamErrorState);
   const [chartMode, setChartMode] = useAtom(teamChartModeState);
   const [viewMode, setViewMode] = useAtom(teamViewModeState);
+  const [timeFilter] = useAtom(timeFilterState);
 
-  // Data fetching hooks (Teams always uses 'week' filter)
-  const activities = useActivities('week');
+  // Data fetching hooks (now respecting global timeFilter instead of hardcoding 'week')
+  const activities = useActivities(timeFilter);
   const athletes = useAthletes();
   const timeseries = useTimeseries();
   const teamStats = useTeamStats();
+  const stats = useActivityStats();
 
   const chartData = useMemo(() => {
     if (!teamStats) return [];
@@ -224,16 +224,18 @@ export default function TeamsPage() {
     return sharksAthletes.reduce((sum, athlete) => sum + athlete.totalKm, 0);
   }, [sharksAthletes]);
 
-  const [lastUpdatedText, setLastUpdatedText] = useState("");
+  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
 
   useEffect(() => {
-    setLastUpdatedText(`Last updated: ${new Date().toLocaleString()}`);
-  }, []);
+    if (!stats?.lastFetchedAt) {
+      setLastUpdatedText("No data yet");
+    } else {
+      setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
+    }
+  }, [stats?.lastFetchedAt, setLastUpdatedText]);
 
   return (
-    <div className="container">
-      <Header lastUpdatedText={lastUpdatedText} active="teams" />
-
+    <>
       <div className={css.card}>
         <div className={css.group}>
           <span className={css.label}>View</span>
@@ -337,7 +339,6 @@ export default function TeamsPage() {
       </div>
 
       <Divider size={12} />
-      <Footer />
-    </div>
+    </>
   );
 }

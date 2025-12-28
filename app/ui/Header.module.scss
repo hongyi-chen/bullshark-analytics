@@ -70,6 +70,9 @@
   border-radius: 8px;
   text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+  background: none;
+  border: none;
 }
 
 .navPill:hover {
