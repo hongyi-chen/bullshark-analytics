@@ -19,10 +19,10 @@ export function useActivities(timeFilter: TimeFilter) {
       try {
         const data = await fetchActivities(timeFilter);
         setActivities(data);
-      } catch (e: any) {
+      } catch (e: unknown) {
         setError((prev) => ({
           ...prev,
-          activities: e?.message ?? String(e)
+          activities: e instanceof Error ? e.message : String(e)
         }));
       } finally {
         setLoading((prev) => ({ ...prev, activities: false }));

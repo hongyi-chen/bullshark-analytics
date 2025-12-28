@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchActivities } from '@/lib/server-api';
 import { startOfWeek } from 'date-fns';
-
-function isRun(sportType: string): boolean {
-  return sportType === 'Run';
-}
+import { isRun } from '@/app/utils/activityUtils';
 
 // Date cutoff - only show runs from 12/15/2025 onwards
 const DATE_CUTOFF = new Date('2025-12-15T00:00:00Z');
@@ -111,7 +108,7 @@ export async function GET(req: NextRequest) {
       },
       athletes,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Failed to fetch activities from server:', err);
     return NextResponse.json(
       { ok: false, error: 'Failed to fetch activities from server' },

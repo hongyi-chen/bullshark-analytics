@@ -45,10 +45,10 @@ export async function GET(
     }
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching activities:', error);
     return NextResponse.json(
-      { error: error?.message ?? String(error) },
+      { error: error instanceof Error ? error.message : String(error) },
       { status: 502 }
     );
   }
