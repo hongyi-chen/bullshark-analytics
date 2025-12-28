@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useAtom } from "jotai";
 import {
   teamLoadingState,
@@ -309,7 +309,7 @@ export default function TeamsView() {
 
       <Divider size={12} />
 
-      <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
+      <div className="rowEqual" style={{ opacity: loading ? 0.7 : 1 }}>
         <LeaderboardCard
           title="Bulls Leaderboard"
           subtitle="Top athletes by distance"

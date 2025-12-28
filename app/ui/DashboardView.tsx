@@ -12,7 +12,6 @@ import {
 } from "@/lib/state/atoms";
 import { useActivities, useAthletes, useTimeseries, useActivityStats } from "@/lib/hooks";
 import Filters from "./Filters";
-import { AthleteStats } from "./types";
 import ErrorCard from "./cards/ErrorCard";
 import LeaderboardCard from "./cards/LeaderboardCard";
 import ClubKmCard from "./cards/ClubKmCard";

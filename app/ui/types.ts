@@ -5,13 +5,6 @@ export type Timeseries = {
   athleteName: string;
   km: number;
 };
-export type AthleteStats = {
-  athleteName: string;
-  runs: number;
-  totalKm: number;
-  longestKm: number;
-  shortestKm: number;
-};
 export type ChartData = {
   day: string;
   km: number;

@@ -18,10 +18,10 @@ export function useAthletes() {
       try {
         const data = await fetchAthletes();
         setAthletes(data);
-      } catch (e: any) {
+      } catch (e: unknown) {
         setError((prev) => ({
           ...prev,
-          athletes: e?.message ?? String(e)
+          athletes: e instanceof Error ? e.message : String(e)
         }));
       } finally {
         setLoading((prev) => ({ ...prev, athletes: false }));

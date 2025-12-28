@@ -8,7 +8,8 @@ import {
   YAxis,
 } from "recharts";
 import ChartTooltip from "./ChartTooltip";
-import { AthleteStats, TimeFilter } from "../types";
+import { AthleteStats } from "@/lib/types/dashboard";
+import { TimeFilter } from "../types";
 import { useMemo } from "react";
 import Card from "./Card";
 import css from "./RunsPerAthleteCard.module.scss";

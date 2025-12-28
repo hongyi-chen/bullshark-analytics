@@ -18,10 +18,10 @@ export function useTeamStats() {
       try {
         const data = await fetchTeamStats();
         setTeamStats(data);
-      } catch (e: any) {
+      } catch (e: unknown) {
         setError((prev) => ({
           ...prev,
-          teamStats: e?.message ?? String(e)
+          teamStats: e instanceof Error ? e.message : String(e)
         }));
       } finally {
         setLoading((prev) => ({ ...prev, teamStats: false }));

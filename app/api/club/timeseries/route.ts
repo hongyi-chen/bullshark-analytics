@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { startOfDay } from 'date-fns';
 import { fetchActivities } from '@/lib/server-api';
-
-function isRun(sportType: string): boolean {
-  return sportType === 'Run';
-}
+import { isRun } from '@/app/utils/activityUtils';
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
@@ -38,7 +35,7 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : a.athleteName.localeCompare(b.athleteName)));
 
     return NextResponse.json({ ok: true, days, since: since.toISOString(), points });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Failed to fetch activities from server:', err);
     return NextResponse.json(
       { ok: false, error: 'Failed to fetch activities from server' },

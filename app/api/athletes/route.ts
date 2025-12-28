@@ -6,7 +6,7 @@ export async function GET() {
     const athletes = await fetchAthletesFromServer();
 
     return NextResponse.json(athletes);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Failed to fetch athletes from server:', err);
     return NextResponse.json(
       { ok: false, error: 'Failed to fetch athletes from server' },

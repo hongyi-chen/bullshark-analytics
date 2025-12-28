@@ -1,5 +1,6 @@
 import { fmtKm } from "@/app/utils/fmtKm";
-import { AthleteStats, ChartData, TimeFilter } from "../types";
+import { AthleteStats } from "@/lib/types/dashboard";
+import { ChartData, TimeFilter } from "../types";
 import { useMemo } from "react";
 import Card from "./Card";
 import css from "./HighlightsCard.module.scss";
