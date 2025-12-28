@@ -1,7 +1,7 @@
 import { atom } from 'jotai';
 import { TimeFilter, TeamStatsData } from '@/lib/types/dashboard';
 import { ServerActivity } from '@/lib/server-api';
-import { Athlete } from '@/app/ui/types';
+import { Athlete, AthleteWithTrainingData } from '@/app/ui/types';
 
 export const timeFilterState = atom<TimeFilter>('week');
 
@@ -50,6 +50,8 @@ export type TeamViewMode = 'comparison' | 'bulls-breakdown' | 'sharks-breakdown'
 export const teamViewModeState = atom<TeamViewMode>('comparison');
 
 export const athletesState = atom<Athlete[]>([]);
+
+export const athletesTrainingDataState = atom<AthleteWithTrainingData[]>([]);
 
 // Derived atom: timeseries from activities
 export const timeseriesAtom = atom((get) => {
@@ -134,6 +136,7 @@ export const dataLoadingState = atom({
   activities: false,
   athletes: false,
   teamStats: false,
+  athletesTrainingData: false,
 });
 
 // Unified error state atom
@@ -141,8 +144,10 @@ export const dataErrorState = atom<{
   activities: string | null;
   athletes: string | null;
   teamStats: string | null;
+  athletesTrainingData: string | null;
 }>({
   activities: null,
   athletes: null,
   teamStats: null,
+  athletesTrainingData: null,
 });
