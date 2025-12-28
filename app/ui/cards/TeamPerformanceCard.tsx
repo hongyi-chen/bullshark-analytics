@@ -16,6 +16,13 @@ import Card from "./Card";
 import { getAthleteColour, getChartColor } from "@/app/utils/athleteStyles";
 import css from "./TeamPerformanceCard.module.scss";
 
+interface TooltipPayloadEntry {
+  color?: string;
+  fill?: string;
+  name?: string;
+  value?: number;
+}
+
 interface TeamPerformanceCardProps {
   viewMode: 'comparison' | 'bulls-breakdown' | 'sharks-breakdown';
   chartData: TeamComparisonChartData[] | AthleteBreakdownChartData[];
@@ -81,13 +88,13 @@ export default function TeamPerformanceCard({
                       <div className={css.tooltipDate}>
                         {new Date(label).toLocaleDateString()}
                       </div>
-                      {payload.map((entry: any, index: number) => (
+                      {payload.map((entry: TooltipPayloadEntry, index: number) => (
                         <div key={index} className={css.tooltipEntry}>
                           <div className={css.tooltipName} style={{ color: entry.color }}>
                             {entry.name}
                           </div>
                           <div className={css.tooltipValue}>
-                            {fmtKm(entry.value)} km
+                            {fmtKm(entry.value ?? 0)} km
                           </div>
                         </div>
                       ))}
@@ -147,13 +154,13 @@ export default function TeamPerformanceCard({
                       <div className={css.tooltipDate}>
                         {new Date(label).toLocaleDateString()}
                       </div>
-                      {[...payload].reverse().map((entry: any, index: number) => (
+                      {[...payload].reverse().map((entry: TooltipPayloadEntry, index: number) => (
                         <div key={index} className={css.tooltipEntry}>
                           <div className={css.tooltipName} style={{ color: entry.fill }}>
                             {entry.name}
                           </div>
                           <div className={css.tooltipValue}>
-                            {fmtKm(entry.value)} km
+                            {fmtKm(entry.value ?? 0)} km
                           </div>
                         </div>
                       ))}

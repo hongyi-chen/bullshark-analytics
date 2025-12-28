@@ -17,6 +17,7 @@ import TeamPerformanceCard from "@/app/ui/cards/TeamPerformanceCard";
 import LeaderboardCard from "@/app/ui/cards/LeaderboardCard";
 import { fmtKm } from "@/app/utils/fmtKm";
 import css from "@/app/ui/Filters.module.scss";
+import { AthleteBreakdownChartData } from "@/lib/types/dashboard";
 
 export default function TeamsView() {
   const [loading] = useAtom(teamLoadingState);
@@ -134,7 +135,7 @@ export default function TeamsView() {
 
       return weeklyKilometers
         .map((week) => {
-          const point: any = { weekStart: week.weekStart };
+          const point: AthleteBreakdownChartData = { weekStart: week.weekStart };
           athleteOrder.forEach((name) => {
             const weeklyValue = week.weeklyAthleteKilometers?.[name] || 0;
             if (isRunningTotal) {
