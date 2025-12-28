@@ -13,15 +13,15 @@ import { useMemo } from "react";
 import Card from "./Card";
 import css from "./RunsPerAthleteCard.module.scss";
 
-interface RunsPerAtheleteCardProps {
+interface RunsPerAthleteCardProps {
   athletes: AthleteStats[];
   timeFilter: TimeFilter;
 }
 
-export default function RunsPerAtheleteCard({
+export default function RunsPerAthleteCard({
   athletes,
   timeFilter,
-}: RunsPerAtheleteCardProps) {
+}: RunsPerAthleteCardProps) {
   const runsBarData = useMemo(() => {
     return [...athletes]
       .sort((a, b) => b.runs - a.runs)
