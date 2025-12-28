@@ -1,5 +1,5 @@
 import { fmtKm } from "@/app/utils/fmtKm";
-import { AthleteStats } from "@/lib/types/dashboard";
+import { AthleteStats, ActivityData } from "@/lib/types/dashboard";
 import { ChartData, TimeFilter } from "../types";
 import { useMemo } from "react";
 import Card from "./Card";
@@ -8,7 +8,7 @@ import css from "./HighlightsCard.module.scss";
 interface HighlightsCardProps {
   athletes: AthleteStats[];
   chartData: ChartData[];
-  stats: any;
+  stats: ActivityData['stats'] | null;
   timeFilter: TimeFilter;
 }
 

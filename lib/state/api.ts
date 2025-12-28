@@ -12,7 +12,7 @@ type CacheEntry<T> = {
   promise?: Promise<T>;
 };
 
-const cache = new Map<string, CacheEntry<any>>();
+const cache = new Map<string, CacheEntry<unknown>>();
 
 function getKey(path: string) {
   return path; // can be extended later
@@ -36,7 +36,7 @@ export function hasFreshTeamStatsCache(): boolean {
   return !!entry && Date.now() - entry.ts < CACHE_TTL_MS && entry.data != null;
 }
 
-async function fetchWithCache<T>(endpoint: string, validate: (x: any) => T): Promise<T> {
+async function fetchWithCache<T>(endpoint: string, validate: (x: unknown) => T): Promise<T> {
   const key = getKey(endpoint);
   const now = Date.now();
   let entry = cache.get(key) as CacheEntry<T> | undefined;

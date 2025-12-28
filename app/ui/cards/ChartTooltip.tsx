@@ -1,10 +1,14 @@
 import css from "./ChartTooltip.module.scss";
 
+interface TooltipPayloadItem {
+  value?: number;
+}
+
 interface ChartTooltipProps {
-  active?: any;
-  label?: any;
+  active?: boolean;
+  label?: string | number;
   metricLabel: string;
-  payload?: any;
+  payload?: TooltipPayloadItem[];
 }
 
 export default function ChartTooltip({
