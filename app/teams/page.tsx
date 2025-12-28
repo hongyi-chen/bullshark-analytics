@@ -3,15 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import {
-  teamStatsState,
   teamLoadingState,
   teamErrorState,
   teamChartModeState,
   teamViewModeState,
-  athletesState,
-  activitiesState,
 } from "@/lib/state/atoms";
-import { fetchActivities, fetchAthletes, fetchTeamStats, hasFreshAthletesCache, hasFreshTeamStatsCache } from "@/lib/state/api";
+import { useActivities, useAthletes, useTimeseries, useTeamStats } from "@/lib/hooks";
 import Header from "@/app/ui/Header";
 import Footer from "@/app/ui/Footer";
 import Divider from "@/app/ui/Divider";
@@ -20,48 +17,20 @@ import TeamPerformanceCard from "@/app/ui/cards/TeamPerformanceCard";
 import LeaderboardCard from "@/app/ui/cards/LeaderboardCard";
 import { fmtKm } from "@/app/utils/fmtKm";
 import css from "@/app/ui/Filters.module.scss";
-import { getTimeseries } from "../utils/activityUtils";
 
 export const dynamic = "force-dynamic";
 
 export default function TeamsPage() {
-  const [teamStats, setTeamStats] = useAtom(teamStatsState);
-  const [loading, setLoading] = useAtom(teamLoadingState);
-  const [athletes, setAthletes] = useAtom(athletesState);
-  const [activities, setActivities] = useAtom(activitiesState);
-  const [err, setErr] = useAtom(teamErrorState);
+  const [loading] = useAtom(teamLoadingState);
+  const [err] = useAtom(teamErrorState);
   const [chartMode, setChartMode] = useAtom(teamChartModeState);
   const [viewMode, setViewMode] = useAtom(teamViewModeState);
 
-  const timeseries = useMemo(() => {
-    return getTimeseries(activities); 
-  }, [activities]);
-  
-  useEffect(() => {
-    async function load() {
-      const hasFreshTeamStats = hasFreshTeamStatsCache();
-      const hasFreshActivities = hasFreshAthletesCache();
-      const hasFreshAthletes = hasFreshAthletesCache();
-      setLoading(!hasFreshTeamStats || !hasFreshAthletes || !hasFreshActivities);
-      setErr(null);
-
-      try {
-        const teamStats = await fetchTeamStats();
-        const activityData = await fetchActivities('week');
-        const athleteData = await fetchAthletes();
-
-        setTeamStats(teamStats);
-        setActivities(activityData);
-        setAthletes(athleteData);
-      } catch (e: any) {
-        setErr(e?.message ?? String(e));
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-  }, [setTeamStats, setAthletes, setActivities, setLoading, setErr]);
+  // Data fetching hooks (Teams always uses 'week' filter)
+  const activities = useActivities('week');
+  const athletes = useAthletes();
+  const timeseries = useTimeseries();
+  const teamStats = useTeamStats();
 
   const chartData = useMemo(() => {
     if (!teamStats) return [];
