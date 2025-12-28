@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import Card from "./Card";
-import { getAthleteColour } from "@/app/utils/getAthleteEmojiAndBackground";
+import { getAthleteColour, getChartColor } from "@/app/utils/athleteStyles";
 import css from "./TeamPerformanceCard.module.scss";
 
 interface TeamPerformanceCardProps {
@@ -168,43 +168,22 @@ export default function TeamPerformanceCard({
                 wrapperStyle={{ fontSize: 12 }}
               />
               {/* Assign high-contrast, unique colors for current set of athletes */}
-              {(() => {
-                if (!athleteNames) return null;
-                const PALETTE = [
-                  '#22c55e', // green
-                  '#3b82f6', // blue
-                  '#a855f7', // purple
-                  '#ef4444', // red
-                  '#eab308', // yellow
-                  '#06b6d4', // cyan
-                  '#f97316', // orange
-                  '#84cc16', // lime
-                  '#0ea5e9', // sky
-                  '#f43f5e', // rose
-                  '#6366f1', // indigo
-                  '#10b981', // emerald
-                ];
-                const colorByName = new Map<string, string>();
-                athleteNames.forEach((name, idx) => {
-                  if (!colorByName.has(name)) {
-                    const color = PALETTE[idx % PALETTE.length];
-                    colorByName.set(name, color);
-                  }
-                });
-                return athleteNames.map((name) => (
+              {athleteNames?.map((name, idx) => {
+                const color = getChartColor(idx);
+                return (
                   <Area
                     key={name}
                     type="linear"
                     dataKey={name}
                     stackId="1"
-                    stroke={colorByName.get(name)!}
-                    fill={colorByName.get(name)!}
+                    stroke={color}
+                    fill={color}
                     fillOpacity={0.8}
                     strokeWidth={2}
                     name={name}
                   />
-                ));
-              })()}
+                );
+              })}
             </AreaChart>
           )}
         </ResponsiveContainer>

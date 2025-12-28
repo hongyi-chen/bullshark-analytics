@@ -1,5 +1,5 @@
 import { fmtKm } from "@/app/utils/fmtKm";
-import { getAthleteEmojiAndBackground } from "@/app/utils/getAthleteEmojiAndBackground";
+import { getAthleteEmojiAndBackground } from "@/app/utils/athleteStyles";
 import { ServerActivity } from "@/lib/server-api";
 import { useEffect, useMemo, useState } from "react";
 import Card from "./Card";

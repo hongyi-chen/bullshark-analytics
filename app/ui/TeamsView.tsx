@@ -3,65 +3,34 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import {
-  teamStatsState,
   teamLoadingState,
   teamErrorState,
   teamChartModeState,
   teamViewModeState,
-  athletesState,
-  activitiesState,
+  timeFilterState,
+  lastUpdatedTextState,
 } from "@/lib/state/atoms";
-import { fetchActivities, fetchAthletes, fetchTeamStats, hasFreshAthletesCache, hasFreshTeamStatsCache } from "@/lib/state/api";
-import Header from "@/app/ui/Header";
-import Footer from "@/app/ui/Footer";
+import { useActivities, useAthletes, useTimeseries, useTeamStats, useActivityStats } from "@/lib/hooks";
 import Divider from "@/app/ui/Divider";
 import ErrorCard from "@/app/ui/cards/ErrorCard";
 import TeamPerformanceCard from "@/app/ui/cards/TeamPerformanceCard";
 import LeaderboardCard from "@/app/ui/cards/LeaderboardCard";
 import { fmtKm } from "@/app/utils/fmtKm";
 import css from "@/app/ui/Filters.module.scss";
-import { getTimeseries } from "../utils/activityUtils";
 
-export const dynamic = "force-dynamic";
-
-export default function TeamsPage() {
-  const [teamStats, setTeamStats] = useAtom(teamStatsState);
-  const [loading, setLoading] = useAtom(teamLoadingState);
-  const [athletes, setAthletes] = useAtom(athletesState);
-  const [activities, setActivities] = useAtom(activitiesState);
-  const [err, setErr] = useAtom(teamErrorState);
+export default function TeamsView() {
+  const [loading] = useAtom(teamLoadingState);
+  const [err] = useAtom(teamErrorState);
   const [chartMode, setChartMode] = useAtom(teamChartModeState);
   const [viewMode, setViewMode] = useAtom(teamViewModeState);
+  const [timeFilter] = useAtom(timeFilterState);
 
-  const timeseries = useMemo(() => {
-    return getTimeseries(activities); 
-  }, [activities]);
-  
-  useEffect(() => {
-    async function load() {
-      const hasFreshTeamStats = hasFreshTeamStatsCache();
-      const hasFreshActivities = hasFreshAthletesCache();
-      const hasFreshAthletes = hasFreshAthletesCache();
-      setLoading(!hasFreshTeamStats || !hasFreshAthletes || !hasFreshActivities);
-      setErr(null);
-
-      try {
-        const teamStats = await fetchTeamStats();
-        const activityData = await fetchActivities('week');
-        const athleteData = await fetchAthletes();
-
-        setTeamStats(teamStats);
-        setActivities(activityData);
-        setAthletes(athleteData);
-      } catch (e: any) {
-        setErr(e?.message ?? String(e));
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-  }, [setTeamStats, setAthletes, setActivities, setLoading, setErr]);
+  // Data fetching hooks (now respecting global timeFilter instead of hardcoding 'week')
+  const activities = useActivities(timeFilter);
+  const athletes = useAthletes();
+  const timeseries = useTimeseries();
+  const teamStats = useTeamStats();
+  const stats = useActivityStats();
 
   const chartData = useMemo(() => {
     if (!teamStats) return [];
@@ -255,16 +224,18 @@ export default function TeamsPage() {
     return sharksAthletes.reduce((sum, athlete) => sum + athlete.totalKm, 0);
   }, [sharksAthletes]);
 
-  const [lastUpdatedText, setLastUpdatedText] = useState("");
+  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
 
   useEffect(() => {
-    setLastUpdatedText(`Last updated: ${new Date().toLocaleString()}`);
-  }, []);
+    if (!stats?.lastFetchedAt) {
+      setLastUpdatedText("No data yet");
+    } else {
+      setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
+    }
+  }, [stats?.lastFetchedAt, setLastUpdatedText]);
 
   return (
-    <div className="container">
-      <Header lastUpdatedText={lastUpdatedText} active="teams" />
-
+    <>
       <div className={css.card}>
         <div className={css.group}>
           <span className={css.label}>View</span>
@@ -368,7 +339,6 @@ export default function TeamsPage() {
       </div>
 
       <Divider size={12} />
-      <Footer />
-    </div>
+    </>
   );
 }
