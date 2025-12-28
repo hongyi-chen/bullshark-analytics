@@ -8,57 +8,60 @@ import {
   teamErrorState,
   teamChartModeState,
   teamViewModeState,
+  athletesState,
+  activitiesState,
 } from "@/lib/state/atoms";
-import { fetchTeamStats, hasFreshTeamStatsCache } from "@/lib/state/api";
+import { fetchActivities, fetchAthletes, fetchTeamStats, hasFreshAthletesCache, hasFreshTeamStatsCache } from "@/lib/state/api";
 import Header from "@/app/ui/Header";
 import Footer from "@/app/ui/Footer";
 import Divider from "@/app/ui/Divider";
 import ErrorCard from "@/app/ui/cards/ErrorCard";
 import TeamPerformanceCard from "@/app/ui/cards/TeamPerformanceCard";
-import BullsLeaderboardCard from "@/app/ui/cards/BullsLeaderboardCard";
-import SharksLeaderboardCard from "@/app/ui/cards/SharksLeaderboardCard";
+import LeaderboardCard from "@/app/ui/cards/LeaderboardCard";
+import { fmtKm } from "@/app/utils/fmtKm";
 import css from "@/app/ui/Filters.module.scss";
+import { getTimeseries } from "../utils/activityUtils";
 
 export const dynamic = "force-dynamic";
 
 export default function TeamsPage() {
   const [teamStats, setTeamStats] = useAtom(teamStatsState);
   const [loading, setLoading] = useAtom(teamLoadingState);
+  const [athletes, setAthletes] = useAtom(athletesState);
+  const [activities, setActivities] = useAtom(activitiesState);
   const [err, setErr] = useAtom(teamErrorState);
   const [chartMode, setChartMode] = useAtom(teamChartModeState);
   const [viewMode, setViewMode] = useAtom(teamViewModeState);
 
+  const timeseries = useMemo(() => {
+    return getTimeseries(activities); 
+  }, [activities]);
+  
   useEffect(() => {
-    let cancelled = false;
-
     async function load() {
-      const hasFresh = hasFreshTeamStatsCache();
-      setLoading(!hasFresh);
+      const hasFreshTeamStats = hasFreshTeamStatsCache();
+      const hasFreshActivities = hasFreshAthletesCache();
+      const hasFreshAthletes = hasFreshAthletesCache();
+      setLoading(!hasFreshTeamStats || !hasFreshAthletes || !hasFreshActivities);
       setErr(null);
 
       try {
-        const data = await fetchTeamStats();
+        const teamStats = await fetchTeamStats();
+        const activityData = await fetchActivities('week');
+        const athleteData = await fetchAthletes();
 
-        if (!cancelled) {
-          setTeamStats(data);
-        }
+        setTeamStats(teamStats);
+        setActivities(activityData);
+        setAthletes(athleteData);
       } catch (e: any) {
-        if (!cancelled) {
-          setErr(e?.message ?? String(e));
-        }
+        setErr(e?.message ?? String(e));
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     }
 
     load();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [setTeamStats, setLoading, setErr]);
+  }, [setTeamStats, setAthletes, setActivities, setLoading, setErr]);
 
   const chartData = useMemo(() => {
     if (!teamStats) return [];
@@ -271,7 +274,7 @@ export default function TeamsPage() {
               aria-pressed={viewMode === "comparison"}
               onClick={() => setViewMode("comparison")}
               type="button"
->
+            >
               Team Comparison
             </button>
             <button
@@ -279,7 +282,7 @@ export default function TeamsPage() {
               aria-pressed={viewMode === "bulls-breakdown"}
               onClick={() => setViewMode("bulls-breakdown")}
               type="button"
->
+            >
               🐂 Bulls Breakdown
             </button>
             <button
@@ -287,7 +290,7 @@ export default function TeamsPage() {
               aria-pressed={viewMode === "sharks-breakdown"}
               onClick={() => setViewMode("sharks-breakdown")}
               type="button"
->
+            >
               🦈 Sharks Breakdown
             </button>
           </div>
@@ -335,11 +338,32 @@ export default function TeamsPage() {
 
       <Divider size={12} />
 
-      <div className="rowEqual" style={{ opacity: loading ? 0.7 : 1 }}>
-        <BullsLeaderboardCard athletes={bullsAthletes} totalKm={totalBullsKm} />
-        <SharksLeaderboardCard
+      <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
+        <LeaderboardCard
+          title="Bulls Leaderboard"
+          subtitle="Top athletes by distance"
+          badgeLabel="Total"
+          badgeValue={`${fmtKm(totalBullsKm)} km`}
+          chipDataSources={{ timeseries, athleteMetadata: athletes }}
+          athletes={bullsAthletes}
+          columns={[
+            { type: "rank" },
+            { type: "athlete", showEventChips: true, showStatusChips: true },
+            { type: "distance" },
+          ]}
+        />
+        <LeaderboardCard
+          title="Sharks Leaderboard"
+          subtitle="Top athletes by distance"
+          badgeLabel="Total"
+          badgeValue={`${fmtKm(totalSharksKm)} km`}
+          chipDataSources={{ timeseries, athleteMetadata: athletes }}
           athletes={sharksAthletes}
-          totalKm={totalSharksKm}
+          columns={[
+            { type: "rank" },
+            { type: "athlete", showEventChips: true, showStatusChips: true },
+            { type: "distance" },
+          ]}
         />
       </div>
 

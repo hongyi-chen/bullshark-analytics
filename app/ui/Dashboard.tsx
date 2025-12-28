@@ -15,12 +15,13 @@ import Filters from "./Filters";
 import { Aggregation, AthleteStats } from "./types";
 import ErrorCard from "./cards/ErrorCard";
 import Footer from "./Footer";
-import TopAthletesCard from "./cards/TopAthletesCard";
+import LeaderboardCard from "./cards/LeaderboardCard";
 import ClubKmCard from "./cards/ClubKmCard";
 import RunsPerAtheleteCard from "./cards/RunsPerAthleteCard";
 import HighlightsCard from "./cards/HighlightsCard";
 import LatestRunsCard from "./cards/LatestRunsCard";
 import Divider from "./Divider";
+import { getTimeseries } from "../utils/activityUtils";
 
 export default function Dashboard() {
   // Jotai state
@@ -58,15 +59,8 @@ export default function Dashboard() {
     load();
   }, [timeFilter, setActivities, setAthletes, setLoading, setErr]);
 
-  // Process raw activities into structures needed by components
   const timeseries = useMemo(() => {
-    return activities
-      .filter((a) => a.sport_type === "Run")
-      .map((a) => ({
-        day: a.date.split("T")[0],
-        athleteName: a.athlete_name,
-        km: a.distance / 1000,
-      }));
+    return getTimeseries(activities); 
   }, [activities]);
 
   const stats = useMemo(() => {
@@ -198,12 +192,20 @@ export default function Dashboard() {
       {err != null ? <ErrorCard errorMessage={err} /> : null}
 
       <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
-        <TopAthletesCard
+        <LeaderboardCard
+          title="Top athletes"
+          subtitle={`By total distance (this ${timeFilter})`}
+          badgeLabel="Runs"
+          badgeValue={stats.overall.totalRuns}
+          athletes={filteredAthletes}
+          columns={[
+            { type: "rank" },
+            { type: "athlete", showEventChips: true, showStatusChips: true },
+            { type: "runs" },
+            { type: "distance" },
+          ]}
+          chipDataSources={{ timeseries, athleteMetadata: athletes }}
           loading={loading}
-          timeFilter={timeFilter}
-          timeseries={timeseries}
-          topAthletes={filteredAthletes}
-          totalRuns={stats.overall.totalRuns}
         />
         <ClubKmCard
           aggregation={aggregation}
