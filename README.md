@@ -1,4 +1,6 @@
 # Bullshark Analytics 🦈
+https://bullsharks.online/
+
 A lightweight public dashboard that visualizes Bullsharks running activity.
 
 This repo is **frontend + serverless API only**:
