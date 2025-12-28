@@ -79,6 +79,22 @@ const COLOURS = [
   "rgba(99, 102, 241, 1)", // indigo
 ];
 
+// High-contrast color palette for charts (hex format)
+const CHART_PALETTE = [
+  '#22c55e', // green
+  '#3b82f6', // blue
+  '#a855f7', // purple
+  '#ef4444', // red
+  '#eab308', // yellow
+  '#06b6d4', // cyan
+  '#f97316', // orange
+  '#84cc16', // lime
+  '#0ea5e9', // sky
+  '#f43f5e', // rose
+  '#6366f1', // indigo
+  '#10b981', // emerald
+];
+
 interface EmojiAndBackground {
   background: string;
   emoji: string;
@@ -106,4 +122,8 @@ export function getAthleteEmojiAndBackground(name: string): EmojiAndBackground {
     background: EMOJI_BACKGROUNDS[hash % EMOJI_BACKGROUNDS.length],
     emoji: ATHLETE_EMOJIS[hash % ATHLETE_EMOJIS.length],
   };
+}
+
+export function getChartColor(index: number): string {
+  return CHART_PALETTE[index % CHART_PALETTE.length];
 }

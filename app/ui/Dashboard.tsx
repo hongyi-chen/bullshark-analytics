@@ -17,7 +17,7 @@ import ErrorCard from "./cards/ErrorCard";
 import Footer from "./Footer";
 import LeaderboardCard from "./cards/LeaderboardCard";
 import ClubKmCard from "./cards/ClubKmCard";
-import RunsPerAtheleteCard from "./cards/RunsPerAthleteCard";
+import RunsPerAthleteCard from "./cards/RunsPerAthleteCard";
 import HighlightsCard from "./cards/HighlightsCard";
 import LatestRunsCard from "./cards/LatestRunsCard";
 import Divider from "./Divider";
@@ -218,7 +218,7 @@ export default function Dashboard() {
       <Divider size={12} />
 
       <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
-        <RunsPerAtheleteCard
+        <RunsPerAthleteCard
           athletes={filteredAthletes}
           timeFilter={timeFilter}
         />
