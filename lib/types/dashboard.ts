@@ -72,3 +72,8 @@ export type AthleteBreakdownChartData = {
   weekStart: string;
   [athleteName: string]: string | number;
 };
+
+export type ActivityStats = {
+  overall: OverallStats;
+  lastFetchedAt: string | null;
+};
