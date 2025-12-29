@@ -1,6 +1,6 @@
 import { ServerActivity } from '@/lib/server-api';
 import { TeamStatsData } from '@/lib/types/dashboard';
-import { Athlete } from '@/app/ui/types';
+import { Athlete, AthleteWithTrainingData } from '@/app/ui/types';
 
 // Simple in-memory cache with SWR-like behavior
 // Not persisted across hard refreshes; sufficient to smooth client-side route transitions
@@ -32,6 +32,12 @@ export function hasFreshAthletesCache(): boolean {
 
 export function hasFreshTeamStatsCache(): boolean {
   const key = getKey('/api/team_stats');
+  const entry = cache.get(key);
+  return !!entry && Date.now() - entry.ts < CACHE_TTL_MS && entry.data != null;
+}
+
+export function hasFreshAthletesTrainingDataCache(): boolean {
+  const key = getKey('/api/athletes/training_data');
   const entry = cache.get(key);
   return !!entry && Date.now() - entry.ts < CACHE_TTL_MS && entry.data != null;
 }
@@ -87,5 +93,15 @@ export async function fetchAthletes(): Promise<Athlete[]> {
       throw new Error('Server response is not an array');
     }
     return raw as Athlete[];
+  });
+}
+
+export async function fetchAthletesTrainingData(): Promise<AthleteWithTrainingData[]> {
+  const endpoint = '/api/athletes/training_data';
+  return fetchWithCache<AthleteWithTrainingData[]>(endpoint, (raw) => {
+    if (!Array.isArray(raw)) {
+      throw new Error('Server response is not an array');
+    }
+    return raw as AthleteWithTrainingData[];
   });
 }

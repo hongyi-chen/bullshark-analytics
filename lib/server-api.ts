@@ -1,5 +1,5 @@
 import { env } from '@/lib/env';
-import { Athlete } from '@/app/ui/types';
+import { Athlete, AthleteWithTrainingData } from '@/app/ui/types';
 
 export type ServerActivity = {
   id: string;
@@ -71,4 +71,32 @@ export async function fetchAthletesFromServer(): Promise<Athlete[]> {
   }
 
   return data as Athlete[];
+}
+
+export async function fetchAthletesTrainingDataFromServer(): Promise<AthleteWithTrainingData[]> {
+  const e = env();
+
+  const url = `${e.BASE_SERVER_URL}/athletes/training_data`;
+
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+    },
+    // Don't cache - we want fresh data
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Server fetch failed: ${res.status} ${text}`);
+  }
+
+  const data = await res.json();
+
+  if (!data || typeof data !== 'object' || !Array.isArray(data.athletes)) {
+    throw new Error('Server response missing athletes array');
+  }
+
+  return data.athletes as AthleteWithTrainingData[];
 }

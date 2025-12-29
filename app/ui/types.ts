@@ -15,3 +15,15 @@ export type Athlete = {
   team: "bulls" | "sharks";
   event: "half" | "full";
 };
+
+export type WeeklyKilometers = {
+  [date: string]: number; // e.g., "2025-12-15": 35.3095
+};
+
+export type TrainingData = {
+  weeklyKilometers: WeeklyKilometers;
+};
+
+export type AthleteWithTrainingData = Athlete & {
+  trainingData: TrainingData;
+};
