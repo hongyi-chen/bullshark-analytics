@@ -1,4 +1,5 @@
 import { AthleteWithTrainingData } from '@/app/ui/types';
+import { formatRiskType } from '@/app/utils/formatRiskType';
 import Card from '@/app/ui/cards/Card';
 import css from './TrainingWarningsPlaceholder.module.scss';
 
@@ -7,15 +8,6 @@ interface TrainingWarningsPlaceholderProps {
   riskyWeeks?: Map<string, { riskCount: number; risks: string[] }>;
 }
 
-// Helper function to format risk types for display
-function formatRiskType(riskType: string): string {
-  return riskType
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
-}
-
-// Helper function to get risk severity color
 function getRiskSeverityClass(riskCount: number): string {
   if (riskCount >= 3) return css.severityHigh;
   if (riskCount >= 2) return css.severityMedium;
@@ -23,11 +15,10 @@ function getRiskSeverityClass(riskCount: number): string {
 }
 
 export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: TrainingWarningsPlaceholderProps) {
-  // Convert Map to sorted array for display
   const riskyWeeksArray = riskyWeeks
     ? Array.from(riskyWeeks.entries())
         .map(([week, data]) => ({ week, ...data }))
-        .sort((a, b) => b.week.localeCompare(a.week)) // Most recent first
+        .sort((a, b) => b.week.localeCompare(a.week))
     : [];
 
   const hasWarnings = riskyWeeksArray.length > 0;

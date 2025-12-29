@@ -63,7 +63,6 @@ export const trainingTeamFilterState = atom<TrainingTeamFilter>('all');
 
 // Injury Insights tab state
 export const injurySelectedAthleteIdState = atom<string | null>(null);
-export const injuryTestModeState = atom<boolean>(false);
 
 // Derived atom: timeseries from activities
 export const timeseriesAtom = atom((get) => {

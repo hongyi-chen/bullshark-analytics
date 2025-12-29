@@ -17,13 +17,13 @@ export type Athlete = {
 };
 
 export type WeeklyKilometers = {
-  [date: string]: number; // e.g., "2025-12-15": 35.3095
+  [date: string]: number;
 };
 
 export type RiskyWeek = {
-  week: string; // ISO date string e.g., "2025-12-22"
+  week: string;
   riskCount: number;
-  risks: string[]; // Array of risk types e.g., ["HIGH_VOLUME_SPIKE"]
+  risks: string[];
 };
 
 export type TrainingData = {

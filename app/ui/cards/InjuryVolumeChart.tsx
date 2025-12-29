@@ -2,13 +2,14 @@ import { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
+import { formatRiskType } from '@/app/utils/formatRiskType';
 import Card from '@/app/ui/cards/Card';
 import css from './InjuryVolumeChart.module.scss';
 
 interface InjuryVolumeChartProps {
   athlete: AthleteWithTrainingData;
   loading: boolean;
-  riskyWeeks?: Map<string, { riskCount: number; risks: string[] }>; // Map of week dates to risk data
+  riskyWeeks?: Map<string, { riskCount: number; risks: string[] }>;
 }
 
 interface ChartDataPoint {
@@ -70,16 +71,6 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
       )}
     </div>
   );
-}
-
-// Helper function to format risk types for display
-// This makes it easy to handle new risk types that get added to the API
-function formatRiskType(riskType: string): string {
-  // Convert snake_case to Title Case
-  return riskType
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
 }
 
 export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: InjuryVolumeChartProps) {
