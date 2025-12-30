@@ -33,6 +33,8 @@ export default function DisclaimerCard() {
         <div className={css.text}>
           <h3 className={css.title}>Important Disclaimer</h3>
           <p className={css.message}>
+            Welcome to the Injury Insights Beta!
+
             This is not medical advice. Do your own research, talk to professionals, listen to your body, etc.
           </p>
         </div>

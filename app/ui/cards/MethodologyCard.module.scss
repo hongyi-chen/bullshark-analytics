@@ -52,6 +52,16 @@
   color: var(--text);
 }
 
+.link {
+  color: var(--accent);
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 .note {
   display: flex;
   gap: 10px;

@@ -51,7 +51,7 @@ export default function Header() {
             role="tab"
             type="button"
           >
-            Injury Insights
+            Injury Insights (Beta)
           </button>
         </div>
       </nav>
