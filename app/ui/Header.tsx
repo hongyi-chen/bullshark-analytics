@@ -35,6 +35,15 @@ export default function Header() {
           >
             Teams
           </button>
+          <button
+            className={`${css.navPill} ${activeTab === "training" ? css.navPillActive : ""}`}
+            aria-current={activeTab === "training" ? "page" : undefined}
+            onClick={() => setActiveTab('training')}
+            role="tab"
+            type="button"
+          >
+            Training Volume
+          </button>
         </div>
       </nav>
     </header>
