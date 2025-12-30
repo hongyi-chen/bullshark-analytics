@@ -1,0 +1,92 @@
+.container {
+  position: relative;
+  width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: rgba(231, 237, 246, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: var(--muted);
+  }
+
+  &:focus {
+    background: rgba(231, 237, 246, 0.08);
+    border-color: rgba(231, 237, 246, 0.2);
+  }
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+}
+
+.item {
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &:hover {
+    background: rgba(231, 237, 246, 0.08);
+  }
+
+  &.selected {
+    background: rgba(34, 197, 94, 0.15);
+  }
+}
+
+.athleteName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.athleteMeta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(231, 237, 246, 0.1);
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.emptyState {
+  padding: 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}

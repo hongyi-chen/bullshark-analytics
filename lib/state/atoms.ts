@@ -6,7 +6,7 @@ import { Athlete, AthleteWithTrainingData } from '@/app/ui/types';
 export const timeFilterState = atom<TimeFilter>('week');
 
 // Active tab state for SPA navigation
-export const activeTabState = atom<'dashboard' | 'teams' | 'training'>('dashboard');
+export const activeTabState = atom<'dashboard' | 'teams' | 'training' | 'injury'>('dashboard');
 
 // Shared last updated text for Header display
 export const lastUpdatedTextState = atom<string>('');
@@ -60,6 +60,9 @@ export type TrainingTeamFilter = 'all' | 'bulls' | 'sharks';
 export const trainingSearchState = atom<string>('');
 export const trainingEventFilterState = atom<TrainingEventFilter>('all');
 export const trainingTeamFilterState = atom<TrainingTeamFilter>('all');
+
+// Injury Insights tab state
+export const injurySelectedAthleteIdState = atom<string | null>(null);
 
 // Derived atom: timeseries from activities
 export const timeseriesAtom = atom((get) => {
