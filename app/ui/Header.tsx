@@ -44,6 +44,15 @@ export default function Header() {
           >
             Training Volume
           </button>
+          <button
+            className={`${css.navPill} ${activeTab === "injury" ? css.navPillActive : ""}`}
+            aria-current={activeTab === "injury" ? "page" : undefined}
+            onClick={() => setActiveTab('injury')}
+            role="tab"
+            type="button"
+          >
+            Injury Insights (Beta)
+          </button>
         </div>
       </nav>
     </header>
