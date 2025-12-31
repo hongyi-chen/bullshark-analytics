@@ -9,8 +9,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import ChartTooltip from "./ChartTooltip";
-import Card from "./Card";
+import ChartTooltip from "../common/ChartTooltip";
+import Card from "../common/Card";
 
 interface ClubKmCardProps {
   aggregation: Aggregation;

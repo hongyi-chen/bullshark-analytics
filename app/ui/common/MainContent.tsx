@@ -2,10 +2,10 @@
 
 import { useAtom } from "jotai";
 import { activeTabState } from "@/lib/state/atoms";
-import DashboardView from "./DashboardView";
-import TeamsView from "./TeamsView";
-import TrainingView from "./TrainingView";
-import InjuryInsightsView from "./InjuryInsightsView";
+import DashboardView from "../dashboard/DashboardView";
+import TeamsView from "../team/TeamsView";
+import TrainingView from "../training/TrainingView";
+import InjuryInsightsView from "../injury-insights/InjuryInsightsView";
 
 export default function MainContent() {
   const [activeTab] = useAtom(activeTabState);

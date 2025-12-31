@@ -1,4 +1,4 @@
-import Card from '@/app/ui/cards/Card';
+import Card from '@/app/ui/common/Card';
 import css from './MethodologyCard.module.scss';
 
 export default function MethodologyCard() {

@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
-import Card from '@/app/ui/cards/Card';
+import Card from '@/app/ui/common/Card';
 import css from './InjuryVolumeChart.module.scss';
 
 interface InjuryVolumeChartProps {

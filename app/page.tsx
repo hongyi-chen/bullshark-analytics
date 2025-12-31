@@ -1,6 +1,6 @@
-import Header from "./ui/Header";
-import Footer from "./ui/Footer";
-import MainContent from "./ui/MainContent";
+import Header from "./ui/common/Header";
+import Footer from "./ui/common/Footer";
+import MainContent from "./ui/common/MainContent";
 
 // Force dynamic rendering to ensure fresh data on each request
 // since the dashboard displays real-time activity data

@@ -1,4 +1,4 @@
-import { Aggregation, TimeFilter } from "./types";
+import { Aggregation, TimeFilter } from "../types";
 import css from "./Filters.module.scss";
 
 interface FiltersProps {

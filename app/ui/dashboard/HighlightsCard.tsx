@@ -2,7 +2,7 @@ import { fmtKm } from "@/app/utils/fmtKm";
 import { AthleteStats, ActivityData } from "@/lib/types/dashboard";
 import { ChartData, TimeFilter } from "../types";
 import { useMemo } from "react";
-import Card from "./Card";
+import Card from "../common/Card";
 import css from "./HighlightsCard.module.scss";
 
 interface HighlightsCardProps {

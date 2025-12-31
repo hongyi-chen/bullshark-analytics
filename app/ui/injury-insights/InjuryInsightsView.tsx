@@ -9,14 +9,14 @@ import {
   lastUpdatedTextState,
 } from '@/lib/state/atoms';
 import { useAthletesTrainingData, useActivityStats } from '@/lib/hooks';
-import Card from '@/app/ui/cards/Card';
-import ErrorCard from '@/app/ui/cards/ErrorCard';
-import Divider from '@/app/ui/Divider';
-import DisclaimerCard from '@/app/ui/cards/DisclaimerCard';
-import AthleteSelector from '@/app/ui/AthleteSelector';
-import InjuryVolumeChart from '@/app/ui/cards/InjuryVolumeChart';
-import TrainingWarningsPlaceholder from '@/app/ui/TrainingWarningsPlaceholder';
-import MethodologyCard from '@/app/ui/cards/MethodologyCard';
+import Card from '@/app/ui/common/Card';
+import ErrorCard from '@/app/ui/common/ErrorCard';
+import Divider from '@/app/ui/common/Divider';
+import DisclaimerCard from '@/app/ui/injury-insights/DisclaimerCard';
+import AthleteSelector from '@/app/ui/injury-insights/AthleteSelector';
+import InjuryVolumeChart from '@/app/ui/injury-insights/InjuryVolumeChart';
+import TrainingWarningsPlaceholder from '@/app/ui/injury-insights/TrainingWarningsPlaceholder';
+import MethodologyCard from '@/app/ui/injury-insights/MethodologyCard';
 
 export default function InjuryInsightsView() {
   const [selectedAthleteId, setSelectedAthleteId] = useAtom(injurySelectedAthleteIdState);
