@@ -7,11 +7,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import ChartTooltip from "./ChartTooltip";
+import ChartTooltip from "../common/ChartTooltip";
 import { AthleteStats } from "@/lib/types/dashboard";
 import { TimeFilter } from "../types";
 import { useMemo } from "react";
-import Card from "./Card";
+import Card from "../common/Card";
 import css from "./RunsPerAthleteCard.module.scss";
 
 interface RunsPerAthleteCardProps {

@@ -2,7 +2,7 @@ import { fmtKm } from "@/app/utils/fmtKm";
 import { getAthleteEmojiAndBackground } from "@/app/utils/athleteStyles";
 import { ServerActivity } from "@/lib/server-api";
 import { useEffect, useMemo, useState } from "react";
-import Card from "./Card";
+import Card from "../common/Card";
 import css from "./LatestRunsCard.module.scss";
 
 interface LatestRunsCardProps {

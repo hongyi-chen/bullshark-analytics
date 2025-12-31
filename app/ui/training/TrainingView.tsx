@@ -12,12 +12,12 @@ import {
 } from '@/lib/state/atoms';
 import { useAthletesTrainingData } from '@/lib/hooks';
 import { useActivityStats } from '@/lib/hooks';
-import SearchBar from '@/app/ui/SearchBar';
-import TrainingChartCard from '@/app/ui/cards/TrainingChartCard';
-import Divider from '@/app/ui/Divider';
-import ErrorCard from '@/app/ui/cards/ErrorCard';
-import Card from '@/app/ui/cards/Card';
-import css from '@/app/ui/Filters.module.scss';
+import SearchBar from '@/app/ui/training/SearchBar';
+import TrainingChartCard from '@/app/ui/training/TrainingChartCard';
+import Divider from '@/app/ui/common/Divider';
+import ErrorCard from '@/app/ui/common/ErrorCard';
+import Card from '@/app/ui/common/Card';
+import css from '@/app/ui/dashboard/Filters.module.scss';
 
 export default function TrainingView() {
   // State

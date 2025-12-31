@@ -11,12 +11,12 @@ import {
   lastUpdatedTextState,
 } from "@/lib/state/atoms";
 import { useActivities, useAthletes, useTimeseries, useTeamStats, useActivityStats } from "@/lib/hooks";
-import Divider from "@/app/ui/Divider";
-import ErrorCard from "@/app/ui/cards/ErrorCard";
-import TeamPerformanceCard from "@/app/ui/cards/TeamPerformanceCard";
-import LeaderboardCard from "@/app/ui/cards/LeaderboardCard";
+import Divider from "@/app/ui/common/Divider";
+import ErrorCard from "@/app/ui/common/ErrorCard";
+import TeamPerformanceCard from "@/app/ui/team/TeamPerformanceCard";
+import LeaderboardCard from "@/app/ui/common/LeaderboardCard";
 import { fmtKm } from "@/app/utils/fmtKm";
-import css from "@/app/ui/Filters.module.scss";
+import css from "@/app/ui/dashboard/Filters.module.scss";
 import { AthleteBreakdownChartData } from "@/lib/types/dashboard";
 
 export default function TeamsView() {

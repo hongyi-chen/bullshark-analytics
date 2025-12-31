@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo } from "react";
-import Card from "./Card";
+import Card from "../common/Card";
 import { Athlete, Timeseries } from "../types";
 import clsx from "clsx";
 import css from "./LeaderboardCard.module.scss";

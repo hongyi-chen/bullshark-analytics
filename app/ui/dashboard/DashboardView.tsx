@@ -12,13 +12,13 @@ import {
 } from "@/lib/state/atoms";
 import { useActivities, useAthletes, useTimeseries, useActivityStats } from "@/lib/hooks";
 import Filters from "./Filters";
-import ErrorCard from "./cards/ErrorCard";
-import LeaderboardCard from "./cards/LeaderboardCard";
-import ClubKmCard from "./cards/ClubKmCard";
-import RunsPerAthleteCard from "./cards/RunsPerAthleteCard";
-import HighlightsCard from "./cards/HighlightsCard";
-import LatestRunsCard from "./cards/LatestRunsCard";
-import Divider from "./Divider";
+import ErrorCard from "../common/ErrorCard";
+import LeaderboardCard from "../common/LeaderboardCard";
+import ClubKmCard from "./ClubKmCard";
+import RunsPerAthleteCard from "./RunsPerAthleteCard";
+import HighlightsCard from "./HighlightsCard";
+import LatestRunsCard from "./LatestRunsCard";
+import Divider from "../common/Divider";
 
 export default function DashboardView() {
   // Global state

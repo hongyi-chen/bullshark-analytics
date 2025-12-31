@@ -1,6 +1,6 @@
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { formatRiskType } from '@/app/utils/formatRiskType';
-import Card from '@/app/ui/cards/Card';
+import Card from '@/app/ui/common/Card';
 import css from './TrainingWarningsPlaceholder.module.scss';
 
 interface TrainingWarningsPlaceholderProps {

@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { getChartColor } from '@/app/utils/athleteStyles';
 import { fmtKm } from '@/app/utils/fmtKm';
-import Card from '@/app/ui/cards/Card';
+import Card from '@/app/ui/common/Card';
 import css from './TrainingChartCard.module.scss';
 
 interface TrainingChartCardProps {
