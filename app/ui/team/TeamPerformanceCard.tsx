@@ -69,6 +69,10 @@ export default function TeamPerformanceCard({
                 dataKey="weekStart"
                 tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
                 tickFormatter={(value) => {
+                  // Hide the first tick label (week 0) for cleaner styling
+                  if (chartData.length > 0 && value === chartData[0].weekStart) {
+                    return '';
+                  }
                   const date = new Date(value);
                   return `${date.getMonth() + 1}/${date.getDate()}`;
                 }}
@@ -135,6 +139,10 @@ export default function TeamPerformanceCard({
                 dataKey="weekStart"
                 tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
                 tickFormatter={(value) => {
+                  // Hide the first tick label (week 0) for cleaner styling
+                  if (chartData.length > 0 && value === chartData[0].weekStart) {
+                    return '';
+                  }
                   const date = new Date(value);
                   return `${date.getMonth() + 1}/${date.getDate()}`;
                 }}
