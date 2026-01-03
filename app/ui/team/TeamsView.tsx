@@ -54,9 +54,22 @@ export default function TeamsView() {
       combined.set(point.weekStart, existing);
     }
 
-    return Array.from(combined.entries())
+    const sorted = Array.from(combined.entries())
       .map(([weekStart, data]) => ({ weekStart, ...data }))
       .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+
+    // Add a starting point at week 0 (one week before the first data point)
+    if (sorted.length > 0) {
+      const firstWeek = new Date(sorted[0].weekStart);
+      firstWeek.setDate(firstWeek.getDate() - 7);
+      sorted.unshift({
+        weekStart: firstWeek.toISOString().split('T')[0],
+        bullsKm: 0,
+        sharksKm: 0,
+      });
+    }
+
+    return sorted;
   }, [teamStats]);
 
   const runningTotalsData = useMemo(() => {
@@ -80,9 +93,22 @@ export default function TeamsView() {
       combined.set(point.weekStart, existing);
     }
 
-    return Array.from(combined.entries())
+    const sorted = Array.from(combined.entries())
       .map(([weekStart, data]) => ({ weekStart, ...data }))
       .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+
+    // Add a starting point at week 0 (one week before the first data point)
+    if (sorted.length > 0) {
+      const firstWeek = new Date(sorted[0].weekStart);
+      firstWeek.setDate(firstWeek.getDate() - 7);
+      sorted.unshift({
+        weekStart: firstWeek.toISOString().split('T')[0],
+        bullsKm: 0,
+        sharksKm: 0,
+      });
+    }
+
+    return sorted;
   }, [teamStats]);
 
   const bullsAthletes = useMemo(() => {
@@ -133,7 +159,7 @@ export default function TeamsView() {
         athleteOrder.forEach((name) => (runningTotals[name] = 0));
       }
 
-      return weeklyKilometers
+      const sorted = weeklyKilometers
         .map((week) => {
           const point: AthleteBreakdownChartData = { weekStart: week.weekStart };
           athleteOrder.forEach((name) => {
@@ -148,6 +174,21 @@ export default function TeamsView() {
           return point;
         })
         .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+
+      // Add a starting point at week 0 (one week before the first data point)
+      if (sorted.length > 0) {
+        const firstWeek = new Date(sorted[0].weekStart);
+        firstWeek.setDate(firstWeek.getDate() - 7);
+        const startPoint: AthleteBreakdownChartData = {
+          weekStart: firstWeek.toISOString().split('T')[0],
+        };
+        athleteOrder.forEach((name) => {
+          startPoint[name] = 0;
+        });
+        sorted.unshift(startPoint);
+      }
+
+      return sorted;
     };
 
     return {
