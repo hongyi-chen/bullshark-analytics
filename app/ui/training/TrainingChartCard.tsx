@@ -187,11 +187,13 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
                    dataKey={athlete.name}
                    stroke={getChartColor(idx)}
                    strokeWidth={isFocused ? 2.5 : 2}
-                    strokeOpacity={isFocused ? 1 : 0.15}
-
+                   strokeOpacity={isFocused ? 1 : 0.15}
                    dot={false}
+                   activeDot={{ r: 6 }}
+                   onClick={() => setFocusedAthleteName(athlete.name)}
                    name={athlete.name}
                  />
+
                );
              })}
 
