@@ -1,5 +1,13 @@
-import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { getChartColor } from '@/app/utils/athleteStyles';
 import { fmtKm } from '@/app/utils/fmtKm';
@@ -20,15 +28,23 @@ interface TooltipProps {
   active?: boolean;
   payload?: Array<{ name: string; value: number; color: string }>;
   label?: string;
+  focusedAthleteName?: string | null;
 }
 
-function TrainingTooltip({ active, payload, label }: TooltipProps) {
+function TrainingTooltip({ active, payload, label, focusedAthleteName }: TooltipProps) {
   if (!active || !payload?.length || !label) return null;
+
+  const filteredPayload =
+    focusedAthleteName == null
+      ? payload
+      : payload.filter(entry => entry.name === focusedAthleteName);
+
+  if (filteredPayload.length === 0) return null;
 
   return (
     <div className={css.tooltip}>
       <div className={css.tooltipWeek}>Week of {new Date(label).toLocaleDateString()}</div>
-      {payload.map((entry, index) => (
+      {filteredPayload.map((entry, index) => (
         <div key={index} className={css.tooltipEntry}>
           <div className={css.tooltipName} style={{ color: entry.color }}>
             {entry.name}
@@ -42,7 +58,64 @@ function TrainingTooltip({ active, payload, label }: TooltipProps) {
   );
 }
 
+function AthleteLegend({
+  athletes,
+  focusedAthleteName,
+  onToggle,
+  onClear,
+}: {
+  athletes: AthleteWithTrainingData[];
+  focusedAthleteName: string | null;
+  onToggle: (athleteName: string) => void;
+  onClear: () => void;
+}) {
+  if (athletes.length === 0) return null;
+
+  return (
+    <div className={css.legend}>
+      {focusedAthleteName != null && (
+        <button
+          type="button"
+          className={css.legendReset}
+          onClick={onClear}
+          aria-label="Show all athletes"
+        >
+          Show all
+        </button>
+      )}
+      {athletes.map((athlete, idx) => {
+        const name = athlete.name;
+        const isActive = focusedAthleteName === name;
+        const isDimmed = focusedAthleteName != null && !isActive;
+
+        return (
+          <button
+            key={name}
+            type="button"
+            className={`${css.legendItem} ${isActive ? css.legendItemActive : ''} ${isDimmed ? css.legendItemDimmed : ''}`}
+            onClick={() => onToggle(name)}
+            aria-pressed={isActive}
+            aria-label={isActive ? `Show all athletes (unfocus ${name})` : `Focus ${name}`}
+            title={focusedAthleteName == null ? 'Click to focus' : isActive ? 'Click to show all' : 'Click to focus'}
+          >
+            <span className={css.legendSwatch} style={{ backgroundColor: getChartColor(idx) }} />
+            <span className={css.legendLabel}>{name}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function TrainingChartCard({ athletes, loading }: TrainingChartCardProps) {
+  const [focusedAthleteName, setFocusedAthleteName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (focusedAthleteName == null) return;
+    const stillPresent = athletes.some(athlete => athlete.name === focusedAthleteName);
+    if (!stillPresent) setFocusedAthleteName(null);
+  }, [athletes, focusedAthleteName]);
+
   const chartData = useMemo(() => {
     // Collect all unique week dates
     const allWeeks = new Set<string>();
@@ -81,7 +154,13 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
         <h2>Weekly Training Kilometers</h2>
         <p className="muted">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</p>
       </div>
-      <div className="flexFill">
+      <AthleteLegend
+        athletes={athletes}
+        focusedAthleteName={focusedAthleteName}
+        onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
+        onClear={() => setFocusedAthleteName(null)}
+      />
+      <div className={`flexFill ${css.chartArea}`}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
             <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
@@ -93,28 +172,31 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
                 return `${date.getMonth() + 1}/${date.getDate()}`;
               }}
             />
-            <YAxis
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-              width={40}
-            />
-            <Tooltip content={<TrainingTooltip />} />
-            <Legend
-              verticalAlign="top"
-              height={36}
-              iconType="line"
-              wrapperStyle={{ fontSize: 12 }}
-            />
-            {athletes.map((athlete, idx) => (
-              <Line
-                key={athlete.name}
-                type="monotone"
-                dataKey={athlete.name}
-                stroke={getChartColor(idx)}
-                strokeWidth={2}
-                dot={false}
-                name={athlete.name}
-              />
-            ))}
+             <YAxis
+               tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+               width={40}
+             />
+             <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
+             {athletes.map((athlete, idx) => {
+
+               const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
+               return (
+                 <Line
+                   key={athlete.name}
+                   type="monotone"
+                   dataKey={athlete.name}
+                   stroke={getChartColor(idx)}
+                   strokeWidth={isFocused ? 2.5 : 2}
+                   strokeOpacity={isFocused ? 1 : 0.15}
+                   dot={false}
+                   activeDot={{ r: 6 }}
+                   onClick={() => setFocusedAthleteName(athlete.name)}
+                   name={athlete.name}
+                 />
+
+               );
+             })}
+
           </LineChart>
         </ResponsiveContainer>
       </div>

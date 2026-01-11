@@ -1,5 +1,5 @@
 .header {
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 
   h2 {
     font-size: 16px;
@@ -51,4 +51,84 @@
 .tooltipValue {
   font-size: 12px;
   color: var(--text);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  align-items: center;
+  padding: 2px 0;
+  margin-bottom: 10px;
+}
+
+.legendReset {
+  appearance: none;
+  border: 1px solid rgba(231, 237, 246, 0.18);
+  background: rgba(231, 237, 246, 0.06);
+  color: rgba(231, 237, 246, 0.9);
+  border-radius: 999px;
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(231, 237, 246, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.7);
+    outline-offset: 2px;
+  }
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  color: rgba(231, 237, 246, 0.85);
+  font-size: 12px;
+  line-height: 1;
+
+  &:hover {
+    background: rgba(231, 237, 246, 0.06);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(59, 130, 246, 0.7);
+    outline-offset: 2px;
+  }
+}
+
+.legendItemActive {
+  border-color: rgba(231, 237, 246, 0.18);
+  background: rgba(231, 237, 246, 0.06);
+  color: rgba(231, 237, 246, 1);
+}
+
+.legendItemDimmed {
+  opacity: 0.45;
+}
+
+.legendSwatch {
+  width: 10px;
+  height: 2px;
+  border-radius: 999px;
+}
+
+.legendLabel {
+  white-space: nowrap;
+}
+
+.chartArea {
+  :global(.recharts-line-curve),
+  :global(.recharts-active-dot),
+  :global(.recharts-dot) {
+    cursor: pointer;
+  }
 }
