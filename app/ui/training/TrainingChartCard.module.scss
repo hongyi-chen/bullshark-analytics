@@ -1,5 +1,5 @@
 .header {
-  margin-bottom: 12px;
+  margin-bottom: 6px;
 
   h2 {
     font-size: 16px;
@@ -123,4 +123,12 @@
 
 .legendLabel {
   white-space: nowrap;
+}
+
+.chartArea {
+  :global(.recharts-line-curve),
+  :global(.recharts-active-dot),
+  :global(.recharts-dot) {
+    cursor: pointer;
+  }
 }
