@@ -59,6 +59,9 @@
   gap: 8px 10px;
   align-items: center;
   padding: 2px 0;
+  margin-bottom: 8px;
+  max-height: 72px;
+  overflow-y: auto;
 }
 
 .legendReset {

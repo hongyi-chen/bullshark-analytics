@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -59,42 +58,18 @@ function TrainingTooltip({ active, payload, label, focusedAthleteName }: Tooltip
   );
 }
 
-type LegendPayloadItem = {
-  value?: unknown;
-  dataKey?: unknown;
-  color?: unknown;
-};
-
-type NameExtraction = {
-  name: string | null;
-  color: string | undefined;
-};
-
-function getLegendNameAndColor(item: LegendPayloadItem): NameExtraction {
-  const rawName =
-    typeof item.value === 'string'
-      ? item.value
-      : typeof item.dataKey === 'string'
-        ? item.dataKey
-        : null;
-
-  const color = typeof item.color === 'string' ? item.color : undefined;
-
-  return { name: rawName, color };
-}
-
-function ClickableLegend({
-  payload,
+function AthleteLegend({
+  athletes,
   focusedAthleteName,
   onToggle,
   onClear,
 }: {
-  payload?: ReadonlyArray<LegendPayloadItem>;
+  athletes: AthleteWithTrainingData[];
   focusedAthleteName: string | null;
   onToggle: (athleteName: string) => void;
   onClear: () => void;
-}) { 
-  if (!payload?.length) return null;
+}) {
+  if (athletes.length === 0) return null;
 
   return (
     <div className={css.legend}>
@@ -108,10 +83,8 @@ function ClickableLegend({
           Show all
         </button>
       )}
-      {payload.map((item) => {
-        const { name, color } = getLegendNameAndColor(item);
-        if (name == null) return null;
-
+      {athletes.map((athlete, idx) => {
+        const name = athlete.name;
         const isActive = focusedAthleteName === name;
         const isDimmed = focusedAthleteName != null && !isActive;
 
@@ -125,7 +98,7 @@ function ClickableLegend({
             aria-label={isActive ? `Show all athletes (unfocus ${name})` : `Focus ${name}`}
             title={focusedAthleteName == null ? 'Click to focus' : isActive ? 'Click to show all' : 'Click to focus'}
           >
-            <span className={css.legendSwatch} style={{ backgroundColor: color ?? 'var(--text)' }} />
+            <span className={css.legendSwatch} style={{ backgroundColor: getChartColor(idx) }} />
             <span className={css.legendLabel}>{name}</span>
           </button>
         );
@@ -181,6 +154,12 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
         <h2>Weekly Training Kilometers</h2>
         <p className="muted">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</p>
       </div>
+      <AthleteLegend
+        athletes={athletes}
+        focusedAthleteName={focusedAthleteName}
+        onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
+        onClear={() => setFocusedAthleteName(null)}
+      />
       <div className="flexFill">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
@@ -193,26 +172,13 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
                 return `${date.getMonth() + 1}/${date.getDate()}`;
               }}
             />
-            <YAxis
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-              width={40}
-            />
+             <YAxis
+               tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+               width={40}
+             />
              <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
-             <Legend
-                verticalAlign="top"
-                height={focusedAthleteName == null ? 40 : 56}
-                content={(props) => (
-                  <ClickableLegend
-                    payload={props.payload}
-                    focusedAthleteName={focusedAthleteName}
-                    onToggle={(athleteName) =>
-                      setFocusedAthleteName((prev) => (prev === athleteName ? null : athleteName))
-                    }
-                    onClear={() => setFocusedAthleteName(null)}
-                  />
-                )}
-              />
              {athletes.map((athlete, idx) => {
+
                const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
                return (
                  <Line
@@ -221,7 +187,8 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
                    dataKey={athlete.name}
                    stroke={getChartColor(idx)}
                    strokeWidth={isFocused ? 2.5 : 2}
-                   strokeOpacity={isFocused ? 1 : 0.3}
+                    strokeOpacity={isFocused ? 1 : 0.15}
+
                    dot={false}
                    name={athlete.name}
                  />
