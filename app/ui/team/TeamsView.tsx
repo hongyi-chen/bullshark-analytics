@@ -361,7 +361,7 @@ export default function TeamsView() {
           athletes={bullsAthletes}
           columns={[
             { type: "rank" },
-            { type: "athlete", showEventChips: true, showStatusChips: true },
+            { type: "athlete", showTeamChips: true, showEventChips: true, showStatusChips: true },
             { type: "distance" },
           ]}
         />
@@ -374,7 +374,7 @@ export default function TeamsView() {
           athletes={sharksAthletes}
           columns={[
             { type: "rank" },
-            { type: "athlete", showEventChips: true, showStatusChips: true },
+            { type: "athlete", showTeamChips: true, showEventChips: true, showStatusChips: true },
             { type: "distance" },
           ]}
         />

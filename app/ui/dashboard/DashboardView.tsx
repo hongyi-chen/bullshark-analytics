@@ -95,7 +95,7 @@ export default function DashboardView() {
           athletes={filteredAthletes}
           columns={[
             { type: "rank" },
-            { type: "athlete", showEventChips: true, showStatusChips: true },
+            { type: "athlete", showTeamChips: true, showEventChips: true, showStatusChips: true },
             { type: "runs" },
             { type: "distance" },
           ]}

@@ -8,7 +8,7 @@ interface WeeklyLeaderboardProps {
 
 const columns: Column[] = [
   { type: 'rank' },
-  { type: 'athlete', showEventChips: true, showStatusChips: true },
+  { type: 'athlete', showTeamChips: true, showEventChips: true, showStatusChips: true },
   { type: 'distance' },
   { type: 'streak' },
 ];
