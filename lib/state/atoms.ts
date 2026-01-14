@@ -2,11 +2,17 @@ import { atom } from 'jotai';
 import { TimeFilter, TeamStatsData } from '@/lib/types/dashboard';
 import { ServerActivity } from '@/lib/server-api';
 import { Athlete, AthleteWithTrainingData } from '@/app/ui/types';
+import { startOfWeek, format } from 'date-fns';
 
 export const timeFilterState = atom<TimeFilter>('week');
 
 // Active tab state for SPA navigation
-export const activeTabState = atom<'dashboard' | 'teams' | 'training' | 'injury'>('dashboard');
+export const activeTabState = atom<'dashboard' | 'teams' | 'training' | 'injury' | 'weekly-winners'>('dashboard');
+
+// Weekly Winners tab state - selected week (ISO date string of Monday)
+export const weeklyWinnersWeekState = atom<string>(
+  format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd')
+);
 
 // Shared last updated text for Header display
 export const lastUpdatedTextState = atom<string>('');
