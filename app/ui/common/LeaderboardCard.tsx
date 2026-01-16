@@ -19,7 +19,7 @@ export interface LeaderboardAthlete {
 
 export type Column =
   | { type: "rank" }
-  | { type: "athlete"; showEventChips?: boolean; showStatusChips?: boolean }
+  | { type: "athlete"; showEventChips?: boolean; showStatusChips?: boolean; showTeamChips?: boolean }
   | { type: "runs" }
   | { type: "distance" }
   | { type: "streak" };
@@ -93,6 +93,24 @@ function StatusChip({ status }: StatusChipProps) {
   );
 }
 
+interface TeamChipProps {
+  team: "bulls" | "sharks";
+}
+
+function TeamChip({ team }: TeamChipProps) {
+  return (
+    <span
+      className={clsx(
+        css.teamChip,
+        team === "bulls" ? css.teamChipBulls : css.teamChipSharks
+      )}
+      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+    >
+      {team}
+    </span>
+  );
+}
+
 // === MAIN COMPONENT ===
 
 const DEFAULT_COLUMNS: Column[] = [
@@ -122,6 +140,16 @@ export default function LeaderboardCard({
       eventMap.set(athlete.name, athlete.event);
     }
     return eventMap;
+  }, [chipDataSources?.athleteMetadata]);
+
+  // Build team map from athlete metadata
+  const athleteTeamMap = useMemo(() => {
+    const teamMap = new Map<string, "bulls" | "sharks">();
+    const metadata = chipDataSources?.athleteMetadata || [];
+    for (const athlete of metadata) {
+      teamMap.set(athlete.name, athlete.team);
+    }
+    return teamMap;
   }, [chipDataSources?.athleteMetadata]);
 
   // Render column headers
@@ -162,6 +190,7 @@ export default function LeaderboardCard({
   const renderCells = (athlete: LeaderboardAthlete, idx: number) => {
     const status = getAthleteStatus(athlete.athleteName);
     const event = athleteEventMap.get(athlete.athleteName);
+    const team = athleteTeamMap.get(athlete.athleteName);
 
     return columns.map((col, colIdx) => {
       switch (col.type) {
@@ -177,6 +206,7 @@ export default function LeaderboardCard({
             <td key={colIdx}>
               <span className={css.athleteNameCell}>
                 {athlete.athleteName}
+                {col.showTeamChips && team && <TeamChip team={team} />}
                 {col.showEventChips && event && <EventChip event={event} />}
                 {col.showStatusChips && status && <StatusChip status={status} />}
               </span>

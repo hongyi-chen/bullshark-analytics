@@ -103,6 +103,21 @@
     color: #ef4444;
 }
 
+/* Team chip variants */
+.teamChip {
+    composes: chip;
+}
+
+.teamChipBulls {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.teamChipSharks {
+    background: rgba(6, 182, 212, 0.15);
+    color: #06b6d4;
+}
+
 /* Streak badge styles */
 .streakBadge {
     display: inline-flex;
