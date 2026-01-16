@@ -14,13 +14,15 @@ export interface LeaderboardAthlete {
   athleteName: string;
   totalKm: number;
   runs?: number;
+  streak?: number;
 }
 
 export type Column =
   | { type: "rank" }
   | { type: "athlete"; showEventChips?: boolean; showStatusChips?: boolean }
   | { type: "runs" }
-  | { type: "distance" };
+  | { type: "distance" }
+  | { type: "streak" };
 
 export interface ChipDataSources {
   timeseries?: Timeseries[];
@@ -146,6 +148,12 @@ export default function LeaderboardCard({
               Km
             </th>
           );
+        case "streak":
+          return (
+            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+              Streak
+            </th>
+          );
       }
     });
   };
@@ -186,6 +194,16 @@ export default function LeaderboardCard({
           return (
             <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
               {fmtKm(athlete.totalKm)}
+            </td>
+          );
+        case "streak":
+          const streakCount = athlete.streak ?? 0;
+          return (
+            <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
+              <span className={css.streakBadge}>
+                <span className={css.streakIcon}>🔥</span>
+                {streakCount}
+              </span>
             </td>
           );
       }

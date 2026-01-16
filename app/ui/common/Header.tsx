@@ -53,6 +53,15 @@ export default function Header() {
           >
             Injury Insights (Beta)
           </button>
+          <button
+            className={`${css.navPill} ${activeTab === "weekly-winners" ? css.navPillActive : ""}`}
+            aria-current={activeTab === "weekly-winners" ? "page" : undefined}
+            onClick={() => setActiveTab('weekly-winners')}
+            role="tab"
+            type="button"
+          >
+            Weekly Winners
+          </button>
         </div>
       </nav>
     </header>

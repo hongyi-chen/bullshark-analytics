@@ -34,3 +34,15 @@ export type TrainingData = {
 export type AthleteWithTrainingData = Athlete & {
   trainingData: TrainingData;
 };
+
+export type WeeklyWinner = {
+  athleteName: string;
+  totalKm: number;
+  streak: number;
+};
+
+export type WeeklyLeaderboardData = {
+  weekStart: string;
+  winners: WeeklyWinner[];
+  weekNumber: number;
+};
