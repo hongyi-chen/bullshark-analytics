@@ -1,11 +1,19 @@
 # Bullshark Analytics 🦈
 https://bullsharks.online/
 
-A lightweight public dashboard that visualizes Bullsharks running activity.
+A lightweight public dashboard that visualizes Bullsharks running activity across
+multiple views (teams, training volume, injury insights, and weekly winners).
 
 This repo is **frontend + serverless API only**:
 - The source-of-truth activities come from the Bullsharks backend server (Cloud Run).
 - This Next.js app calls that backend from server-side API routes, then computes summary stats + timeseries for the UI.
+
+## Views
+- Dashboard: club highlights, recent runs, and activity trends.
+- Teams: Bulls vs Sharks comparisons plus leaderboards.
+- Training Volume: weekly kilometers by athlete with search + filters.
+- Injury Insights (Beta): per-athlete training load and risky-week markers.
+- Weekly Winners: per-week leaderboard and streaks.
 
 ## Documentation
 For details on the backend server API endpoints, see the [Server API Documentation](https://github.com/BraydenRoyston/bullsharks.online/blob/main/docs/API_DOCUMENTATION.md).
@@ -20,11 +28,15 @@ Copy `.env.example` to `.env` and fill values.
 
 Required:
 - `BASE_SERVER_URL` (base URL of the Bullsharks backend, no trailing slash; endpoints are appended by the app)
-  - The app calls `${BASE_SERVER_URL}/activities/{week|month}` and `${BASE_SERVER_URL}/read` (legacy)
+  - The app calls:
+    - `${BASE_SERVER_URL}/activities/{week|month}`
+    - `${BASE_SERVER_URL}/read` (legacy: club stats/timeseries/latest)
+    - `${BASE_SERVER_URL}/athletes`
+    - `${BASE_SERVER_URL}/athletes/training_data`
+    - `${BASE_SERVER_URL}/team_stats`
 
 Optional:
 - `APP_BASE_URL` (used for generating absolute URLs in metadata/social cards)
-- Strava-related keys are only required if you run the backend yourself
 
 ## Local dev
 ```sh
@@ -38,7 +50,12 @@ Open:
 ## API (used by the dashboard)
 - `GET /api/activities/week` → returns activities for the current week
 - `GET /api/activities/month` → returns activities for the current month
-- `GET /api/club/stats`, `GET /api/club/timeseries`, `GET /api/club/latest` remain for legacy views
+- `GET /api/athletes` → athlete metadata (team/event labels)
+- `GET /api/athletes/training_data` → training volume + injury risk data
+- `GET /api/team_stats` → team aggregates for Bulls vs Sharks
+- `GET /api/club/stats?mode=days|week&days=30` → aggregated club stats (legacy)
+- `GET /api/club/timeseries?days=30` → daily km per athlete (legacy)
+- `GET /api/club/latest?limit=10` → latest runs (legacy)
 - `GET /api/health`
 
 ## Deploying (Vercel)
