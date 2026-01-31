@@ -4,27 +4,41 @@ https://bullsharks.online/
 A lightweight public dashboard that visualizes Bullsharks running activity.
 
 This repo is **frontend + serverless API only**:
-- The source-of-truth activities come from the Bullsharks backend server (Cloud Run).
-- This Next.js app calls that backend from server-side API routes, then computes summary stats + timeseries for the UI.
+- The source-of-truth data comes from the Bullsharks backend server (Cloud Run).
+- This Next.js app calls that backend from server-side API routes, then computes summary stats, leaderboards, and timeseries for the UI.
 
-## Documentation
-For details on the backend server API endpoints, see the [Server API Documentation](https://github.com/BraydenRoyston/bullsharks.online/blob/main/docs/API_DOCUMENTATION.md).
+## What’s in the UI
+The app is a single-page dashboard with multiple views:
+- **Dashboard**: club totals, highlights, recent runs, and leaderboards
+- **Teams**: Bulls vs Sharks comparison + athlete breakdowns
+- **Training Volume**: per-athlete weekly mileage trends
+- **Injury Insights (Beta)**: volume risk highlights and warnings
+- **Weekly Winners**: weekly leaderboard + streaks
+
+## Architecture at a glance
+1. UI uses **Jotai** atoms + hooks to request data.
+2. Client hooks call **App Router API routes** in `/app/api`.
+3. API routes proxy the Bullsharks backend (`BASE_SERVER_URL`) and return JSON.
+4. Client derives stats/timeseries for charts and leaderboards.
+
+The client uses a lightweight in-memory cache (60s TTL) to smooth navigation.
 
 ## Tech stack
 - Next.js (App Router)
+- React
 - Jotai (global state)
 - Recharts (charts)
+- date-fns (date utilities)
+- zod (env validation)
 
 ## Environment variables
 Copy `.env.example` to `.env` and fill values.
 
 Required:
-- `BASE_SERVER_URL` (base URL of the Bullsharks backend, no trailing slash; endpoints are appended by the app)
-  - The app calls `${BASE_SERVER_URL}/activities/{week|month}` and `${BASE_SERVER_URL}/read` (legacy)
+- `BASE_SERVER_URL` (base URL of the Bullsharks backend, **no trailing slash**)
 
 Optional:
 - `APP_BASE_URL` (used for generating absolute URLs in metadata/social cards)
-- Strava-related keys are only required if you run the backend yourself
 
 ## Local dev
 ```sh
@@ -35,11 +49,25 @@ npm run dev
 Open:
 - Dashboard: `http://localhost:3000/`
 
-## API (used by the dashboard)
-- `GET /api/activities/week` → returns activities for the current week
-- `GET /api/activities/month` → returns activities for the current month
-- `GET /api/club/stats`, `GET /api/club/timeseries`, `GET /api/club/latest` remain for legacy views
+## App API routes
+These are the routes used by the UI. They proxy the backend and normalize data:
+- `GET /api/activities/week`
+- `GET /api/activities/month`
+- `GET /api/athletes`
+- `GET /api/athletes/training_data`
+- `GET /api/team_stats`
+- `GET /api/club/stats` (legacy)
+- `GET /api/club/timeseries` (legacy)
+- `GET /api/club/latest` (legacy)
 - `GET /api/health`
+
+## Backend endpoints used
+These are called by the serverless API layer:
+- `${BASE_SERVER_URL}/activities/{week|month}`
+- `${BASE_SERVER_URL}/read` (legacy activities)
+- `${BASE_SERVER_URL}/athletes`
+- `${BASE_SERVER_URL}/athletes/training_data`
+- `${BASE_SERVER_URL}/team_stats`
 
 ## Deploying (Vercel)
 1) Create a Vercel project from this repo.
