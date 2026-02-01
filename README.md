@@ -1,19 +1,19 @@
 # Bullshark Analytics 🦈
 https://bullsharks.online/
 
-A lightweight public dashboard that visualizes Bullsharks running activity across
+A lightweight public dashboard that visualizes Bullsharks' running activity across
 multiple views (teams, training volume, injury insights, and weekly winners).
 
-This repo is **frontend + serverless API only**:
+This repo is **frontend and serverless API only**:
 - The source-of-truth activities come from the Bullsharks backend server (Cloud Run).
-- This Next.js app calls that backend from server-side API routes, then computes summary stats + timeseries for the UI.
+- This Next.js app calls that backend from server-side API routes, then computes summary stats and time series for the UI.
 
 ## Views
 - Dashboard: club highlights, recent runs, and activity trends.
-- Teams: Bulls vs Sharks comparisons plus leaderboards.
-- Training Volume: weekly kilometers by athlete with search + filters.
-- Injury Insights (Beta): per-athlete training load and risky-week markers.
-- Weekly Winners: per-week leaderboard and streaks.
+- Teams: Bulls vs Sharks comparisons and leaderboards.
+- Training Volume: weekly kilometers by athlete with search and filters.
+- Injury Insights (Beta): per-athlete training load and risky week markers.
+- Weekly Winners: a per-week leaderboard and streaks.
 
 ## Documentation
 For details on the backend server API endpoints, see the [Server API Documentation](https://github.com/BraydenRoyston/bullsharks.online/blob/main/docs/API_DOCUMENTATION.md).
@@ -24,7 +24,7 @@ For details on the backend server API endpoints, see the [Server API Documentati
 - Recharts (charts)
 
 ## Environment variables
-Copy `.env.example` to `.env` and fill values.
+Copy `.env.example` to `.env` and fill in the values.
 
 Required:
 - `BASE_SERVER_URL` (base URL of the Bullsharks backend, no trailing slash; endpoints are appended by the app)
@@ -44,8 +44,8 @@ npm install
 npm run dev
 ```
 
-Open:
-- Dashboard: `http://localhost:3000/`
+Open the dashboard at:
+- `http://localhost:3000/`
 
 ## API (used by the dashboard)
 - `GET /api/activities/week` → returns activities for the current week
@@ -54,13 +54,13 @@ Open:
 - `GET /api/athletes/training_data` → training volume + injury risk data
 - `GET /api/team_stats` → team aggregates for Bulls vs Sharks
 - `GET /api/club/stats?mode=days|week&days=30` → aggregated club stats (legacy)
-- `GET /api/club/timeseries?days=30` → daily km per athlete (legacy)
+- `GET /api/club/timeseries?days=30` → daily kilometers per athlete (legacy)
 - `GET /api/club/latest?limit=10` → latest runs (legacy)
 - `GET /api/health`
 
 ## Deploying (Vercel)
 1) Create a Vercel project from this repo.
-2) Set Vercel env:
+2) Set Vercel environment variables:
    - `BASE_SERVER_URL=https://bullsharks-server-288102886042.us-central1.run.app`
    - (optional) `APP_BASE_URL=https://your-app.vercel.app`
 3) Deploy.
