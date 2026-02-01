@@ -2,11 +2,11 @@
 
 https://bullsharks.online/
 
-A lightweight public dashboard that visualizes the Bullsharks running club's activity data. The app provides multiple views for tracking team performance, individual training volumes, injury risk indicators, and weekly leaderboards.
+A lightweight public dashboard that visualizes the Bullsharks running club's activity data. The app provides multiple views for tracking team performance, individual training volume, injury risk indicators, and weekly leaderboards.
 
 ## Overview
 
-This repository contains the **frontend and serverless API layer only**. Activity data is sourced from a separate Bullsharks backend server (hosted on Google Cloud Run). This Next.js application fetches data from that backend via server-side API routes, computes summary statistics and time series, then renders interactive charts and leaderboards.
+This repository contains the **frontend and serverless API layer only**. Activity data is sourced from a separate Bullsharks backend server (hosted on Google Cloud Run). This Next.js application fetches data from that backend via server-side API routes, computes summary statistics and time series, and then renders interactive charts and leaderboards.
 
 ### Architecture
 
@@ -114,7 +114,7 @@ Copy `.env.example` to `.env` and fill in the values.
 ### Backend Endpoints Called
 
 The app calls these endpoints on the backend server:
-- `${BASE_SERVER_URL}/activities/{week|month}` — Activity data for time period
+- `${BASE_SERVER_URL}/activities/{week|month}` — Activity data for a given time period
 - `${BASE_SERVER_URL}/read` — Legacy endpoint for club stats/timeseries
 - `${BASE_SERVER_URL}/athletes` — Athlete metadata (team, event)
 - `${BASE_SERVER_URL}/athletes/training_data` — Training volume and injury risk data
@@ -147,11 +147,11 @@ These Next.js API routes are used by the frontend:
 
 ## Deployment (Vercel)
 
-1. Create a Vercel project from this repository
-2. Set environment variables:
+1. Create a Vercel project from this repository.
+2. Set the environment variables:
    - `BASE_SERVER_URL=https://bullsharks-server-288102886042.us-central1.run.app`
    - (optional) `APP_BASE_URL=https://your-app.vercel.app`
-3. Deploy
+3. Deploy.
 
 ## Key Concepts
 
@@ -160,9 +160,9 @@ Each athlete belongs to a **team** (Bulls or Sharks) and is registered for an **
 
 ### Activity Status Chips
 Leaderboards display status chips indicating recent activity:
-- **"ran today"** — User ran today
-- **"recent"** — Last run within the past 3 days
-- **"inactive"** — No runs in the past 4+ days
+- **"ran today"** — The athlete ran today
+- **"recent"** — The athlete's last run was within the past 3 days
+- **"inactive"** — No runs in the past 4 or more days
 
 ### Training Risk Analysis
 The Injury Insights view shows risky weeks based on training load patterns. Risk indicators help athletes identify potential overtraining.
