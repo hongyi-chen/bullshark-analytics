@@ -13,7 +13,7 @@ export default function MethodologyCard() {
             <li>
               <span className={css.listTitle}>High Volume Spike:</span> This warning appears when your
               week-over-week mileage increased by more than 10%. Sometimes 10%+ weeks are okay, but
-              stacking many 10%+ weeks back-to-back can increase injury risk. Research "The 10% rule"
+              stacking many 10%+ weeks back-to-back can increase injury risk. Research &ldquo;The 10% rule&rdquo;
               to learn more.
             </li>
             <li>

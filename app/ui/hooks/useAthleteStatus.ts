@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Timeseries } from "../types";
 
 export function useAthleteStatus(timeseries: Timeseries[] | undefined) {
-  const [todayTimestamp, setTodayTimestamp] = useState<number | null>(null);
-
-  useEffect(() => {
+  const todayTimestamp = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    setTodayTimestamp(today.getTime());
+    return today.getTime();
   }, []);
 
   const athleteLastRunDate = useMemo(() => {
@@ -26,7 +24,6 @@ export function useAthleteStatus(timeseries: Timeseries[] | undefined) {
 
   const getAthleteStatus = useCallback(
     (athleteName: string): "today" | "recent" | "inactive" | null => {
-      if (todayTimestamp === null) return null;
       const lastRun = athleteLastRunDate.get(athleteName);
       if (!lastRun) return null;
 

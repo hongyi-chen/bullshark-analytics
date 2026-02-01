@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   CartesianGrid,
   Line,
@@ -110,10 +110,11 @@ function AthleteLegend({
 export default function TrainingChartCard({ athletes, loading }: TrainingChartCardProps) {
   const [focusedAthleteName, setFocusedAthleteName] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (focusedAthleteName == null) return;
-    const stillPresent = athletes.some(athlete => athlete.name === focusedAthleteName);
-    if (!stillPresent) setFocusedAthleteName(null);
+  const activeFocusedAthleteName = useMemo(() => {
+    if (focusedAthleteName == null) return null;
+    return athletes.some(athlete => athlete.name === focusedAthleteName)
+      ? focusedAthleteName
+      : null;
   }, [athletes, focusedAthleteName]);
 
   const chartData = useMemo(() => {
@@ -156,7 +157,7 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
       </div>
       <AthleteLegend
         athletes={athletes}
-        focusedAthleteName={focusedAthleteName}
+        focusedAthleteName={activeFocusedAthleteName}
         onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
         onClear={() => setFocusedAthleteName(null)}
       />
@@ -176,10 +177,10 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
                width={40}
              />
-             <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
+             <Tooltip content={<TrainingTooltip focusedAthleteName={activeFocusedAthleteName} />} />
              {athletes.map((athlete, idx) => {
 
-               const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
+               const isFocused = activeFocusedAthleteName == null || activeFocusedAthleteName === athlete.name;
                return (
                  <Line
                    key={athlete.name}
