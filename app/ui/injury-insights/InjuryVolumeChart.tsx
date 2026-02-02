@@ -167,12 +167,12 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
-                const { cx, cy, payload } = props;
-                const isRisky = payload.isRisky;
+              dot={(props: { cx?: number; cy?: number; payload?: ChartDataPoint }) => {
+                const { cx = 0, cy = 0, payload } = props;
+                const isRisky = payload?.isRisky;
 
                 return (
-                  <g>
+                  <g role="img" aria-label={isRisky ? `Risky data point at ${payload?.weekStart}` : undefined}>
                     <circle
                       cx={cx}
                       cy={cy}

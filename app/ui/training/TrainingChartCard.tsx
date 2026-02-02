@@ -151,8 +151,8 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
   return (
     <Card fixedTall style={{ height: '600px' }}>
       <div className={css.header}>
-        <h2>Weekly Training Kilometers</h2>
-        <p className="muted">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</p>
+        <h2 id="training-chart-title">Weekly Training Kilometers</h2>
+        <p className="muted" aria-live="polite">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</p>
       </div>
       <AthleteLegend
         athletes={athletes}
@@ -172,30 +172,28 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
                 return `${date.getMonth() + 1}/${date.getDate()}`;
               }}
             />
-             <YAxis
-               tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-               width={40}
-             />
-             <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
-             {athletes.map((athlete, idx) => {
-
-               const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
-               return (
-                 <Line
-                   key={athlete.name}
-                   type="monotone"
-                   dataKey={athlete.name}
-                   stroke={getChartColor(idx)}
-                   strokeWidth={isFocused ? 2.5 : 2}
-                   strokeOpacity={isFocused ? 1 : 0.15}
-                   dot={false}
-                   activeDot={{ r: 6 }}
-                   onClick={() => setFocusedAthleteName(athlete.name)}
-                   name={athlete.name}
-                 />
-
-               );
-             })}
+            <YAxis
+              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+              width={40}
+            />
+            <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
+            {athletes.map((athlete, idx) => {
+              const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
+              return (
+                <Line
+                  key={athlete.name}
+                  type="monotone"
+                  dataKey={athlete.name}
+                  stroke={getChartColor(idx)}
+                  strokeWidth={isFocused ? 2.5 : 2}
+                  strokeOpacity={isFocused ? 1 : 0.15}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                  onClick={() => setFocusedAthleteName(athlete.name)}
+                  name={athlete.name}
+                />
+              );
+            })}
 
           </LineChart>
         </ResponsiveContainer>

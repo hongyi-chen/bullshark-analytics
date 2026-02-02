@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --bg: #0b0f14;
   --panel: #0f1620;
   --panel-2: #111a25;
@@ -7,10 +7,35 @@
   --muted: #a6b1c2;
   --border: rgba(231, 237, 246, 0.12);
   --accent: #22c55e; /* green */
+  --focus-ring: rgba(34, 197, 94, 0.5);
 }
 
 * {
   box-sizing: border-box;
+}
+
+/* Improved focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 8px 16px;
+  z-index: 1000;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  top: 0;
 }
 
 html,

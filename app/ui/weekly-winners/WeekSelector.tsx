@@ -1,5 +1,6 @@
 import { format, parseISO, addWeeks, subWeeks, startOfWeek, isAfter } from 'date-fns';
 import css from '../dashboard/Filters.module.scss';
+import weekSelectorCss from './WeekSelector.module.scss';
 
 interface WeekSelectorProps {
   selectedWeek: string;
@@ -31,35 +32,38 @@ export default function WeekSelector({ selectedWeek, onWeekChange }: WeekSelecto
   );
 
   return (
-    <div className={css.card}>
+    <nav className={css.card} aria-label="Week navigation">
       <div className={css.group}>
-        <span className={css.label}>Week Selection</span>
-        <div className={css.pillRow}>
+        <span className={css.label} id="week-selection-label">Week Selection</span>
+        <div className={css.pillRow} role="group" aria-labelledby="week-selection-label">
           <button
             className={css.pill}
             onClick={handlePrevious}
             type="button"
+            aria-label={`Go to previous week, before ${weekLabel}`}
           >
-            ← Previous Week
+            <span aria-hidden="true">←</span> Previous Week
           </button>
-          <div style={{
-            padding: '8px 16px',
-            fontWeight: 600,
-            color: 'var(--text)'
-          }}>
+          <div 
+            className={weekSelectorCss.currentWeek}
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <span className={weekSelectorCss.visuallyHidden}>Currently viewing: </span>
             Week of {weekLabel}
           </div>
           <button
-            className={css.pill}
+            className={`${css.pill} ${isCurrentWeek ? weekSelectorCss.disabledPill : ''}`}
             onClick={handleNext}
             type="button"
             disabled={isCurrentWeek}
-            style={{ opacity: isCurrentWeek ? 0.5 : 1, cursor: isCurrentWeek ? 'not-allowed' : 'pointer' }}
+            aria-label={isCurrentWeek ? "Cannot go to next week - already at current week" : `Go to next week, after ${weekLabel}`}
+            aria-disabled={isCurrentWeek}
           >
-            Next Week →
+            Next Week <span aria-hidden="true">→</span>
           </button>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

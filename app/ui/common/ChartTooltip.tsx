@@ -9,6 +9,7 @@ interface ChartTooltipProps {
   label?: string | number;
   metricLabel: string;
   payload?: TooltipPayloadItem[];
+  labelPrefix?: string;
 }
 
 export default function ChartTooltip({
@@ -16,13 +17,14 @@ export default function ChartTooltip({
   payload,
   label,
   metricLabel,
+  labelPrefix = "Date",
 }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   const val = payload[0]?.value ?? 0;
   return (
-    <div className={css.tooltip}>
+    <div className={css.tooltip} role="tooltip" aria-live="polite">
       <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 4 }}>
-        Label
+        {labelPrefix}
       </div>
       <div style={{ fontSize: 13, marginBottom: 8 }}>{label}</div>
       <div
