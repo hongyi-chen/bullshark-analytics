@@ -9,6 +9,9 @@ export const dynamic = "force-dynamic";
 export default function HomePage() {
   return (
     <div className="container">
+      <a href="#tabpanel-main" className="skip-link">
+        Skip to main content
+      </a>
       <Header />
       <MainContent />
       <Footer />

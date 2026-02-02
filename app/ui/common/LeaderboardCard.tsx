@@ -48,15 +48,18 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const fullLabel = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      title={fullLabel}
+      aria-label={fullLabel}
+      role="img"
     >
-      {event}
+      <span aria-hidden="true">{event}</span>
     </span>
   );
 }
@@ -87,8 +90,13 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
-      {label}
+    <span 
+      className={clsx(css.statusChip, className)} 
+      title={tooltip}
+      aria-label={tooltip}
+      role="status"
+    >
+      <span aria-hidden="true">{label}</span>
     </span>
   );
 }
@@ -98,15 +106,18 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const fullLabel = team === "bulls" ? "Team Bulls" : "Team Sharks";
   return (
     <span
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      title={fullLabel}
+      aria-label={fullLabel}
+      role="img"
     >
-      {team}
+      <span aria-hidden="true">{team}</span>
     </span>
   );
 }

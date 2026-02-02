@@ -8,12 +8,41 @@ import TrainingView from "../training/TrainingView";
 import InjuryInsightsView from "../injury-insights/InjuryInsightsView";
 import WeeklyWinnersView from "../weekly-winners/WeeklyWinnersView";
 
+const TAB_LABELS: Record<string, string> = {
+  dashboard: "Dashboard",
+  teams: "Teams",
+  training: "Training Volume",
+  injury: "Injury Insights",
+  "weekly-winners": "Weekly Winners",
+};
+
 export default function MainContent() {
   const [activeTab] = useAtom(activeTabState);
 
-  if (activeTab === "dashboard") return <DashboardView />;
-  if (activeTab === "teams") return <TeamsView />;
-  if (activeTab === "injury") return <InjuryInsightsView />;
-  if (activeTab === "weekly-winners") return <WeeklyWinnersView />;
-  return <TrainingView />;
+  const renderContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return <DashboardView />;
+      case "teams":
+        return <TeamsView />;
+      case "injury":
+        return <InjuryInsightsView />;
+      case "weekly-winners":
+        return <WeeklyWinnersView />;
+      default:
+        return <TrainingView />;
+    }
+  };
+
+  return (
+    <main
+      id="tabpanel-main"
+      role="tabpanel"
+      aria-labelledby={`tab-${activeTab}`}
+      aria-label={TAB_LABELS[activeTab] || "Content"}
+      tabIndex={0}
+    >
+      {renderContent()}
+    </main>
+  );
 }
