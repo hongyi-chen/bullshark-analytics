@@ -1,0 +1,47 @@
+name: Weekly Cursor Code Review
+
+on:
+  # Run every Monday at 9:00 AM UTC (4:00 AM EST)
+  schedule:
+    - cron: '0 9 * * 1'
+  
+  # Allow manual triggering from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  launch-cursor-agent:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Make launcher script executable
+        run: chmod +x scripts/cursor-agent-launcher.mjs
+      
+      - name: Launch Cursor Cloud Agent
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+        run: node scripts/cursor-agent-launcher.mjs
+      
+      - name: Summary
+        if: success()
+        run: |
+          echo "✅ Cursor Cloud Agent launched successfully!"
+          echo "The agent will analyze the codebase and create a PR with improvements."
+          echo "Check your repository PRs for the automated review results."
+      
+      - name: Failure notification
+        if: failure()
+        run: |
+          echo "❌ Failed to launch Cursor Cloud Agent"
+          echo "Please check the workflow logs for details."
+          echo "Common issues:"
+          echo "- CURSOR_API_KEY secret not configured"
+          echo "- API key is invalid or expired"
+          echo "- Network connectivity issues"
