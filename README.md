@@ -61,6 +61,40 @@ Open:
    - (optional) `APP_BASE_URL=https://your-app.vercel.app`
 3) Deploy.
 
+## Automated Code Reviews (Optional)
+This repository includes an automated weekly code review system powered by Cursor Cloud Agents. The agent analyzes the codebase for:
+- **Accessibility**: WCAG 2.1 AA compliance, ARIA attributes, keyboard navigation, color contrast
+- **Code Quality**: TypeScript best practices, React patterns, error handling
+- **Performance**: Bundle optimization, unnecessary re-renders, memoization opportunities
+- **Refactoring**: Code duplication, dead code, complexity reduction
+
+### Setup
+1. **Obtain a Cursor API Key**:
+   - Visit [Cursor Settings](https://cursor.com/settings)
+   - Navigate to the API section
+   - Generate a new API key
+
+2. **Add to GitHub Secrets**:
+   - Go to your repository Settings → Secrets and variables → Actions
+   - Click "New repository secret"
+   - Name: `CURSOR_API_KEY`
+   - Value: Your API key from step 1
+
+3. **Enable the Workflow**:
+   - The workflow runs automatically every Monday at 9:00 AM UTC
+   - You can also trigger it manually from the Actions tab
+   - The agent will create a PR with improvement suggestions
+
+### Manual Testing
+To test the agent locally:
+```sh
+# Add your API key to .env
+echo "CURSOR_API_KEY=your_api_key_here" >> .env
+
+# Run the launcher script
+node scripts/cursor-agent-launcher.mjs
+```
+
 ## Troubleshooting
 - **500 with** `Invalid environment configuration: BASE_SERVER_URL: Invalid url`
   - Ensure `BASE_SERVER_URL` includes `https://` and does not include a trailing slash.
