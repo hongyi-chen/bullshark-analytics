@@ -8,12 +8,49 @@ import TrainingView from "../training/TrainingView";
 import InjuryInsightsView from "../injury-insights/InjuryInsightsView";
 import WeeklyWinnersView from "../weekly-winners/WeeklyWinnersView";
 
+type TabId = 'dashboard' | 'teams' | 'training' | 'injury' | 'weekly-winners';
+
+interface TabPanelProps {
+  id: TabId;
+  activeTab: TabId;
+  children: React.ReactNode;
+}
+
+function TabPanel({ id, activeTab, children }: TabPanelProps) {
+  if (activeTab !== id) return null;
+  
+  return (
+    <div
+      role="tabpanel"
+      id={`tabpanel-${id}`}
+      aria-labelledby={`tab-${id}`}
+      tabIndex={0}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function MainContent() {
   const [activeTab] = useAtom(activeTabState);
 
-  if (activeTab === "dashboard") return <DashboardView />;
-  if (activeTab === "teams") return <TeamsView />;
-  if (activeTab === "injury") return <InjuryInsightsView />;
-  if (activeTab === "weekly-winners") return <WeeklyWinnersView />;
-  return <TrainingView />;
+  return (
+    <>
+      <TabPanel id="dashboard" activeTab={activeTab}>
+        <DashboardView />
+      </TabPanel>
+      <TabPanel id="teams" activeTab={activeTab}>
+        <TeamsView />
+      </TabPanel>
+      <TabPanel id="training" activeTab={activeTab}>
+        <TrainingView />
+      </TabPanel>
+      <TabPanel id="injury" activeTab={activeTab}>
+        <InjuryInsightsView />
+      </TabPanel>
+      <TabPanel id="weekly-winners" activeTab={activeTab}>
+        <WeeklyWinnersView />
+      </TabPanel>
+    </>
+  );
 }

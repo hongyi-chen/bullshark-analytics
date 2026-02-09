@@ -8,10 +8,17 @@ export const dynamic = "force-dynamic";
 
 export default function HomePage() {
   return (
-    <div className="container">
-      <Header />
-      <MainContent />
-      <Footer />
-    </div>
+    <>
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      <div className="container">
+        <Header />
+        <main id="main-content" role="main">
+          <MainContent />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }
