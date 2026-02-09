@@ -167,8 +167,9 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: { cx?: number; cy?: number; payload?: ChartDataPoint }) => {
                 const { cx, cy, payload } = props;
+                if (cx === undefined || cy === undefined || !payload) return null;
                 const isRisky = payload.isRisky;
 
                 return (

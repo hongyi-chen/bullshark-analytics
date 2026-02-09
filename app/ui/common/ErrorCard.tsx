@@ -7,15 +7,22 @@ interface ErrorCardProps {
 
 export default function ErrorCard({ errorMessage }: ErrorCardProps) {
   return (
-    <Card
-      header={
-        <>
-          <div className="bold">Couldn’t load dashboard</div>
-          <div className="muted">Check that the API endpoints are working.</div>
-        </>
-      }
-    >
-      <pre className={css.errorMessage}>{errorMessage}</pre>
-    </Card>
+    <div role="alert" aria-live="assertive">
+      <Card
+        header={
+          <>
+            <div className="bold">
+              <span aria-hidden="true">⚠️ </span>
+              Couldn&apos;t load dashboard
+            </div>
+            <div className="muted">Check that the API endpoints are working.</div>
+          </>
+        }
+      >
+        <pre className={css.errorMessage} aria-label="Error details">
+          {errorMessage}
+        </pre>
+      </Card>
+    </div>
   );
 }

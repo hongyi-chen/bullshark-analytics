@@ -231,7 +231,8 @@ export default function LeaderboardCard({
           return (
             <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
               <span className={css.streakBadge}>
-                <span className={css.streakIcon}>🔥</span>
+                <span className={css.streakIcon} aria-hidden="true">🔥</span>
+                <span className="visually-hidden">Streak: </span>
                 {streakCount}
               </span>
             </td>
