@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/build.mjs",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
@@ -23,6 +24,8 @@
     "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.6",
     "sass": "^1.97.1",
     "typescript": "^5.9.3"
   }

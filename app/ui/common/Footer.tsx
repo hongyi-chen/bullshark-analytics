@@ -1,14 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import css from "./Footer.module.scss";
 
 export default function Footer() {
-  const [year, setYear] = useState("");
-
-  useEffect(() => {
-    setYear(new Date().getFullYear().toString());
-  }, []);
+  const year = new Date().getFullYear().toString();
 
   return (
     <footer className={css.footer}>
