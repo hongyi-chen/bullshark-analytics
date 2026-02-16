@@ -4,16 +4,24 @@ interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  ariaLabel?: string;
 }
 
-export default function SearchBar({ value, onChange, placeholder = "Search..." }: SearchBarProps) {
+export default function SearchBar({
+  value,
+  onChange,
+  placeholder = "Search...",
+  ariaLabel = "Search",
+}: SearchBarProps) {
   return (
     <input
-      type="text"
+      type="search"
       className={css.searchInput}
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
+      aria-label={ariaLabel}
+      role="searchbox"
     />
   );
 }
