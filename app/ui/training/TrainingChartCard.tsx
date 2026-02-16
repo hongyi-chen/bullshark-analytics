@@ -12,6 +12,7 @@ import { AthleteWithTrainingData } from '@/app/ui/types';
 import { getChartColor } from '@/app/utils/athleteStyles';
 import { fmtKm } from '@/app/utils/fmtKm';
 import Card from '@/app/ui/common/Card';
+import ErrorBoundary from '@/app/ui/common/ErrorBoundary';
 import css from './TrainingChartCard.module.scss';
 
 interface TrainingChartCardProps {
@@ -149,57 +150,56 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
   }
 
   return (
-    <Card fixedTall style={{ height: '600px' }}>
-      <div className={css.header}>
-        <h2>Weekly Training Kilometers</h2>
-        <p className="muted">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</p>
-      </div>
-      <AthleteLegend
-        athletes={athletes}
-        focusedAthleteName={focusedAthleteName}
-        onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
-        onClear={() => setFocusedAthleteName(null)}
-      />
-      <div className={`flexFill ${css.chartArea}`}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
-            <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
-            <XAxis
-              dataKey="weekStart"
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return `${date.getMonth() + 1}/${date.getDate()}`;
-              }}
-            />
-             <YAxis
-               tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-               width={40}
-             />
-             <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
-             {athletes.map((athlete, idx) => {
-
-               const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
-               return (
-                 <Line
-                   key={athlete.name}
-                   type="monotone"
-                   dataKey={athlete.name}
-                   stroke={getChartColor(idx)}
-                   strokeWidth={isFocused ? 2.5 : 2}
-                   strokeOpacity={isFocused ? 1 : 0.15}
-                   dot={false}
-                   activeDot={{ r: 6 }}
-                   onClick={() => setFocusedAthleteName(athlete.name)}
-                   name={athlete.name}
-                 />
-
-               );
-             })}
-
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </Card>
+    <ErrorBoundary componentName="Training Chart">
+      <Card fixedTall style={{ height: '600px' }}>
+        <div className={css.header}>
+          <h2>Weekly Training Kilometers</h2>
+          <p className="muted">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</p>
+        </div>
+        <AthleteLegend
+          athletes={athletes}
+          focusedAthleteName={focusedAthleteName}
+          onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
+          onClear={() => setFocusedAthleteName(null)}
+        />
+        <div className={`flexFill ${css.chartArea}`}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
+              <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
+              <XAxis
+                dataKey="weekStart"
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+                tickFormatter={(value) => {
+                  const date = new Date(value);
+                  return `${date.getMonth() + 1}/${date.getDate()}`;
+                }}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+                width={40}
+              />
+              <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
+              {athletes.map((athlete, idx) => {
+                const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
+                return (
+                  <Line
+                    key={athlete.name}
+                    type="monotone"
+                    dataKey={athlete.name}
+                    stroke={getChartColor(idx)}
+                    strokeWidth={isFocused ? 2.5 : 2}
+                    strokeOpacity={isFocused ? 1 : 0.15}
+                    dot={false}
+                    activeDot={{ r: 6 }}
+                    onClick={() => setFocusedAthleteName(athlete.name)}
+                    name={athlete.name}
+                  />
+                );
+              })}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+    </ErrorBoundary>
   );
 }

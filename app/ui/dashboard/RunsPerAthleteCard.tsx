@@ -57,7 +57,7 @@ export default function RunsPerAthleteCard({
               width={120}
               tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
             />
-            <Tooltip content={<ChartTooltip metricLabel="Runs" />} />
+            <Tooltip content={<ChartTooltip metricLabel="Runs" labelTitle="Athlete" />} />
             <Bar
               dataKey="runs"
               fill="rgba(34, 197, 94, 0.45)"
