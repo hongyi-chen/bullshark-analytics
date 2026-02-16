@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import css from "./Card.module.scss";
-import { CSSProperties } from "react";
+import { CSSProperties, HTMLAttributes } from "react";
 
 interface CardProps extends React.PropsWithChildren {
   fixedTall?: boolean;
@@ -8,6 +8,9 @@ interface CardProps extends React.PropsWithChildren {
   highlighted?: boolean;
   style?: CSSProperties;
   className?: string;
+  role?: HTMLAttributes<HTMLDivElement>['role'];
+  'aria-labelledby'?: string;
+  'aria-label'?: string;
 }
 
 export default function Card({
@@ -17,6 +20,9 @@ export default function Card({
   highlighted = false,
   style,
   className,
+  role,
+  'aria-labelledby': ariaLabelledby,
+  'aria-label': ariaLabel,
 }: CardProps) {
   return (
     <div
@@ -25,6 +31,9 @@ export default function Card({
         [css.highlighted]: highlighted,
       })}
       style={style}
+      role={role}
+      aria-labelledby={ariaLabelledby}
+      aria-label={ariaLabel}
     >
       {header != null && <div className={css.header}>{header}</div>}
       {children}
