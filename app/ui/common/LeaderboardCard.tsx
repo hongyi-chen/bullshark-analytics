@@ -48,13 +48,15 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const label = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      title={label}
+      aria-label={label}
     >
       {event}
     </span>
@@ -87,7 +89,11 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
+    <span
+      className={clsx(css.statusChip, className)}
+      title={tooltip}
+      aria-label={tooltip}
+    >
       {label}
     </span>
   );
@@ -98,13 +104,15 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const label = team === "bulls" ? "Team Bulls" : "Team Sharks";
   return (
     <span
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      title={label}
+      aria-label={label}
     >
       {team}
     </span>
@@ -158,27 +166,31 @@ export default function LeaderboardCard({
       switch (col.type) {
         case "rank":
           return (
-            <th key={idx} style={{ width: 42 }}>
-              #
+            <th key={idx} scope="col" style={{ width: 42 }}>
+              <span aria-label="Rank">#</span>
             </th>
           );
         case "athlete":
-          return <th key={idx}>Athlete</th>;
+          return (
+            <th key={idx} scope="col">
+              Athlete
+            </th>
+          );
         case "runs":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Runs
             </th>
           );
         case "distance":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
-              Km
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
+              <abbr title="Kilometers">Km</abbr>
             </th>
           );
         case "streak":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Streak
             </th>
           );
