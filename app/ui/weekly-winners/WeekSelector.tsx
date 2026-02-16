@@ -30,23 +30,31 @@ export default function WeekSelector({ selectedWeek, onWeekChange }: WeekSelecto
     'yyyy-MM-dd'
   );
 
+  const previousWeekLabel = format(subWeeks(weekDate, 1), 'MMM d, yyyy');
+  const nextWeekLabel = !isCurrentWeek ? format(addWeeks(weekDate, 1), 'MMM d, yyyy') : '';
+
   return (
-    <div className={css.card}>
+    <nav className={css.card} aria-label="Week navigation">
       <div className={css.group}>
-        <span className={css.label}>Week Selection</span>
-        <div className={css.pillRow}>
+        <span className={css.label} id="week-selection-label">Week Selection</span>
+        <div className={css.pillRow} role="group" aria-labelledby="week-selection-label">
           <button
             className={css.pill}
             onClick={handlePrevious}
             type="button"
+            aria-label={`Go to previous week: ${previousWeekLabel}`}
           >
-            ← Previous Week
+            <span aria-hidden="true">←</span> Previous Week
           </button>
-          <div style={{
-            padding: '8px 16px',
-            fontWeight: 600,
-            color: 'var(--text)'
-          }}>
+          <div
+            style={{
+              padding: '8px 16px',
+              fontWeight: 600,
+              color: 'var(--text)'
+            }}
+            aria-live="polite"
+            aria-atomic="true"
+          >
             Week of {weekLabel}
           </div>
           <button
@@ -54,12 +62,14 @@ export default function WeekSelector({ selectedWeek, onWeekChange }: WeekSelecto
             onClick={handleNext}
             type="button"
             disabled={isCurrentWeek}
+            aria-disabled={isCurrentWeek}
+            aria-label={isCurrentWeek ? 'Next week (current week selected, cannot go forward)' : `Go to next week: ${nextWeekLabel}`}
             style={{ opacity: isCurrentWeek ? 0.5 : 1, cursor: isCurrentWeek ? 'not-allowed' : 'pointer' }}
           >
-            Next Week →
+            Next Week <span aria-hidden="true">→</span>
           </button>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
