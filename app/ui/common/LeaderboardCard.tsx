@@ -158,27 +158,27 @@ export default function LeaderboardCard({
       switch (col.type) {
         case "rank":
           return (
-            <th key={idx} style={{ width: 42 }}>
-              #
+            <th key={idx} scope="col" style={{ width: 42 }}>
+              <span aria-label="Rank">#</span>
             </th>
           );
         case "athlete":
-          return <th key={idx}>Athlete</th>;
+          return <th key={idx} scope="col">Athlete</th>;
         case "runs":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Runs
             </th>
           );
         case "distance":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
-              Km
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
+              <span aria-label="Kilometers">Km</span>
             </th>
           );
         case "streak":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Streak
             </th>
           );
@@ -226,16 +226,17 @@ export default function LeaderboardCard({
               {fmtKm(athlete.totalKm)}
             </td>
           );
-        case "streak":
+        case "streak": {
           const streakCount = athlete.streak ?? 0;
           return (
             <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
               <span className={css.streakBadge}>
-                <span className={css.streakIcon}>🔥</span>
+                <span className={css.streakIcon} role="img" aria-label="fire">🔥</span>
                 {streakCount}
               </span>
             </td>
           );
+        }
       }
     });
   };

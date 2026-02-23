@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import JotaiProvider from '@/lib/providers/JotaiProvider';
+import ErrorBoundary from '@/app/ui/common/ErrorBoundary';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
@@ -10,7 +11,6 @@ function getMetadataBase(): URL | undefined {
   try {
     return new URL(raw);
   } catch {
-    // Avoid crashing metadata generation if env is misconfigured.
     return undefined;
   }
 }
@@ -43,7 +43,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <JotaiProvider>{children}</JotaiProvider>
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+        <JotaiProvider>
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </JotaiProvider>
         <Analytics />
         <SpeedInsights />
       </body>

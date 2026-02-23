@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useAtom } from "jotai";
+import { useEffect, useMemo } from "react";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
   timeFilterState,
   loadingState,
@@ -23,8 +23,8 @@ import Divider from "../common/Divider";
 export default function DashboardView() {
   // Global state
   const [timeFilter, setTimeFilter] = useAtom(timeFilterState);
-  const [loading] = useAtom(loadingState);
-  const [err] = useAtom(errorState);
+  const loading = useAtomValue(loadingState);
+  const err = useAtomValue(errorState);
 
   // Dashboard-specific state (now using atoms for persistence)
   const [aggregation, setAggregation] = useAtom(dashboardAggregationState);
@@ -62,7 +62,7 @@ export default function DashboardView() {
     return (stats?.athletes ?? []).filter((a) => a.runs >= minRuns);
   }, [stats, minRuns]);
 
-  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
+  const setLastUpdatedText = useSetAtom(lastUpdatedTextState);
 
   useEffect(() => {
     if (!stats?.lastFetchedAt) {
@@ -91,7 +91,7 @@ export default function DashboardView() {
           title="Top athletes"
           subtitle={`By total distance (this ${timeFilter})`}
           badgeLabel="Runs"
-          badgeValue={stats.overall.totalRuns}
+          badgeValue={stats?.overall?.totalRuns ?? 0}
           athletes={filteredAthletes}
           columns={[
             { type: "rank" },

@@ -25,6 +25,47 @@ interface TooltipProps {
   label?: string;
 }
 
+interface ChartDotProps {
+  cx?: number;
+  cy?: number;
+  payload?: ChartDataPoint;
+}
+
+function renderChartDot(props: ChartDotProps) {
+  const { cx, cy, payload } = props;
+  if (cx === undefined || cy === undefined || !payload) return null;
+  const isRisky = payload.isRisky;
+
+  return (
+    <g aria-hidden="true">
+      <circle
+        cx={cx}
+        cy={cy}
+        r={4}
+        fill={isRisky ? '#ef4444' : 'var(--accent)'}
+        stroke={isRisky ? '#ef4444' : 'var(--accent)'}
+        strokeWidth={2}
+      />
+      {isRisky && (
+        <g transform={`translate(${cx - 10}, ${cy - 24})`}>
+          <path
+            d="M10 1L1 17h18L10 1z"
+            fill="#ef4444"
+            stroke="#1a1a1a"
+            strokeWidth="1"
+          />
+          <path
+            d="M10 6v4M10 13h.01"
+            stroke="#1a1a1a"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </g>
+      )}
+    </g>
+  );
+}
+
 function VolumeTooltip({ active, payload, label }: TooltipProps) {
   if (!active || !payload?.length || !label) return null;
 
@@ -41,7 +82,7 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
       </div>
       {riskData && (
         <div className={css.tooltipRisk}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" role="img">
             <path
               d="M12 2L2 20h20L12 2z"
               stroke="currentColor"
@@ -167,39 +208,7 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
-                const { cx, cy, payload } = props;
-                const isRisky = payload.isRisky;
-
-                return (
-                  <g>
-                    <circle
-                      cx={cx}
-                      cy={cy}
-                      r={4}
-                      fill={isRisky ? '#ef4444' : 'var(--accent)'}
-                      stroke={isRisky ? '#ef4444' : 'var(--accent)'}
-                      strokeWidth={2}
-                    />
-                    {isRisky && (
-                      <g transform={`translate(${cx - 10}, ${cy - 24})`}>
-                        <path
-                          d="M10 1L1 17h18L10 1z"
-                          fill="#ef4444"
-                          stroke="#1a1a1a"
-                          strokeWidth="1"
-                        />
-                        <path
-                          d="M10 6v4M10 13h.01"
-                          stroke="#1a1a1a"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                        />
-                      </g>
-                    )}
-                  </g>
-                );
-              }}
+              dot={renderChartDot}
               activeDot={{ r: 6 }}
             />
           </ComposedChart>
