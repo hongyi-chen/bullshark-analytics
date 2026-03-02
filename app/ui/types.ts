@@ -1,5 +1,5 @@
-export type Aggregation = "daily" | "weekly";
-export type TimeFilter = "week" | "month";
+export type { TimeFilter } from "@/lib/types/dashboard";
+export type { Aggregation } from "@/lib/state/atoms";
 export type Timeseries = {
   day: string;
   athleteName: string;

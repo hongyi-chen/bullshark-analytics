@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart, Line } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
@@ -17,6 +17,12 @@ interface ChartDataPoint {
   kilometers: number;
   isRisky?: boolean;
   riskData?: { riskCount: number; risks: string[] };
+}
+
+interface ChartDotProps {
+  cx?: number;
+  cy?: number;
+  payload?: ChartDataPoint;
 }
 
 interface TooltipProps {
@@ -41,7 +47,14 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
       </div>
       {riskData && (
         <div className={css.tooltipRisk}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg 
+            width="14" 
+            height="14" 
+            viewBox="0 0 24 24" 
+            fill="none"
+            aria-hidden="true"
+            focusable="false"
+          >
             <path
               d="M12 2L2 20h20L12 2z"
               stroke="currentColor"
@@ -167,8 +180,9 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: ChartDotProps) => {
                 const { cx, cy, payload } = props;
+                if (cx === undefined || cy === undefined || !payload) return null;
                 const isRisky = payload.isRisky;
 
                 return (
