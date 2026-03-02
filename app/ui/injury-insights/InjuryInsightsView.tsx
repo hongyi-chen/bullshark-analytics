@@ -62,10 +62,14 @@ export default function InjuryInsightsView() {
 
       <Card>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>
+          <label 
+            htmlFor="injury-athlete-selector"
+            style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}
+          >
             Select Athlete
           </label>
           <AthleteSelector
+            id="injury-athlete-selector"
             athletes={athletesTrainingData}
             selectedAthleteId={selectedAthleteId}
             onSelectAthlete={setSelectedAthleteId}
