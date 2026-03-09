@@ -68,8 +68,7 @@ export default function HighlightsCard({
       }
     >
       <div className={css.container}>
-        <Card highlighted={true} style={{ padding: 12 }}>
-          {" "}
+        <Card highlighted compact>
           <div className="muted">Longest run</div>
           <div className={css.highlightValue}>
             {stats?.overall.longest
@@ -80,7 +79,7 @@ export default function HighlightsCard({
             {stats?.overall.longest?.athleteName ?? ""}
           </div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted compact>
           <div className="muted">Most dedicated</div>
           <div className={css.highlightValue}>
             {highlights.mostDedicated
@@ -91,7 +90,7 @@ export default function HighlightsCard({
             {highlights.mostDedicated?.name ?? ""}
           </div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted compact>
           <div className="muted">Most runs</div>
           <div className={css.highlightValue}>
             {stats?.overall.mostRuns
@@ -102,19 +101,19 @@ export default function HighlightsCard({
             {stats?.overall.mostRuns?.athleteName ?? ""}
           </div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted compact>
           <div className="muted">Average run</div>
           <div className={css.highlightValue}>
             {fmtKm(highlights.avgRunKm)} km
           </div>
           <div className={css.highlightAthlete}>per run</div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted compact>
           <div className="muted">Active athletes</div>
           <div className={css.highlightValue}>{highlights.activeAthletes}</div>
           <div className={css.highlightAthlete}>runners</div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted compact>
           <div className="muted">Busiest day</div>
           <div className={css.highlightValue}>
             {highlights.busiestDay
