@@ -69,8 +69,8 @@ export default function LatestRunsCard({
       style={{ opacity: loading ? 0.7 : 1 }}
     >
       <div className={css.latestRunsGrid}>
-        {latestRuns?.runs.map((run, idx) => (
-          <div key={idx} className={css.latestRunItem}>
+        {latestRuns?.runs.map((run) => (
+          <div key={`${run.athleteName}-${run.fetchedAt}`} className={css.latestRunItem}>
             <div
               className={css.latestRunIcon}
               style={{

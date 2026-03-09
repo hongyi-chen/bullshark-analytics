@@ -6,6 +6,7 @@ interface CardProps extends React.PropsWithChildren {
   fixedTall?: boolean;
   header?: React.JSX.Element;
   highlighted?: boolean;
+  compact?: boolean;
   style?: CSSProperties;
   className?: string;
 }
@@ -15,6 +16,7 @@ export default function Card({
   fixedTall = false,
   header,
   highlighted = false,
+  compact = false,
   style,
   className,
 }: CardProps) {
@@ -23,6 +25,7 @@ export default function Card({
       className={clsx(css.card, className, {
         [css.fixedTall]: fixedTall,
         [css.highlighted]: highlighted,
+        [css.compact]: compact,
       })}
       style={style}
     >

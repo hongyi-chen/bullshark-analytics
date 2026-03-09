@@ -20,6 +20,11 @@
     justify-content: center;
 }
 
+/* Compact card variant with reduced padding */
+.compact {
+    padding: 12px;
+}
+
 .header {
     display: flex;
     align-items: baseline;

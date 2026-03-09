@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CartesianGrid,
   Line,
@@ -116,6 +116,14 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
     if (!stillPresent) setFocusedAthleteName(null);
   }, [athletes, focusedAthleteName]);
 
+  const handleToggleAthlete = useCallback((athleteName: string) => {
+    setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName));
+  }, []);
+
+  const handleClearFocus = useCallback(() => {
+    setFocusedAthleteName(null);
+  }, []);
+
   const chartData = useMemo(() => {
     // Collect all unique week dates
     const allWeeks = new Set<string>();
@@ -157,8 +165,8 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
       <AthleteLegend
         athletes={athletes}
         focusedAthleteName={focusedAthleteName}
-        onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
-        onClear={() => setFocusedAthleteName(null)}
+        onToggle={handleToggleAthlete}
+        onClear={handleClearFocus}
       />
       <div className={`flexFill ${css.chartArea}`}>
         <ResponsiveContainer width="100%" height="100%">
