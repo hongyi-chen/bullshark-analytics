@@ -14,8 +14,8 @@ type CacheEntry<T> = {
 
 const cache = new Map<string, CacheEntry<unknown>>();
 
-function getKey(path: string) {
-  return path; // can be extended later
+function getKey(path: string): string {
+  return path;
 }
 
 export function hasFreshActivitiesCache(timeFilter: 'week' | 'month'): boolean {

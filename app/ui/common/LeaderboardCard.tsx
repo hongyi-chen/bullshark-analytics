@@ -1,4 +1,4 @@
-import { CSSProperties, useMemo } from "react";
+import { CSSProperties, useMemo, memo } from "react";
 import Card from "../common/Card";
 import { Athlete, Timeseries } from "../types";
 import clsx from "clsx";
@@ -47,7 +47,7 @@ interface EventChipProps {
   event: "half" | "full";
 }
 
-function EventChip({ event }: EventChipProps) {
+const EventChip = memo(function EventChip({ event }: EventChipProps) {
   return (
     <span
       className={clsx(
@@ -59,13 +59,13 @@ function EventChip({ event }: EventChipProps) {
       {event}
     </span>
   );
-}
+});
 
 interface StatusChipProps {
   status: "today" | "recent" | "inactive";
 }
 
-function StatusChip({ status }: StatusChipProps) {
+const StatusChip = memo(function StatusChip({ status }: StatusChipProps) {
   const config = {
     today: {
       label: "ran today",
@@ -91,13 +91,13 @@ function StatusChip({ status }: StatusChipProps) {
       {label}
     </span>
   );
-}
+});
 
 interface TeamChipProps {
   team: "bulls" | "sharks";
 }
 
-function TeamChip({ team }: TeamChipProps) {
+const TeamChip = memo(function TeamChip({ team }: TeamChipProps) {
   return (
     <span
       className={clsx(
@@ -109,7 +109,7 @@ function TeamChip({ team }: TeamChipProps) {
       {team}
     </span>
   );
-}
+});
 
 // === MAIN COMPONENT ===
 
@@ -152,33 +152,32 @@ export default function LeaderboardCard({
     return teamMap;
   }, [chipDataSources?.athleteMetadata]);
 
-  // Render column headers
   const renderHeaders = () => {
-    return columns.map((col, idx) => {
+    return columns.map((col) => {
       switch (col.type) {
         case "rank":
           return (
-            <th key={idx} style={{ width: 42 }}>
+            <th key={col.type} style={{ width: 42 }}>
               #
             </th>
           );
         case "athlete":
-          return <th key={idx}>Athlete</th>;
+          return <th key={col.type}>Athlete</th>;
         case "runs":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={col.type} style={TEXT_ALIGN_RIGHT}>
               Runs
             </th>
           );
         case "distance":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={col.type} style={TEXT_ALIGN_RIGHT}>
               Km
             </th>
           );
         case "streak":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={col.type} style={TEXT_ALIGN_RIGHT}>
               Streak
             </th>
           );
@@ -186,24 +185,23 @@ export default function LeaderboardCard({
     });
   };
 
-  // Render athlete row cells
   const renderCells = (athlete: LeaderboardAthlete, idx: number) => {
     const status = getAthleteStatus(athlete.athleteName);
     const event = athleteEventMap.get(athlete.athleteName);
     const team = athleteTeamMap.get(athlete.athleteName);
 
-    return columns.map((col, colIdx) => {
+    return columns.map((col) => {
       switch (col.type) {
         case "rank":
           return (
-            <td key={colIdx} className="muted">
+            <td key={col.type} className="muted">
               {idx + 1}
             </td>
           );
 
         case "athlete":
           return (
-            <td key={colIdx}>
+            <td key={col.type}>
               <span className={css.athleteNameCell}>
                 {athlete.athleteName}
                 {col.showTeamChips && team && <TeamChip team={team} />}
@@ -215,27 +213,28 @@ export default function LeaderboardCard({
 
         case "runs":
           return (
-            <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
+            <td key={col.type} style={TEXT_ALIGN_RIGHT}>
               {athlete.runs ?? 0}
             </td>
           );
 
         case "distance":
           return (
-            <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
+            <td key={col.type} style={TEXT_ALIGN_RIGHT}>
               {fmtKm(athlete.totalKm)}
             </td>
           );
-        case "streak":
+        case "streak": {
           const streakCount = athlete.streak ?? 0;
           return (
-            <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
+            <td key={col.type} style={TEXT_ALIGN_RIGHT}>
               <span className={css.streakBadge}>
                 <span className={css.streakIcon}>🔥</span>
                 {streakCount}
               </span>
             </td>
           );
+        }
       }
     });
   };
