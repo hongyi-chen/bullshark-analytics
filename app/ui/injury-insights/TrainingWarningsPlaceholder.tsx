@@ -71,8 +71,8 @@ export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: Tra
                     </span>
                   </div>
                   <ul className={css.risksList}>
-                    {risks.map((risk, idx) => (
-                      <li key={idx}>{formatRiskType(risk)}</li>
+                    {risks.map((risk) => (
+                      <li key={risk}>{formatRiskType(risk)}</li>
                     ))}
                   </ul>
                 </div>

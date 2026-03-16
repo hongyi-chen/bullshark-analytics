@@ -25,6 +25,14 @@ interface TooltipProps {
   label?: string;
 }
 
+interface DotProps {
+  cx?: number;
+  cy?: number;
+  payload: ChartDataPoint;
+  index?: number;
+  value?: number;
+}
+
 function VolumeTooltip({ active, payload, label }: TooltipProps) {
   if (!active || !payload?.length || !label) return null;
 
@@ -62,8 +70,8 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
               {riskData.riskCount} {riskData.riskCount === 1 ? 'Risk' : 'Risks'} Detected
             </span>
             <ul className={css.tooltipRiskList}>
-              {riskData.risks.map((risk, idx) => (
-                <li key={idx}>{formatRiskType(risk)}</li>
+              {riskData.risks.map((risk) => (
+                <li key={risk}>{formatRiskType(risk)}</li>
               ))}
             </ul>
           </div>
@@ -167,12 +175,13 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: DotProps) => {
                 const { cx, cy, payload } = props;
+                if (cx === undefined || cy === undefined) return null;
                 const isRisky = payload.isRisky;
 
                 return (
-                  <g>
+                  <g key={`dot-${payload.weekStart}`}>
                     <circle
                       cx={cx}
                       cy={cy}

@@ -39,6 +39,7 @@ export default function LatestRunsCard({
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 8)
       .map((a) => ({
+        id: a.id,
         athleteName: a.athlete_name,
         km: a.distance / 1000,
         activityName: a.name,
@@ -58,19 +59,19 @@ export default function LatestRunsCard({
           <div>
             <div className="bold">Latest runs</div>
             <div className="muted">
-              {latestRuns?.lastPoll && now !== null
+              {latestRuns.lastPoll && now !== null
                 ? `Last poll: ${timeAgoFromNow(latestRuns.lastPoll, now)}`
                 : "Recent activity from the club feed"}
             </div>
           </div>
-          <div className="badge">{latestRuns?.runs.length ?? 0} recent</div>
+          <div className="badge">{latestRuns.runs.length} recent</div>
         </>
       }
       style={{ opacity: loading ? 0.7 : 1 }}
     >
       <div className={css.latestRunsGrid}>
-        {latestRuns?.runs.map((run, idx) => (
-          <div key={idx} className={css.latestRunItem}>
+        {latestRuns.runs.map((run) => (
+          <div key={run.id} className={css.latestRunItem}>
             <div
               className={css.latestRunIcon}
               style={{
@@ -94,7 +95,7 @@ export default function LatestRunsCard({
             </div>
           </div>
         ))}
-        {!loading && (!latestRuns?.runs || latestRuns.runs.length === 0) && (
+        {!loading && latestRuns.runs.length === 0 && (
           <div className="muted" style={{ padding: "20px 0" }}>
             No recent runs
           </div>
