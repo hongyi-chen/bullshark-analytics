@@ -152,33 +152,32 @@ export default function LeaderboardCard({
     return teamMap;
   }, [chipDataSources?.athleteMetadata]);
 
-  // Render column headers
   const renderHeaders = () => {
     return columns.map((col, idx) => {
       switch (col.type) {
         case "rank":
           return (
-            <th key={idx} style={{ width: 42 }}>
+            <th key={idx} scope="col" style={{ width: 42 }} abbr="Rank">
               #
             </th>
           );
         case "athlete":
-          return <th key={idx}>Athlete</th>;
+          return <th key={idx} scope="col">Athlete</th>;
         case "runs":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Runs
             </th>
           );
         case "distance":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT} abbr="Kilometers">
               Km
             </th>
           );
         case "streak":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Streak
             </th>
           );
@@ -226,16 +225,18 @@ export default function LeaderboardCard({
               {fmtKm(athlete.totalKm)}
             </td>
           );
-        case "streak":
+        case "streak": {
           const streakCount = athlete.streak ?? 0;
           return (
             <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
               <span className={css.streakBadge}>
-                <span className={css.streakIcon}>🔥</span>
-                {streakCount}
+                <span className={css.streakIcon} aria-hidden="true">🔥</span>
+                <span className="sr-only">{streakCount} day streak</span>
+                <span aria-hidden="true">{streakCount}</span>
               </span>
             </td>
           );
+        }
       }
     });
   };

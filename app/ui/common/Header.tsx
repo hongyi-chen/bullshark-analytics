@@ -1,67 +1,86 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useCallback, useRef, KeyboardEvent } from "react";
 import { activeTabState, lastUpdatedTextState } from "@/lib/state/atoms";
 import css from "./Header.module.scss";
+
+type TabId = "dashboard" | "teams" | "training" | "injury" | "weekly-winners";
+
+const TAB_ORDER: TabId[] = ["dashboard", "teams", "training", "injury", "weekly-winners"];
+
+const TAB_LABELS: Record<TabId, string> = {
+  dashboard: "Dashboard",
+  teams: "Teams",
+  training: "Training Volume",
+  injury: "Injury Insights (Beta)",
+  "weekly-winners": "Weekly Winners",
+};
 
 export default function Header() {
   const [activeTab, setActiveTab] = useAtom(activeTabState);
   const [lastUpdatedText] = useAtom(lastUpdatedTextState);
+  const tabRefs = useRef<Map<TabId, HTMLButtonElement | null>>(new Map());
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLButtonElement>, currentTab: TabId) => {
+      const currentIndex = TAB_ORDER.indexOf(currentTab);
+      let newIndex = currentIndex;
+
+      switch (e.key) {
+        case "ArrowRight":
+          newIndex = (currentIndex + 1) % TAB_ORDER.length;
+          break;
+        case "ArrowLeft":
+          newIndex = (currentIndex - 1 + TAB_ORDER.length) % TAB_ORDER.length;
+          break;
+        case "Home":
+          newIndex = 0;
+          break;
+        case "End":
+          newIndex = TAB_ORDER.length - 1;
+          break;
+        default:
+          return;
+      }
+
+      e.preventDefault();
+      const newTab = TAB_ORDER[newIndex];
+      setActiveTab(newTab);
+      tabRefs.current.get(newTab)?.focus();
+    },
+    [setActiveTab]
+  );
+
   return (
     <header className={css.header}>
       <div className={css.main}>
         <h1 className={css.h1}>Bullshark Analytics 🦈</h1>
         <div className={css.subtitleContainer}>
-          <p className={css.subtitle}>{lastUpdatedText}</p>
+          <p className={css.subtitle} aria-live="polite">{lastUpdatedText}</p>
         </div>
       </div>
-      <nav className={css.actions} aria-label="Primary">
-        <div className={css.navGroup} role="tablist" aria-label="Views">
-          <button
-            className={`${css.navPill} ${activeTab === "dashboard" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "dashboard" ? "page" : undefined}
-            onClick={() => setActiveTab('dashboard')}
-            role="tab"
-            type="button"
-          >
-            Dashboard
-          </button>
-          <button
-            className={`${css.navPill} ${activeTab === "teams" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "teams" ? "page" : undefined}
-            onClick={() => setActiveTab('teams')}
-            role="tab"
-            type="button"
-          >
-            Teams
-          </button>
-          <button
-            className={`${css.navPill} ${activeTab === "training" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "training" ? "page" : undefined}
-            onClick={() => setActiveTab('training')}
-            role="tab"
-            type="button"
-          >
-            Training Volume
-          </button>
-          <button
-            className={`${css.navPill} ${activeTab === "injury" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "injury" ? "page" : undefined}
-            onClick={() => setActiveTab('injury')}
-            role="tab"
-            type="button"
-          >
-            Injury Insights (Beta)
-          </button>
-          <button
-            className={`${css.navPill} ${activeTab === "weekly-winners" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "weekly-winners" ? "page" : undefined}
-            onClick={() => setActiveTab('weekly-winners')}
-            role="tab"
-            type="button"
-          >
-            Weekly Winners
-          </button>
+      <nav className={css.actions} aria-label="Primary navigation">
+        <div className={css.navGroup} role="tablist" aria-label="Dashboard views">
+          {TAB_ORDER.map((tabId) => (
+            <button
+              key={tabId}
+              ref={(el) => {
+                tabRefs.current.set(tabId, el);
+              }}
+              className={`${css.navPill} ${activeTab === tabId ? css.navPillActive : ""}`}
+              role="tab"
+              id={`tab-${tabId}`}
+              aria-selected={activeTab === tabId}
+              aria-controls={`tabpanel-${tabId}`}
+              tabIndex={activeTab === tabId ? 0 : -1}
+              onClick={() => setActiveTab(tabId)}
+              onKeyDown={(e) => handleKeyDown(e, tabId)}
+              type="button"
+            >
+              {TAB_LABELS[tabId]}
+            </button>
+          ))}
         </div>
       </nav>
     </header>
