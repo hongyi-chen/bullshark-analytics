@@ -141,18 +141,24 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
   if (athletes.length === 0) {
     return (
       <Card fixedTall>
-        <div className={css.emptyState}>
+        <div className={css.emptyState} role="status">
           <p>No athletes match your filters</p>
         </div>
       </Card>
     );
   }
 
+  const chartDescription = `Line chart showing weekly training kilometers for ${athletes.length} athlete${athletes.length !== 1 ? 's' : ''}. ${
+    focusedAthleteName
+      ? `Currently focused on ${focusedAthleteName}.`
+      : 'Click on a legend item or line to focus on a specific athlete.'
+  }`;
+
   return (
     <Card fixedTall style={{ height: '600px' }}>
       <div className={css.header}>
-        <h2>Weekly Training Kilometers</h2>
-        <p className="muted">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</p>
+        <h2 id="training-chart-title">Weekly Training Kilometers</h2>
+        <p className="muted" aria-live="polite">{athletes.length} athlete{athletes.length !== 1 ? 's' : ''}</p>
       </div>
       <AthleteLegend
         athletes={athletes}
@@ -160,7 +166,12 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
         onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
         onClear={() => setFocusedAthleteName(null)}
       />
-      <div className={`flexFill ${css.chartArea}`}>
+      <div
+        className={`flexFill ${css.chartArea}`}
+        role="img"
+        aria-label={chartDescription}
+        aria-describedby="training-chart-title"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
             <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
