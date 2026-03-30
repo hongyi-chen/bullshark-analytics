@@ -1,12 +1,54 @@
 "use client";
 
 import { useAtom } from "jotai";
+import { useCallback, useRef } from "react";
 import { activeTabState, lastUpdatedTextState } from "@/lib/state/atoms";
 import css from "./Header.module.scss";
+
+type TabId = "dashboard" | "teams" | "training" | "injury" | "weekly-winners";
+
+const TABS: { id: TabId; label: string }[] = [
+  { id: "dashboard", label: "Dashboard" },
+  { id: "teams", label: "Teams" },
+  { id: "training", label: "Training Volume" },
+  { id: "injury", label: "Injury Insights (Beta)" },
+  { id: "weekly-winners", label: "Weekly Winners" },
+];
 
 export default function Header() {
   const [activeTab, setActiveTab] = useAtom(activeTabState);
   const [lastUpdatedText] = useAtom(lastUpdatedTextState);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+      let newIndex: number | null = null;
+
+      switch (e.key) {
+        case "ArrowRight":
+          newIndex = (index + 1) % TABS.length;
+          break;
+        case "ArrowLeft":
+          newIndex = (index - 1 + TABS.length) % TABS.length;
+          break;
+        case "Home":
+          newIndex = 0;
+          break;
+        case "End":
+          newIndex = TABS.length - 1;
+          break;
+        default:
+          return;
+      }
+
+      e.preventDefault();
+      const newTab = TABS[newIndex];
+      setActiveTab(newTab.id);
+      tabRefs.current[newIndex]?.focus();
+    },
+    [setActiveTab]
+  );
+
   return (
     <header className={css.header}>
       <div className={css.main}>
@@ -15,53 +57,28 @@ export default function Header() {
           <p className={css.subtitle}>{lastUpdatedText}</p>
         </div>
       </div>
-      <nav className={css.actions} aria-label="Primary">
-        <div className={css.navGroup} role="tablist" aria-label="Views">
-          <button
-            className={`${css.navPill} ${activeTab === "dashboard" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "dashboard" ? "page" : undefined}
-            onClick={() => setActiveTab('dashboard')}
-            role="tab"
-            type="button"
-          >
-            Dashboard
-          </button>
-          <button
-            className={`${css.navPill} ${activeTab === "teams" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "teams" ? "page" : undefined}
-            onClick={() => setActiveTab('teams')}
-            role="tab"
-            type="button"
-          >
-            Teams
-          </button>
-          <button
-            className={`${css.navPill} ${activeTab === "training" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "training" ? "page" : undefined}
-            onClick={() => setActiveTab('training')}
-            role="tab"
-            type="button"
-          >
-            Training Volume
-          </button>
-          <button
-            className={`${css.navPill} ${activeTab === "injury" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "injury" ? "page" : undefined}
-            onClick={() => setActiveTab('injury')}
-            role="tab"
-            type="button"
-          >
-            Injury Insights (Beta)
-          </button>
-          <button
-            className={`${css.navPill} ${activeTab === "weekly-winners" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "weekly-winners" ? "page" : undefined}
-            onClick={() => setActiveTab('weekly-winners')}
-            role="tab"
-            type="button"
-          >
-            Weekly Winners
-          </button>
+      <nav className={css.actions} aria-label="Primary navigation">
+        <div className={css.navGroup} role="tablist" aria-label="View selection">
+          {TABS.map((tab, index) => {
+            const isSelected = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                ref={(el) => { tabRefs.current[index] = el; }}
+                className={`${css.navPill} ${isSelected ? css.navPillActive : ""}`}
+                role="tab"
+                aria-selected={isSelected}
+                tabIndex={isSelected ? 0 : -1}
+                onClick={() => setActiveTab(tab.id)}
+                onKeyDown={(e) => handleKeyDown(e, index)}
+                type="button"
+                id={`tab-${tab.id}`}
+                aria-controls={`tabpanel-${tab.id}`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </nav>
     </header>
