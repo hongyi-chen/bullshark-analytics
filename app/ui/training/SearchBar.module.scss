@@ -13,8 +13,18 @@
   }
 
   &:focus {
-    outline: none;
+    outline: 2px solid rgba(34, 197, 94, 0.5);
+    outline-offset: 2px;
     border-color: rgba(34, 197, 94, 0.5);
     background: rgba(255, 255, 255, 0.05);
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(34, 197, 94, 0.5);
+    outline-offset: 2px;
   }
 }

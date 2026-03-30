@@ -1,24 +1,24 @@
+export type { TimeFilter, TimeseriesPoint as Timeseries } from "@/lib/types/dashboard";
+export { TIME_FILTERS } from "@/lib/types/dashboard";
+
 export type Aggregation = "daily" | "weekly";
-export type TimeFilter = "week" | "month";
-export type Timeseries = {
-  day: string;
-  athleteName: string;
-  km: number;
-};
+
 export type ChartData = {
   day: string;
   km: number;
 };
+
+export type Team = "bulls" | "sharks";
+export type Event = "half" | "full";
+
 export type Athlete = {
   id: string;
   name: string;
-  team: "bulls" | "sharks";
-  event: "half" | "full";
+  team: Team;
+  event: Event;
 };
 
-export type WeeklyKilometers = {
-  [date: string]: number;
-};
+export type WeeklyKilometers = Record<string, number>;
 
 export type RiskyWeek = {
   week: string;
