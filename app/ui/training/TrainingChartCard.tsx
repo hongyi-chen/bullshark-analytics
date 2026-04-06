@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CartesianGrid,
   Line,
@@ -117,7 +117,6 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
   }, [athletes, focusedAthleteName]);
 
   const chartData = useMemo(() => {
-    // Collect all unique week dates
     const allWeeks = new Set<string>();
     athletes.forEach(athlete => {
       Object.keys(athlete.trainingData.weeklyKilometers).forEach(date => {
@@ -125,10 +124,8 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
       });
     });
 
-    // Sort chronologically
     const sortedWeeks = Array.from(allWeeks).sort();
 
-    // Build chart data structure
     return sortedWeeks.map(weekStart => {
       const point: TrainingChartData = { weekStart };
       athletes.forEach(athlete => {
@@ -137,6 +134,18 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
       return point;
     });
   }, [athletes]);
+
+  const handleToggleAthlete = useCallback((athleteName: string) => {
+    setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName));
+  }, []);
+
+  const handleClearFocus = useCallback(() => {
+    setFocusedAthleteName(null);
+  }, []);
+
+  const handleLineClick = useCallback((athleteName: string) => {
+    setFocusedAthleteName(athleteName);
+  }, []);
 
   if (athletes.length === 0) {
     return (
@@ -157,8 +166,8 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
       <AthleteLegend
         athletes={athletes}
         focusedAthleteName={focusedAthleteName}
-        onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
-        onClear={() => setFocusedAthleteName(null)}
+        onToggle={handleToggleAthlete}
+        onClear={handleClearFocus}
       />
       <div className={`flexFill ${css.chartArea}`}>
         <ResponsiveContainer width="100%" height="100%">
@@ -178,7 +187,6 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
              />
              <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
              {athletes.map((athlete, idx) => {
-
                const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
                return (
                  <Line
@@ -190,10 +198,9 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
                    strokeOpacity={isFocused ? 1 : 0.15}
                    dot={false}
                    activeDot={{ r: 6 }}
-                   onClick={() => setFocusedAthleteName(athlete.name)}
+                   onClick={() => handleLineClick(athlete.name)}
                    name={athlete.name}
                  />
-
                );
              })}
 

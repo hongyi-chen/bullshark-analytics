@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useAtom } from "jotai";
 import {
   teamLoadingState,
@@ -8,9 +8,8 @@ import {
   teamChartModeState,
   teamViewModeState,
   timeFilterState,
-  lastUpdatedTextState,
 } from "@/lib/state/atoms";
-import { useActivities, useAthletes, useTimeseries, useTeamStats, useActivityStats } from "@/lib/hooks";
+import { useActivities, useAthletes, useTimeseries, useTeamStats, useActivityStats, useLastUpdatedText } from "@/lib/hooks";
 import Divider from "@/app/ui/common/Divider";
 import ErrorCard from "@/app/ui/common/ErrorCard";
 import TeamPerformanceCard from "@/app/ui/team/TeamPerformanceCard";
@@ -266,15 +265,7 @@ export default function TeamsView() {
     return sharksAthletes.reduce((sum, athlete) => sum + athlete.totalKm, 0);
   }, [sharksAthletes]);
 
-  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
-
-  useEffect(() => {
-    if (!stats?.lastFetchedAt) {
-      setLastUpdatedText("No data yet");
-    } else {
-      setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
-    }
-  }, [stats?.lastFetchedAt, setLastUpdatedText]);
+  useLastUpdatedText(stats?.lastFetchedAt);
 
   return (
     <>
