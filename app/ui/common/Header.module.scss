@@ -1,3 +1,32 @@
+.skipLink {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 100;
+}
+
+.skipLink:focus {
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    height: auto;
+    overflow: visible;
+    padding: 12px 24px;
+    background: var(--panel);
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    z-index: 1000;
+}
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -85,4 +114,13 @@
   background: rgba(34, 197, 94, 0.12);
   color: var(--accent);
   border: 1px solid rgba(34, 197, 94, 0.5);
+}
+
+.navPill:focus {
+  outline: none;
+}
+
+.navPill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
