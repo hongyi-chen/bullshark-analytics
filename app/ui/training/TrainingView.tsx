@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   trainingSearchState,
@@ -8,10 +8,8 @@ import {
   trainingTeamFilterState,
   dataLoadingState,
   dataErrorState,
-  lastUpdatedTextState,
 } from '@/lib/state/atoms';
-import { useAthletesTrainingData } from '@/lib/hooks';
-import { useActivityStats } from '@/lib/hooks';
+import { useAthletesTrainingData, useActivityStats, useLastUpdated } from '@/lib/hooks';
 import SearchBar from '@/app/ui/training/SearchBar';
 import TrainingChartCard from '@/app/ui/training/TrainingChartCard';
 import Divider from '@/app/ui/common/Divider';
@@ -26,20 +24,11 @@ export default function TrainingView() {
   const [teamFilter, setTeamFilter] = useAtom(trainingTeamFilterState);
   const loading = useAtomValue(dataLoadingState);
   const err = useAtomValue(dataErrorState);
-  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
 
-  // Data hooks
   const athletesTrainingData = useAthletesTrainingData();
   const stats = useActivityStats();
 
-  // Update last updated text
-  useEffect(() => {
-    if (!stats?.lastFetchedAt) {
-      setLastUpdatedText("No data yet");
-    } else {
-      setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
-    }
-  }, [stats?.lastFetchedAt, setLastUpdatedText]);
+  useLastUpdated(stats?.lastFetchedAt);
 
   // Filtered athletes with combined search + tag filters
   const filteredAthletes = useMemo(() => {
@@ -62,11 +51,13 @@ export default function TrainingView() {
       {/* Search and Filters - Separate Row */}
       <div className={css.card}>
         <div className={css.group}>
-          <span className={css.label}>Search Athletes</span>
+          <label htmlFor="athlete-search" className={css.label}>Search Athletes</label>
           <SearchBar
+            id="athlete-search"
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Type athlete name..."
+            aria-label="Search athletes by name"
           />
         </div>
 
@@ -150,7 +141,6 @@ export default function TrainingView() {
       <div style={{ opacity: loading.athletesTrainingData ? 0.7 : 1 }}>
         <TrainingChartCard
           athletes={filteredAthletes}
-          loading={loading.athletesTrainingData}
         />
       </div>
     </>

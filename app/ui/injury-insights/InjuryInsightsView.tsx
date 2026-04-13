@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   injurySelectedAthleteIdState,
   dataLoadingState,
   dataErrorState,
-  lastUpdatedTextState,
 } from '@/lib/state/atoms';
-import { useAthletesTrainingData, useActivityStats } from '@/lib/hooks';
+import { useAthletesTrainingData, useActivityStats, useLastUpdated } from '@/lib/hooks';
 import Card from '@/app/ui/common/Card';
 import ErrorCard from '@/app/ui/common/ErrorCard';
 import Divider from '@/app/ui/common/Divider';
@@ -22,18 +21,11 @@ export default function InjuryInsightsView() {
   const [selectedAthleteId, setSelectedAthleteId] = useAtom(injurySelectedAthleteIdState);
   const loading = useAtomValue(dataLoadingState);
   const err = useAtomValue(dataErrorState);
-  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
 
   const athletesTrainingData = useAthletesTrainingData();
   const stats = useActivityStats();
 
-  useEffect(() => {
-    if (!stats?.lastFetchedAt) {
-      setLastUpdatedText("No data yet");
-    } else {
-      setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
-    }
-  }, [stats?.lastFetchedAt, setLastUpdatedText]);
+  useLastUpdated(stats?.lastFetchedAt);
 
   const selectedAthlete = useMemo(() => {
     if (!selectedAthleteId) return null;
@@ -62,10 +54,14 @@ export default function InjuryInsightsView() {
 
       <Card>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>
+          <label
+            htmlFor="athlete-selector"
+            style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}
+          >
             Select Athlete
           </label>
           <AthleteSelector
+            id="athlete-selector"
             athletes={athletesTrainingData}
             selectedAthleteId={selectedAthleteId}
             onSelectAthlete={setSelectedAthleteId}
@@ -84,7 +80,6 @@ export default function InjuryInsightsView() {
           <div style={{ opacity: loading.athletesTrainingData ? 0.7 : 1 }}>
             <InjuryVolumeChart
               athlete={selectedAthlete}
-              loading={loading.athletesTrainingData}
               riskyWeeks={riskyWeeksData}
             />
           </div>

@@ -10,18 +10,22 @@ export default function Header() {
   return (
     <header className={css.header}>
       <div className={css.main}>
-        <h1 className={css.h1}>Bullshark Analytics 🦈</h1>
+        <h1 id="page-title" className={css.h1}>
+          Bullshark Analytics{" "}
+          <span aria-hidden="true">🦈</span>
+        </h1>
         <div className={css.subtitleContainer}>
-          <p className={css.subtitle}>{lastUpdatedText}</p>
+          <p className={css.subtitle} aria-live="polite" aria-atomic="true">
+            {lastUpdatedText}
+          </p>
         </div>
       </div>
-      <nav className={css.actions} aria-label="Primary">
-        <div className={css.navGroup} role="tablist" aria-label="Views">
+      <nav className={css.actions} aria-label="Main navigation">
+        <div className={css.navGroup}>
           <button
             className={`${css.navPill} ${activeTab === "dashboard" ? css.navPillActive : ""}`}
             aria-current={activeTab === "dashboard" ? "page" : undefined}
             onClick={() => setActiveTab('dashboard')}
-            role="tab"
             type="button"
           >
             Dashboard
@@ -30,7 +34,6 @@ export default function Header() {
             className={`${css.navPill} ${activeTab === "teams" ? css.navPillActive : ""}`}
             aria-current={activeTab === "teams" ? "page" : undefined}
             onClick={() => setActiveTab('teams')}
-            role="tab"
             type="button"
           >
             Teams
@@ -39,7 +42,6 @@ export default function Header() {
             className={`${css.navPill} ${activeTab === "training" ? css.navPillActive : ""}`}
             aria-current={activeTab === "training" ? "page" : undefined}
             onClick={() => setActiveTab('training')}
-            role="tab"
             type="button"
           >
             Training Volume
@@ -48,7 +50,6 @@ export default function Header() {
             className={`${css.navPill} ${activeTab === "injury" ? css.navPillActive : ""}`}
             aria-current={activeTab === "injury" ? "page" : undefined}
             onClick={() => setActiveTab('injury')}
-            role="tab"
             type="button"
           >
             Injury Insights (Beta)
@@ -57,7 +58,6 @@ export default function Header() {
             className={`${css.navPill} ${activeTab === "weekly-winners" ? css.navPillActive : ""}`}
             aria-current={activeTab === "weekly-winners" ? "page" : undefined}
             onClick={() => setActiveTab('weekly-winners')}
-            role="tab"
             type="button"
           >
             Weekly Winners

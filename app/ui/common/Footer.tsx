@@ -19,16 +19,18 @@ export default function Footer() {
         </div>
         <div className={css.links}>
           <span className="muted">Powered by Bullsharks Server</span>
-          <span className={css.divider}>·</span>
+          <span className={css.divider} aria-hidden="true">·</span>
           <a
             className="muted"
             href="https://warp.dev/careers"
             target="_blank"
             rel="noreferrer"
+            aria-label="Warp careers (opens in new tab)"
           >
             warp.dev/careers
+            <span className="visually-hidden"> (opens in new tab)</span>
           </a>
-          <span className={css.divider}>·</span>
+          <span className={css.divider} aria-hidden="true">·</span>
           <span className="muted">© {year}</span>
         </div>
       </div>
