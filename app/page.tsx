@@ -10,7 +10,9 @@ export default function HomePage() {
   return (
     <div className="container">
       <Header />
-      <MainContent />
+      <main id="main-content" aria-labelledby="page-title">
+        <MainContent />
+      </main>
       <Footer />
     </div>
   );
