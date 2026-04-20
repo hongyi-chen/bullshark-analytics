@@ -1,3 +1,4 @@
+import { memo, useId } from "react";
 import { Aggregation, TimeFilter } from "../types";
 import css from "./Filters.module.scss";
 
@@ -10,7 +11,24 @@ interface FiltersProps {
   timeFilter: TimeFilter;
 }
 
-export default function Filters({
+const TIME_OPTIONS: { value: TimeFilter; label: string }[] = [
+  { value: "week", label: "This Week" },
+  { value: "month", label: "This Month" },
+];
+
+const AGGREGATION_OPTIONS: { value: Aggregation; label: string }[] = [
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+];
+
+const MIN_RUNS_OPTIONS: { value: number; label: string }[] = [
+  { value: 0, label: "All" },
+  { value: 3, label: "3+" },
+  { value: 5, label: "5+" },
+  { value: 10, label: "10+" },
+];
+
+function Filters({
   aggregation,
   minRuns,
   setAggregation,
@@ -19,70 +37,74 @@ export default function Filters({
   timeFilter,
 }: FiltersProps) {
   return (
-    <div className={css.card}>
-      <FilterGroup title="Time Period">
-        <button
-          className={css.pill}
-          aria-pressed={timeFilter === "week"}
-          onClick={() => setTimeFilter("week")}
-          type="button"
-        >
-          This Week
-        </button>
-        <button
-          className={css.pill}
-          aria-pressed={timeFilter === "month"}
-          onClick={() => setTimeFilter("month")}
-          type="button"
-        >
-          This Month
-        </button>
-      </FilterGroup>
+    <div className={css.card} role="group" aria-label="Dashboard filters">
+      <FilterGroup
+        title="Time Period"
+        options={TIME_OPTIONS}
+        value={timeFilter}
+        onChange={setTimeFilter}
+      />
 
-      <div className={css.divider} />
+      <div className={css.divider} role="separator" aria-hidden="true" />
 
-      <FilterGroup title="Chart View">
-        {(["daily", "weekly"] as const).map((agg) => (
-          <button
-            key={agg}
-            className={css.pill}
-            aria-pressed={aggregation === agg}
-            onClick={() => setAggregation(agg)}
-            type="button"
-          >
-            {agg === "daily" ? "Daily" : "Weekly"}
-          </button>
-        ))}
-      </FilterGroup>
+      <FilterGroup
+        title="Chart View"
+        options={AGGREGATION_OPTIONS}
+        value={aggregation}
+        onChange={setAggregation}
+      />
 
-      <div className={css.divider} />
+      <div className={css.divider} role="separator" aria-hidden="true" />
 
-      <FilterGroup title="Min Runs">
-        {[0, 3, 5, 10].map((m) => (
-          <button
-            key={m}
-            className={css.pill}
-            aria-pressed={minRuns === m}
-            onClick={() => setMinRuns(m)}
-            type="button"
-          >
-            {m === 0 ? "All" : `${m}+`}
-          </button>
-        ))}
-      </FilterGroup>
+      <FilterGroup
+        title="Min Runs"
+        options={MIN_RUNS_OPTIONS}
+        value={minRuns}
+        onChange={setMinRuns}
+      />
     </div>
   );
 }
 
-interface FilterGroupProps extends React.PropsWithChildren {
+export default memo(Filters);
+
+interface FilterGroupProps<T extends string | number> {
   title: string;
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (value: T) => void;
 }
 
-function FilterGroup({ children, title }: FilterGroupProps) {
+function FilterGroup<T extends string | number>({
+  title,
+  options,
+  value,
+  onChange,
+}: FilterGroupProps<T>) {
+  const groupId = useId();
+
   return (
-    <div className={css.group}>
-      <span className={css.label}>{title}</span>
-      <div className={css.pillRow}>{children}</div>
-    </div>
+    <fieldset className={css.group}>
+      <legend id={`${groupId}-label`} className={css.label}>
+        {title}
+      </legend>
+      <div className={css.pillRow} role="radiogroup" aria-labelledby={`${groupId}-label`}>
+        {options.map((option) => {
+          const isSelected = value === option.value;
+          return (
+            <button
+              key={String(option.value)}
+              className={css.pill}
+              type="button"
+              role="radio"
+              aria-checked={isSelected}
+              onClick={() => onChange(option.value)}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
   );
 }

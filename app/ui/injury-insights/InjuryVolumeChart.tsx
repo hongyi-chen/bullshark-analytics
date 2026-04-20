@@ -41,7 +41,14 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
       </div>
       {riskData && (
         <div className={css.tooltipRisk}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+            focusable="false"
+          >
             <path
               d="M12 2L2 20h20L12 2z"
               stroke="currentColor"
@@ -61,7 +68,7 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
             <span className={css.tooltipRiskTitle}>
               {riskData.riskCount} {riskData.riskCount === 1 ? 'Risk' : 'Risks'} Detected
             </span>
-            <ul className={css.tooltipRiskList}>
+            <ul className={css.tooltipRiskList} aria-label="List of detected risks">
               {riskData.risks.map((risk, idx) => (
                 <li key={idx}>{formatRiskType(risk)}</li>
               ))}
@@ -167,12 +174,19 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
-                const { cx, cy, payload } = props;
-                const isRisky = payload.isRisky;
+              dot={(props) => {
+                const { cx, cy, payload, index } = props as {
+                  cx?: number;
+                  cy?: number;
+                  payload?: ChartDataPoint;
+                  index?: number;
+                };
+                if (cx === undefined || cy === undefined) return <g />;
+
+                const isRisky = payload?.isRisky ?? false;
 
                 return (
-                  <g>
+                  <g key={`dot-${index}`}>
                     <circle
                       cx={cx}
                       cy={cy}
@@ -180,9 +194,10 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
                       fill={isRisky ? '#ef4444' : 'var(--accent)'}
                       stroke={isRisky ? '#ef4444' : 'var(--accent)'}
                       strokeWidth={2}
+                      aria-hidden="true"
                     />
                     {isRisky && (
-                      <g transform={`translate(${cx - 10}, ${cy - 24})`}>
+                      <g transform={`translate(${cx - 10}, ${cy - 24})`} aria-hidden="true">
                         <path
                           d="M10 1L1 17h18L10 1z"
                           fill="#ef4444"

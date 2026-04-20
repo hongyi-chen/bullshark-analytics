@@ -62,22 +62,27 @@ export default function TrainingView() {
       {/* Search and Filters - Separate Row */}
       <div className={css.card}>
         <div className={css.group}>
-          <span className={css.label}>Search Athletes</span>
+          <label htmlFor="athlete-search" className={css.label}>
+            Search Athletes
+          </label>
           <SearchBar
+            id="athlete-search"
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Type athlete name..."
+            ariaLabel="Search athletes by name"
           />
         </div>
 
-        <div className={css.divider} />
+        <div className={css.divider} role="separator" aria-hidden="true" />
 
-        <div className={css.group}>
-          <span className={css.label}>Event</span>
-          <div className={css.pillRow}>
+        <fieldset className={css.group}>
+          <legend className={css.label}>Event</legend>
+          <div className={css.pillRow} role="radiogroup" aria-label="Event filter">
             <button
               className={css.pill}
-              aria-pressed={eventFilter === 'all'}
+              role="radio"
+              aria-checked={eventFilter === 'all'}
               onClick={() => setEventFilter('all')}
               type="button"
             >
@@ -85,7 +90,8 @@ export default function TrainingView() {
             </button>
             <button
               className={css.pill}
-              aria-pressed={eventFilter === 'half'}
+              role="radio"
+              aria-checked={eventFilter === 'half'}
               onClick={() => setEventFilter('half')}
               type="button"
             >
@@ -93,23 +99,25 @@ export default function TrainingView() {
             </button>
             <button
               className={css.pill}
-              aria-pressed={eventFilter === 'full'}
+              role="radio"
+              aria-checked={eventFilter === 'full'}
               onClick={() => setEventFilter('full')}
               type="button"
             >
               Full Marathon
             </button>
           </div>
-        </div>
+        </fieldset>
 
-        <div className={css.divider} />
+        <div className={css.divider} role="separator" aria-hidden="true" />
 
-        <div className={css.group}>
-          <span className={css.label}>Team</span>
-          <div className={css.pillRow}>
+        <fieldset className={css.group}>
+          <legend className={css.label}>Team</legend>
+          <div className={css.pillRow} role="radiogroup" aria-label="Team filter">
             <button
               className={css.pill}
-              aria-pressed={teamFilter === 'all'}
+              role="radio"
+              aria-checked={teamFilter === 'all'}
               onClick={() => setTeamFilter('all')}
               type="button"
             >
@@ -117,7 +125,8 @@ export default function TrainingView() {
             </button>
             <button
               className={css.pill}
-              aria-pressed={teamFilter === 'bulls'}
+              role="radio"
+              aria-checked={teamFilter === 'bulls'}
               onClick={() => setTeamFilter('bulls')}
               type="button"
             >
@@ -125,14 +134,15 @@ export default function TrainingView() {
             </button>
             <button
               className={css.pill}
-              aria-pressed={teamFilter === 'sharks'}
+              role="radio"
+              aria-checked={teamFilter === 'sharks'}
               onClick={() => setTeamFilter('sharks')}
               type="button"
             >
               Sharks
             </button>
           </div>
-        </div>
+        </fieldset>
       </div>
 
       <Divider size={16} />

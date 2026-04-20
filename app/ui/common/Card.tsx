@@ -1,6 +1,6 @@
+import { memo, CSSProperties } from "react";
 import clsx from "clsx";
 import css from "./Card.module.scss";
-import { CSSProperties } from "react";
 
 interface CardProps extends React.PropsWithChildren {
   fixedTall?: boolean;
@@ -10,7 +10,7 @@ interface CardProps extends React.PropsWithChildren {
   className?: string;
 }
 
-export default function Card({
+function Card({
   children,
   fixedTall = false,
   header,
@@ -19,7 +19,7 @@ export default function Card({
   className,
 }: CardProps) {
   return (
-    <div
+    <section
       className={clsx(css.card, className, {
         [css.fixedTall]: fixedTall,
         [css.highlighted]: highlighted,
@@ -28,6 +28,8 @@ export default function Card({
     >
       {header != null && <div className={css.header}>{header}</div>}
       {children}
-    </div>
+    </section>
   );
 }
+
+export default memo(Card);
