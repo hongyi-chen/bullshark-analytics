@@ -1,7 +1,7 @@
+import { memo, useMemo } from "react";
 import { fmtKm } from "@/app/utils/fmtKm";
 import { AthleteStats, ActivityData } from "@/lib/types/dashboard";
 import { ChartData, TimeFilter } from "../types";
-import { useMemo } from "react";
 import Card from "../common/Card";
 import css from "./HighlightsCard.module.scss";
 
@@ -12,7 +12,7 @@ interface HighlightsCardProps {
   timeFilter: TimeFilter;
 }
 
-export default function HighlightsCard({
+function HighlightsCard({
   athletes,
   chartData,
   stats,
@@ -129,3 +129,5 @@ export default function HighlightsCard({
     </Card>
   );
 }
+
+export default memo(HighlightsCard);

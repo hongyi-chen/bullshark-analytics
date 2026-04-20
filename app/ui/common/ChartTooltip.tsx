@@ -1,3 +1,4 @@
+import { memo } from "react";
 import css from "./ChartTooltip.module.scss";
 
 interface TooltipPayloadItem {
@@ -11,7 +12,7 @@ interface ChartTooltipProps {
   payload?: TooltipPayloadItem[];
 }
 
-export default function ChartTooltip({
+function ChartTooltip({
   active,
   payload,
   label,
@@ -20,7 +21,7 @@ export default function ChartTooltip({
   if (!active || !payload?.length) return null;
   const val = payload[0]?.value ?? 0;
   return (
-    <div className={css.tooltip}>
+    <div className={css.tooltip} role="tooltip" aria-live="polite">
       <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 4 }}>
         Label
       </div>
@@ -34,3 +35,5 @@ export default function ChartTooltip({
     </div>
   );
 }
+
+export default memo(ChartTooltip);

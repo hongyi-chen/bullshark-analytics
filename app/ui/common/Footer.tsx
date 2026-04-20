@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import css from "./Footer.module.scss";
 
-export default function Footer() {
+function Footer() {
   const [year, setYear] = useState("");
 
   useEffect(() => {
@@ -11,27 +11,31 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className={css.footer}>
+    <footer className={css.footer} role="contentinfo">
       <div className={css.content}>
         <div className={css.brand}>
-          <span className={css.shark}>🦈</span>
+          <span className={css.shark} aria-hidden="true">🦈</span>
           <span>Bullshark Analytics</span>
         </div>
         <div className={css.links}>
           <span className="muted">Powered by Bullsharks Server</span>
-          <span className={css.divider}>·</span>
+          <span className={css.divider} aria-hidden="true">·</span>
           <a
             className="muted"
             href="https://warp.dev/careers"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
+            aria-label="Warp careers (opens in new tab)"
           >
             warp.dev/careers
+            <span className="sr-only"> (opens in new tab)</span>
           </a>
-          <span className={css.divider}>·</span>
+          <span className={css.divider} aria-hidden="true">·</span>
           <span className="muted">© {year}</span>
         </div>
       </div>
     </footer>
   );
 }
+
+export default memo(Footer);

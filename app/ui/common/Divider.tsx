@@ -1,7 +1,11 @@
+import { memo } from "react";
+
 interface DividerProps {
   size: number;
 }
 
-export default function Divider({ size }: DividerProps) {
-  return <div style={{ height: size }} />;
+function Divider({ size }: DividerProps) {
+  return <div style={{ height: size }} aria-hidden="true" />;
 }
+
+export default memo(Divider);

@@ -1,4 +1,4 @@
-import { CSSProperties, useMemo } from "react";
+import { memo, CSSProperties, useMemo, useId } from "react";
 import Card from "../common/Card";
 import { Athlete, Timeseries } from "../types";
 import clsx from "clsx";
@@ -48,13 +48,17 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const label = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      data-tooltip={label}
+      role="img"
+      aria-label={label}
+      title={label}
     >
       {event}
     </span>
@@ -87,7 +91,13 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
+    <span
+      className={clsx(css.statusChip, className)}
+      data-tooltip={tooltip}
+      role="status"
+      aria-label={tooltip}
+      title={tooltip}
+    >
       {label}
     </span>
   );
@@ -98,6 +108,7 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const label = team === "bulls" ? "Bulls team" : "Sharks team";
   return (
     <span
       className={clsx(
@@ -105,6 +116,9 @@ function TeamChip({ team }: TeamChipProps) {
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
       data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      role="img"
+      aria-label={label}
+      title={label}
     >
       {team}
     </span>
@@ -119,7 +133,7 @@ const DEFAULT_COLUMNS: Column[] = [
   { type: "distance" },
 ];
 
-export default function LeaderboardCard({
+function LeaderboardCard({
   title,
   subtitle,
   badgeLabel,
@@ -130,6 +144,7 @@ export default function LeaderboardCard({
   loading = false,
   emptyMessage = "No data yet.",
 }: LeaderboardCardProps) {
+  const tableId = useId();
   const getAthleteStatus = useAthleteStatus(chipDataSources?.timeseries);
 
   // Build event map from athlete metadata
@@ -258,8 +273,14 @@ export default function LeaderboardCard({
       <div
         className={clsx(css.tableScroll, css.tableScrollFixed, "flexFill")}
         style={{ opacity: loading ? 0.7 : 1 }}
+        role="region"
+        aria-label={`${title} leaderboard table`}
+        tabIndex={0}
       >
-        <table className={css.table}>
+        <table className={css.table} aria-describedby={`${tableId}-desc`}>
+          <caption id={`${tableId}-desc`} className="sr-only">
+            {title}: {subtitle}. {badgeLabel}: {badgeValue}
+          </caption>
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>
@@ -282,3 +303,5 @@ export default function LeaderboardCard({
     </Card>
   );
 }
+
+export default memo(LeaderboardCard);

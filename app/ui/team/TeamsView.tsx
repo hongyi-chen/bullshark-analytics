@@ -278,13 +278,14 @@ export default function TeamsView() {
 
   return (
     <>
-      <div className={css.card}>
-        <div className={css.group}>
-          <span className={css.label}>View</span>
-          <div className={css.pillRow}>
+      <div className={css.card} role="group" aria-label="Team view filters">
+        <fieldset className={css.group}>
+          <legend className={css.label}>View</legend>
+          <div className={css.pillRow} role="radiogroup" aria-label="View selection">
             <button
               className={css.pill}
-              aria-pressed={viewMode === "comparison"}
+              role="radio"
+              aria-checked={viewMode === "comparison"}
               onClick={() => setViewMode("comparison")}
               type="button"
             >
@@ -292,31 +293,34 @@ export default function TeamsView() {
             </button>
             <button
               className={css.pill}
-              aria-pressed={viewMode === "bulls-breakdown"}
+              role="radio"
+              aria-checked={viewMode === "bulls-breakdown"}
               onClick={() => setViewMode("bulls-breakdown")}
               type="button"
             >
-              🐂 Bulls Breakdown
+              <span aria-hidden="true">🐂 </span>Bulls Breakdown
             </button>
             <button
               className={css.pill}
-              aria-pressed={viewMode === "sharks-breakdown"}
+              role="radio"
+              aria-checked={viewMode === "sharks-breakdown"}
               onClick={() => setViewMode("sharks-breakdown")}
               type="button"
             >
-              🦈 Sharks Breakdown
+              <span aria-hidden="true">🦈 </span>Sharks Breakdown
             </button>
           </div>
-        </div>
+        </fieldset>
 
-        <div className={css.divider} />
+        <div className={css.divider} role="separator" aria-hidden="true" />
 
-        <div className={css.group}>
-          <span className={css.label}>Metric</span>
-          <div className={css.pillRow}>
+        <fieldset className={css.group}>
+          <legend className={css.label}>Metric</legend>
+          <div className={css.pillRow} role="radiogroup" aria-label="Metric selection">
             <button
               className={css.pill}
-              aria-pressed={chartMode === "running"}
+              role="radio"
+              aria-checked={chartMode === "running"}
               onClick={() => setChartMode("running")}
               type="button"
             >
@@ -324,14 +328,15 @@ export default function TeamsView() {
             </button>
             <button
               className={css.pill}
-              aria-pressed={chartMode === "weekly"}
+              role="radio"
+              aria-checked={chartMode === "weekly"}
               onClick={() => setChartMode("weekly")}
               type="button"
             >
               Weekly Totals
             </button>
           </div>
-        </div>
+        </fieldset>
       </div>
 
       <Divider size={16} />
