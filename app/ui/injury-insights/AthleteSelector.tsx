@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, useCallback, useId, KeyboardEvent } from 'react';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import css from './AthleteSelector.module.scss';
 
@@ -15,14 +15,17 @@ export default function AthleteSelector({
 }: AthleteSelectorProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const inputId = useId();
+  const listboxId = useId();
 
-  // Get selected athlete name
   const selectedAthlete = useMemo(() => {
     return athletes.find(a => a.id === selectedAthleteId);
   }, [athletes, selectedAthleteId]);
 
-  // Filter athletes based on search term
   const filteredAthletes = useMemo(() => {
     if (!searchTerm) return athletes;
     return athletes.filter(athlete =>
@@ -30,11 +33,11 @@ export default function AthleteSelector({
     );
   }, [athletes, searchTerm]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setHighlightedIndex(-1);
       }
     }
 
@@ -42,45 +45,121 @@ export default function AthleteSelector({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleInputChange = (value: string) => {
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [searchTerm, isOpen]);
+
+  const handleInputChange = useCallback((value: string) => {
     setSearchTerm(value);
     setIsOpen(true);
-  };
+  }, []);
 
-  const handleSelectAthlete = (athlete: AthleteWithTrainingData) => {
+  const handleSelectAthlete = useCallback((athlete: AthleteWithTrainingData) => {
     onSelectAthlete(athlete.id);
     setSearchTerm('');
     setIsOpen(false);
-  };
+    setHighlightedIndex(-1);
+  }, [onSelectAthlete]);
 
-  const handleInputFocus = () => {
+  const handleInputFocus = useCallback(() => {
     setIsOpen(true);
-  };
+  }, []);
+
+  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen) {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        setIsOpen(true);
+        event.preventDefault();
+      }
+      return;
+    }
+
+    const count = filteredAthletes.length;
+    if (count === 0) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        setHighlightedIndex(prev => (prev + 1) % count);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setHighlightedIndex(prev => (prev - 1 + count) % count);
+        break;
+      case 'Enter':
+        event.preventDefault();
+        if (highlightedIndex >= 0 && highlightedIndex < count) {
+          handleSelectAthlete(filteredAthletes[highlightedIndex]);
+        }
+        break;
+      case 'Escape':
+        event.preventDefault();
+        setIsOpen(false);
+        setHighlightedIndex(-1);
+        break;
+      case 'Home':
+        event.preventDefault();
+        setHighlightedIndex(0);
+        break;
+      case 'End':
+        event.preventDefault();
+        setHighlightedIndex(count - 1);
+        break;
+    }
+  }, [isOpen, filteredAthletes, highlightedIndex, handleSelectAthlete]);
+
+  useEffect(() => {
+    if (highlightedIndex >= 0 && listRef.current) {
+      const highlightedElement = listRef.current.children[highlightedIndex] as HTMLElement;
+      highlightedElement?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [highlightedIndex]);
 
   const displayValue = selectedAthlete && !isOpen ? selectedAthlete.name : searchTerm;
 
   return (
     <div className={css.container} ref={containerRef}>
       <input
+        ref={inputRef}
+        id={inputId}
         type="text"
         className={css.input}
         placeholder="Type athlete name..."
         value={displayValue}
         onChange={(e) => handleInputChange(e.target.value)}
         onFocus={handleInputFocus}
+        onKeyDown={handleKeyDown}
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-controls={listboxId}
+        aria-activedescendant={highlightedIndex >= 0 ? `athlete-option-${filteredAthletes[highlightedIndex]?.id}` : undefined}
+        aria-autocomplete="list"
+        aria-haspopup="listbox"
+        autoComplete="off"
       />
 
       {isOpen && (
-        <div className={css.dropdown}>
+        <div className={css.dropdown} role="presentation">
           {filteredAthletes.length === 0 ? (
-            <div className={css.emptyState}>No athletes found</div>
+            <div className={css.emptyState} role="status" aria-live="polite">
+              No athletes found
+            </div>
           ) : (
-            <ul className={css.list}>
-              {filteredAthletes.map((athlete) => (
+            <ul 
+              ref={listRef}
+              id={listboxId}
+              className={css.list} 
+              role="listbox"
+              aria-label="Athletes"
+            >
+              {filteredAthletes.map((athlete, index) => (
                 <li
                   key={athlete.id}
-                  className={`${css.item} ${athlete.id === selectedAthleteId ? css.selected : ''}`}
+                  id={`athlete-option-${athlete.id}`}
+                  className={`${css.item} ${athlete.id === selectedAthleteId ? css.selected : ''} ${index === highlightedIndex ? css.highlighted : ''}`}
                   onClick={() => handleSelectAthlete(athlete)}
+                  role="option"
+                  aria-selected={athlete.id === selectedAthleteId}
                 >
                   <div className={css.athleteName}>{athlete.name}</div>
                   <div className={css.athleteMeta}>

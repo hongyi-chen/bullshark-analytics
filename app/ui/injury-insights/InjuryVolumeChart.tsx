@@ -167,8 +167,8 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
-                const { cx, cy, payload } = props;
+              dot={(props) => {
+                const { cx, cy, payload } = props as { cx: number; cy: number; payload: ChartDataPoint };
                 const isRisky = payload.isRisky;
 
                 return (
@@ -180,9 +180,10 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
                       fill={isRisky ? '#ef4444' : 'var(--accent)'}
                       stroke={isRisky ? '#ef4444' : 'var(--accent)'}
                       strokeWidth={2}
+                      aria-hidden="true"
                     />
                     {isRisky && (
-                      <g transform={`translate(${cx - 10}, ${cy - 24})`}>
+                      <g transform={`translate(${cx - 10}, ${cy - 24})`} aria-hidden="true">
                         <path
                           d="M10 1L1 17h18L10 1z"
                           fill="#ef4444"

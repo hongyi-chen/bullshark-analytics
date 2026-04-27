@@ -22,10 +22,8 @@ export default function HighlightsCard({
     const totalRuns = stats?.overall.totalRuns ?? 0;
     const totalKm = stats?.overall.totalKm ?? 0;
 
-    // Average run distance
     const avgRunKm = totalRuns > 0 ? totalKm / totalRuns : 0;
 
-    // Most dedicated: highest avg km per run (min 3 runs to qualify)
     const qualifiedAthletes = athletes.filter((a) => a.runs >= 3);
     const mostDedicated =
       qualifiedAthletes.length > 0
@@ -36,13 +34,11 @@ export default function HighlightsCard({
           })
         : null;
 
-    // Busiest day from chart data
     const busiestDay =
       chartData.length > 0
         ? chartData.reduce((best, d) => (d.km > best.km ? d : best))
         : null;
 
-    // Active athletes count
     const activeAthletes = athletes.length;
 
     return {
@@ -56,7 +52,7 @@ export default function HighlightsCard({
       busiestDay,
       activeAthletes,
     };
-  }, [athletes, chartData]);
+  }, [athletes, chartData, stats]);
 
   return (
     <Card
@@ -67,9 +63,8 @@ export default function HighlightsCard({
         </div>
       }
     >
-      <div className={css.container}>
-        <Card highlighted={true} style={{ padding: 12 }}>
-          {" "}
+      <div className={css.container} role="list" aria-label="Performance highlights">
+        <Card highlighted={true} style={{ padding: 12 }} ariaLabel="Longest run statistic">
           <div className="muted">Longest run</div>
           <div className={css.highlightValue}>
             {stats?.overall.longest
@@ -80,7 +75,7 @@ export default function HighlightsCard({
             {stats?.overall.longest?.athleteName ?? ""}
           </div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted={true} style={{ padding: 12 }} ariaLabel="Most dedicated athlete statistic">
           <div className="muted">Most dedicated</div>
           <div className={css.highlightValue}>
             {highlights.mostDedicated
@@ -91,7 +86,7 @@ export default function HighlightsCard({
             {highlights.mostDedicated?.name ?? ""}
           </div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted={true} style={{ padding: 12 }} ariaLabel="Most runs statistic">
           <div className="muted">Most runs</div>
           <div className={css.highlightValue}>
             {stats?.overall.mostRuns
@@ -102,19 +97,19 @@ export default function HighlightsCard({
             {stats?.overall.mostRuns?.athleteName ?? ""}
           </div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted={true} style={{ padding: 12 }} ariaLabel="Average run statistic">
           <div className="muted">Average run</div>
           <div className={css.highlightValue}>
             {fmtKm(highlights.avgRunKm)} km
           </div>
           <div className={css.highlightAthlete}>per run</div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted={true} style={{ padding: 12 }} ariaLabel="Active athletes statistic">
           <div className="muted">Active athletes</div>
           <div className={css.highlightValue}>{highlights.activeAthletes}</div>
           <div className={css.highlightAthlete}>runners</div>
         </Card>
-        <Card highlighted={true} style={{ padding: 12 }}>
+        <Card highlighted={true} style={{ padding: 12 }} ariaLabel="Busiest day statistic">
           <div className="muted">Busiest day</div>
           <div className={css.highlightValue}>
             {highlights.busiestDay
