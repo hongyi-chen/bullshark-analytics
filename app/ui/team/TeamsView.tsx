@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { useAtom } from "jotai";
 import {
   teamLoadingState,
@@ -9,6 +9,8 @@ import {
   teamViewModeState,
   timeFilterState,
   lastUpdatedTextState,
+  TeamViewMode,
+  TeamChartMode,
 } from "@/lib/state/atoms";
 import { useActivities, useAthletes, useTimeseries, useTeamStats, useActivityStats } from "@/lib/hooks";
 import Divider from "@/app/ui/common/Divider";
@@ -17,7 +19,43 @@ import TeamPerformanceCard from "@/app/ui/team/TeamPerformanceCard";
 import LeaderboardCard from "@/app/ui/common/LeaderboardCard";
 import { fmtKm } from "@/app/utils/fmtKm";
 import css from "@/app/ui/dashboard/Filters.module.scss";
-import { AthleteBreakdownChartData } from "@/lib/types/dashboard";
+import { AthleteBreakdownChartData, TeamWeeklyData } from "@/lib/types/dashboard";
+
+type TeamDataExtractor = (point: TeamWeeklyData) => number;
+
+function combineTeamData(
+  bullsData: TeamWeeklyData[],
+  sharksData: TeamWeeklyData[],
+  extractor: TeamDataExtractor
+) {
+  const combined = new Map<string, { bullsKm: number; sharksKm: number }>();
+
+  for (const point of bullsData) {
+    combined.set(point.weekStart, { bullsKm: extractor(point), sharksKm: 0 });
+  }
+
+  for (const point of sharksData) {
+    const existing = combined.get(point.weekStart) ?? { bullsKm: 0, sharksKm: 0 };
+    existing.sharksKm = extractor(point);
+    combined.set(point.weekStart, existing);
+  }
+
+  const sorted = Array.from(combined.entries())
+    .map(([weekStart, data]) => ({ weekStart, ...data }))
+    .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+
+  if (sorted.length > 0) {
+    const firstWeek = new Date(sorted[0].weekStart);
+    firstWeek.setDate(firstWeek.getDate() - 7);
+    sorted.unshift({
+      weekStart: firstWeek.toISOString().split('T')[0],
+      bullsKm: 0,
+      sharksKm: 0,
+    });
+  }
+
+  return sorted;
+}
 
 export default function TeamsView() {
   const [loading] = useAtom(teamLoadingState);
@@ -26,8 +64,7 @@ export default function TeamsView() {
   const [viewMode, setViewMode] = useAtom(teamViewModeState);
   const [timeFilter] = useAtom(timeFilterState);
 
-  // Data fetching hooks (now respecting global timeFilter instead of hardcoding 'week')
-  const activities = useActivities(timeFilter);
+  useActivities(timeFilter);
   const athletes = useAthletes();
   const timeseries = useTimeseries();
   const teamStats = useTeamStats();
@@ -35,80 +72,20 @@ export default function TeamsView() {
 
   const chartData = useMemo(() => {
     if (!teamStats) return [];
-
-    const combined = new Map<string, { bullsKm: number; sharksKm: number }>();
-
-    for (const point of teamStats.bulls.weeklyKilometers) {
-      combined.set(point.weekStart, {
-        bullsKm: point.weeklyTeamKilometers,
-        sharksKm: 0,
-      });
-    }
-
-    for (const point of teamStats.sharks.weeklyKilometers) {
-      const existing = combined.get(point.weekStart) ?? {
-        bullsKm: 0,
-        sharksKm: 0,
-      };
-      existing.sharksKm = point.weeklyTeamKilometers;
-      combined.set(point.weekStart, existing);
-    }
-
-    const sorted = Array.from(combined.entries())
-      .map(([weekStart, data]) => ({ weekStart, ...data }))
-      .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
-
-    // Add a starting point at week 0 (one week before the first data point)
-    if (sorted.length > 0) {
-      const firstWeek = new Date(sorted[0].weekStart);
-      firstWeek.setDate(firstWeek.getDate() - 7);
-      sorted.unshift({
-        weekStart: firstWeek.toISOString().split('T')[0],
-        bullsKm: 0,
-        sharksKm: 0,
-      });
-    }
-
-    return sorted;
+    return combineTeamData(
+      teamStats.bulls.weeklyKilometers,
+      teamStats.sharks.weeklyKilometers,
+      (point) => point.weeklyTeamKilometers
+    );
   }, [teamStats]);
 
   const runningTotalsData = useMemo(() => {
     if (!teamStats) return [];
-
-    const combined = new Map<string, { bullsKm: number; sharksKm: number }>();
-
-    for (const point of teamStats.bulls.weeklyKilometers) {
-      combined.set(point.weekStart, {
-        bullsKm: point.weeklyRunningSum,
-        sharksKm: 0,
-      });
-    }
-
-    for (const point of teamStats.sharks.weeklyKilometers) {
-      const existing = combined.get(point.weekStart) ?? {
-        bullsKm: 0,
-        sharksKm: 0,
-      };
-      existing.sharksKm = point.weeklyRunningSum;
-      combined.set(point.weekStart, existing);
-    }
-
-    const sorted = Array.from(combined.entries())
-      .map(([weekStart, data]) => ({ weekStart, ...data }))
-      .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
-
-    // Add a starting point at week 0 (one week before the first data point)
-    if (sorted.length > 0) {
-      const firstWeek = new Date(sorted[0].weekStart);
-      firstWeek.setDate(firstWeek.getDate() - 7);
-      sorted.unshift({
-        weekStart: firstWeek.toISOString().split('T')[0],
-        bullsKm: 0,
-        sharksKm: 0,
-      });
-    }
-
-    return sorted;
+    return combineTeamData(
+      teamStats.bulls.weeklyKilometers,
+      teamStats.sharks.weeklyKilometers,
+      (point) => point.weeklyRunningSum
+    );
   }, [teamStats]);
 
   const bullsAthletes = useMemo(() => {
@@ -276,16 +253,24 @@ export default function TeamsView() {
     }
   }, [stats?.lastFetchedAt, setLastUpdatedText]);
 
+  const handleViewModeChange = useCallback((mode: TeamViewMode) => {
+    setViewMode(mode);
+  }, [setViewMode]);
+
+  const handleChartModeChange = useCallback((mode: TeamChartMode) => {
+    setChartMode(mode);
+  }, [setChartMode]);
+
   return (
     <>
-      <div className={css.card}>
-        <div className={css.group}>
-          <span className={css.label}>View</span>
-          <div className={css.pillRow}>
+      <div className={css.card} role="group" aria-label="Team view filters">
+        <fieldset className={css.group} role="group" aria-labelledby="view-mode-label">
+          <legend id="view-mode-label" className={css.label}>View</legend>
+          <div className={css.pillRow} role="radiogroup" aria-label="View mode">
             <button
               className={css.pill}
               aria-pressed={viewMode === "comparison"}
-              onClick={() => setViewMode("comparison")}
+              onClick={() => handleViewModeChange("comparison")}
               type="button"
             >
               Team Comparison
@@ -293,31 +278,31 @@ export default function TeamsView() {
             <button
               className={css.pill}
               aria-pressed={viewMode === "bulls-breakdown"}
-              onClick={() => setViewMode("bulls-breakdown")}
+              onClick={() => handleViewModeChange("bulls-breakdown")}
               type="button"
             >
-              🐂 Bulls Breakdown
+              <span aria-hidden="true">🐂 </span>Bulls Breakdown
             </button>
             <button
               className={css.pill}
               aria-pressed={viewMode === "sharks-breakdown"}
-              onClick={() => setViewMode("sharks-breakdown")}
+              onClick={() => handleViewModeChange("sharks-breakdown")}
               type="button"
             >
-              🦈 Sharks Breakdown
+              <span aria-hidden="true">🦈 </span>Sharks Breakdown
             </button>
           </div>
-        </div>
+        </fieldset>
 
-        <div className={css.divider} />
+        <div className={css.divider} aria-hidden="true" />
 
-        <div className={css.group}>
-          <span className={css.label}>Metric</span>
-          <div className={css.pillRow}>
+        <fieldset className={css.group} role="group" aria-labelledby="metric-label">
+          <legend id="metric-label" className={css.label}>Metric</legend>
+          <div className={css.pillRow} role="radiogroup" aria-label="Metric">
             <button
               className={css.pill}
               aria-pressed={chartMode === "running"}
-              onClick={() => setChartMode("running")}
+              onClick={() => handleChartModeChange("running")}
               type="button"
             >
               Running Total
@@ -325,13 +310,13 @@ export default function TeamsView() {
             <button
               className={css.pill}
               aria-pressed={chartMode === "weekly"}
-              onClick={() => setChartMode("weekly")}
+              onClick={() => handleChartModeChange("weekly")}
               type="button"
             >
               Weekly Totals
             </button>
           </div>
-        </div>
+        </fieldset>
       </div>
 
       <Divider size={16} />

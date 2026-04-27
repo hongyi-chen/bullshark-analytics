@@ -14,6 +14,9 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    border: none;
+    padding: 0;
+    margin: 0;
 }
 
 .label {
@@ -51,6 +54,10 @@
     border-color: rgba(34, 197, 94, 0.5);
     background: rgba(34, 197, 94, 0.12);
     color: var(--accent);
+}
+
+.pill:focus-visible {
+    box-shadow: var(--focus-ring);
 }
 
 .divider {

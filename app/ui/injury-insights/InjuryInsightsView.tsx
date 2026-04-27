@@ -61,16 +61,16 @@ export default function InjuryInsightsView() {
       <Divider size={16} />
 
       <Card>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>
+        <fieldset style={{ display: 'flex', flexDirection: 'column', gap: '8px', border: 'none', padding: 0, margin: 0 }}>
+          <legend style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)', padding: 0 }}>
             Select Athlete
-          </label>
+          </legend>
           <AthleteSelector
             athletes={athletesTrainingData}
             selectedAthleteId={selectedAthleteId}
             onSelectAthlete={setSelectedAthleteId}
           />
-        </div>
+        </fieldset>
       </Card>
 
       <Divider size={16} />

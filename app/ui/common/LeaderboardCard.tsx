@@ -48,13 +48,16 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const label = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      data-tooltip={label}
+      aria-label={label}
+      role="img"
     >
       {event}
     </span>
@@ -87,7 +90,12 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
+    <span 
+      className={clsx(css.statusChip, className)} 
+      data-tooltip={tooltip}
+      aria-label={tooltip}
+      role="status"
+    >
       {label}
     </span>
   );
@@ -98,13 +106,16 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const label = team === "bulls" ? "Team Bulls" : "Team Sharks";
   return (
     <span
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      data-tooltip={label}
+      aria-label={label}
+      role="img"
     >
       {team}
     </span>
@@ -226,16 +237,17 @@ export default function LeaderboardCard({
               {fmtKm(athlete.totalKm)}
             </td>
           );
-        case "streak":
+        case "streak": {
           const streakCount = athlete.streak ?? 0;
           return (
             <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
-              <span className={css.streakBadge}>
-                <span className={css.streakIcon}>🔥</span>
+              <span className={css.streakBadge} aria-label={`${streakCount} day streak`}>
+                <span className={css.streakIcon} aria-hidden="true">🔥</span>
                 {streakCount}
               </span>
             </td>
           );
+        }
       }
     });
   };
@@ -258,8 +270,12 @@ export default function LeaderboardCard({
       <div
         className={clsx(css.tableScroll, css.tableScrollFixed, "flexFill")}
         style={{ opacity: loading ? 0.7 : 1 }}
+        role="region"
+        aria-label={`${title} leaderboard`}
+        tabIndex={0}
       >
-        <table className={css.table}>
+        <table className={css.table} aria-describedby={loading ? 'loading-status' : undefined}>
+          {loading && <caption id="loading-status" className="sr-only">Loading data...</caption>}
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>

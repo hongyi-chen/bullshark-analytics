@@ -86,3 +86,7 @@
   color: var(--accent);
   border: 1px solid rgba(34, 197, 94, 0.5);
 }
+
+.navPill:focus-visible {
+  box-shadow: var(--focus-ring);
+}

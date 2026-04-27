@@ -3,8 +3,8 @@ import css from './DisclaimerCard.module.scss';
 
 export default function DisclaimerCard() {
   return (
-    <Card className={css.disclaimerCard}>
-      <div className={css.content}>
+    <Card className={css.disclaimerCard} as="section" ariaLabel="Important disclaimer">
+      <div className={css.content} role="alert">
         <div className={css.iconContainer}>
           <svg
             className={css.icon}
@@ -13,6 +13,8 @@ export default function DisclaimerCard() {
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
           >
             <path
               d="M12 2L2 20h20L12 2z"
@@ -31,7 +33,7 @@ export default function DisclaimerCard() {
           </svg>
         </div>
         <div className={css.text}>
-          <h3 className={css.title}>Important Disclaimer</h3>
+          <h2 className={css.title}>Important Disclaimer</h2>
           <p className={css.message}>
             Welcome to the Injury Insights Beta!
 
