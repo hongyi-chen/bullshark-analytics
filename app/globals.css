@@ -36,6 +36,25 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Focus visible styles for accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+[role="tab"]:focus-visible,
+[role="option"]:focus-visible,
+[role="combobox"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Remove default outline on buttons (we use :focus-visible instead) */
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .container {
   max-width: 1120px;
   margin: 0 auto;
@@ -86,4 +105,39 @@ a:hover {
   padding: 6px 10px;
   color: var(--muted);
   font-size: 12px;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: var(--bg);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 9999;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+/* Visually hidden utility class for screen readers */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

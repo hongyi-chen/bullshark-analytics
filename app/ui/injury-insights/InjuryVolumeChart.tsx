@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart, Line } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
@@ -25,13 +25,48 @@ interface TooltipProps {
   label?: string;
 }
 
+interface DotProps {
+  cx?: number;
+  cy?: number;
+  payload?: ChartDataPoint;
+}
+
+function WarningIcon({ size = 14, className }: { size?: number; className?: string }) {
+  return (
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="none"
+      className={className}
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M12 2L2 20h20L12 2z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12 9v4M12 17h.01"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function VolumeTooltip({ active, payload, label }: TooltipProps) {
   if (!active || !payload?.length || !label) return null;
 
   const riskData = payload[0]?.payload?.riskData;
 
   return (
-    <div className={css.tooltip}>
+    <div className={css.tooltip} role="tooltip">
       <div className={css.tooltipWeek}>Week of {new Date(label).toLocaleDateString()}</div>
       <div className={css.tooltipEntry}>
         <div className={css.tooltipLabel}>Volume</div>
@@ -41,22 +76,7 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
       </div>
       {riskData && (
         <div className={css.tooltipRisk}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 2L2 20h20L12 2z"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M12 9v4M12 17h.01"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <WarningIcon size={14} />
           <div className={css.tooltipRiskContent}>
             <span className={css.tooltipRiskTitle}>
               {riskData.riskCount} {riskData.riskCount === 1 ? 'Risk' : 'Risks'} Detected
@@ -167,12 +187,14 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: DotProps) => {
                 const { cx, cy, payload } = props;
+                if (cx === undefined || cy === undefined || !payload) return null;
+                
                 const isRisky = payload.isRisky;
 
                 return (
-                  <g>
+                  <g role="img" aria-label={isRisky ? `Week of ${payload.weekStart}: ${payload.kilometers} km - Risk warning` : `Week of ${payload.weekStart}: ${payload.kilometers} km`}>
                     <circle
                       cx={cx}
                       cy={cy}
@@ -182,7 +204,7 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
                       strokeWidth={2}
                     />
                     {isRisky && (
-                      <g transform={`translate(${cx - 10}, ${cy - 24})`}>
+                      <g transform={`translate(${cx - 10}, ${cy - 24})`} aria-hidden="true">
                         <path
                           d="M10 1L1 17h18L10 1z"
                           fill="#ef4444"

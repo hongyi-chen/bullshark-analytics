@@ -48,13 +48,17 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const label = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      data-tooltip={label}
+      title={label}
+      role="img"
+      aria-label={label}
     >
       {event}
     </span>
@@ -87,7 +91,13 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
+    <span 
+      className={clsx(css.statusChip, className)} 
+      data-tooltip={tooltip}
+      title={tooltip}
+      role="img"
+      aria-label={tooltip}
+    >
       {label}
     </span>
   );
@@ -98,13 +108,17 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const label = team === "bulls" ? "Team Bulls" : "Team Sharks";
   return (
     <span
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      data-tooltip={label}
+      title={label}
+      role="img"
+      aria-label={label}
     >
       {team}
     </span>
@@ -259,7 +273,10 @@ export default function LeaderboardCard({
         className={clsx(css.tableScroll, css.tableScrollFixed, "flexFill")}
         style={{ opacity: loading ? 0.7 : 1 }}
       >
-        <table className={css.table}>
+        <table className={css.table} aria-label={`${title} - ${subtitle}`}>
+          <caption className="visuallyHidden">
+            {title}: {subtitle}. {badgeLabel}: {badgeValue}.
+          </caption>
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>

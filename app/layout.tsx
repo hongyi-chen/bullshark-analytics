@@ -10,7 +10,6 @@ function getMetadataBase(): URL | undefined {
   try {
     return new URL(raw);
   } catch {
-    // Avoid crashing metadata generation if env is misconfigured.
     return undefined;
   }
 }
@@ -39,10 +38,19 @@ export const metadata: Metadata = {
   },
 };
 
+function SkipLink() {
+  return (
+    <a href="#main-content" className="skip-link">
+      Skip to main content
+    </a>
+  );
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
+        <SkipLink />
         <JotaiProvider>{children}</JotaiProvider>
         <Analytics />
         <SpeedInsights />
