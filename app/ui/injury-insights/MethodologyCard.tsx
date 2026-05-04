@@ -4,9 +4,9 @@ import css from './MethodologyCard.module.scss';
 export default function MethodologyCard() {
   return (
     <Card>
-      <div className={css.container} id="methodology-card">
+      <section className={css.container} aria-labelledby="methodology-heading">
         <div className={css.header}>
-          <h3>Risk Types</h3>
+          <h3 id="methodology-heading">Risk Types</h3>
         </div>
         <div className={css.content}>
           <ul className={css.list}>
@@ -26,13 +26,15 @@ export default function MethodologyCard() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={css.link}
+                aria-label="Learn more about SSRD30 research (opens in new tab)"
               >
                 Learn more
+                <span className="visuallyHidden"> (opens in new tab)</span>
               </a>
             </li>
           </ul>
         </div>
-      </div>
+      </section>
     </Card>
   );
 }

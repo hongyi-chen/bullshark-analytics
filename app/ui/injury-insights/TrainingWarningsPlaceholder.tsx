@@ -14,6 +14,12 @@ function getRiskSeverityClass(riskCount: number): string {
   return css.severityLow;
 }
 
+function getRiskSeverityLabel(riskCount: number): string {
+  if (riskCount >= 3) return 'High severity';
+  if (riskCount >= 2) return 'Medium severity';
+  return 'Low severity';
+}
+
 export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: TrainingWarningsPlaceholderProps) {
   const riskyWeeksArray = riskyWeeks
     ? Array.from(riskyWeeks.entries())
@@ -25,22 +31,22 @@ export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: Tra
 
   return (
     <Card>
-      <div className={css.container}>
+      <section className={css.container} aria-labelledby="training-warnings-heading">
         <div className={css.header}>
-          <h3>Training Warnings</h3>
+          <h3 id="training-warnings-heading">Training Warnings</h3>
           {hasWarnings && (
-            <span className={css.warningCount}>
+            <span className={css.warningCount} aria-label={`${riskyWeeksArray.length} ${riskyWeeksArray.length === 1 ? 'week with warnings' : 'weeks with warnings'}`}>
               {riskyWeeksArray.length} {riskyWeeksArray.length === 1 ? 'Week' : 'Weeks'}
             </span>
           )}
         </div>
 
         {hasWarnings ? (
-          <div className={css.warningsList}>
+          <ul className={css.warningsList} aria-label="Training warning alerts">
             {riskyWeeksArray.map(({ week, riskCount, risks }) => (
-              <div key={week} className={`${css.warningItem} ${getRiskSeverityClass(riskCount)}`}>
-                <div className={css.warningIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <li key={week} className={`${css.warningItem} ${getRiskSeverityClass(riskCount)}`} role="alert">
+                <div className={css.warningIcon} aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" focusable="false">
                     <path
                       d="M12 2L2 20h20L12 2z"
                       stroke="currentColor"
@@ -67,27 +73,29 @@ export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: Tra
                       })}
                     </span>
                     <span className={css.warningRiskCount}>
+                      <span className="visuallyHidden">{getRiskSeverityLabel(riskCount)}: </span>
                       {riskCount} {riskCount === 1 ? 'Risk' : 'Risks'}
                     </span>
                   </div>
-                  <ul className={css.risksList}>
+                  <ul className={css.risksList} aria-label={`Risks for week of ${new Date(week).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}>
                     {risks.map((risk, idx) => (
                       <li key={idx}>{formatRiskType(risk)}</li>
                     ))}
                   </ul>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
           <div className={css.placeholder}>
-            <div className={css.icon}>
+            <div className={css.icon} aria-hidden="true">
               <svg
                 width="32"
                 height="32"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                focusable="false"
               >
                 <path
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
@@ -107,7 +115,7 @@ export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: Tra
             </p>
           </div>
         )}
-      </div>
+      </section>
     </Card>
   );
 }
