@@ -46,6 +46,11 @@
     background: rgba(255, 255, 255, 0.05);
     color: var(--text);
 }
+
+.pill:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
   
 .pill[aria-pressed='true'] {
     border-color: rgba(34, 197, 94, 0.5);

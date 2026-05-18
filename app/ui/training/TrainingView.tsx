@@ -67,6 +67,7 @@ export default function TrainingView() {
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Type athlete name..."
+            label="Search athletes by name"
           />
         </div>
 
