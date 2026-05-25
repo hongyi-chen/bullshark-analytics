@@ -34,7 +34,7 @@ export default function RunsPerAthleteCard({
     <Card
       header={
         <div>
-          <div className="bold">Runs per athlete</div>
+          <h2 className="bold">Runs per athlete</h2>
           <div className="muted">Top 10 by run count (this {timeFilter})</div>
         </div>
       }

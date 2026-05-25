@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import Card from "../common/Card";
-import { getAthleteColour, getChartColor } from "@/app/utils/athleteStyles";
+import { getChartColor } from "@/app/utils/athleteStyles";
 import css from "./TeamPerformanceCard.module.scss";
 
 interface TooltipPayloadEntry {
@@ -47,12 +47,12 @@ export default function TeamPerformanceCard({
       header={
         <>
           <div>
-            <div className="bold">Team Performance</div>
+            <h2 className="bold">Team Performance</h2>
             <div className="muted">Weekly kilometers by team</div>
           </div>
           <div className={css.badgeContainer}>
-            <div className="badge">🐂 Bulls: {fmtKm(totalBullsKm)} km</div>
-            <div className="badge">🦈 Sharks: {fmtKm(totalSharksKm)} km</div>
+            <div className="badge"><span aria-hidden="true">🐂</span> Bulls: {fmtKm(totalBullsKm)} km</div>
+            <div className="badge"><span aria-hidden="true">🦈</span> Sharks: {fmtKm(totalSharksKm)} km</div>
           </div>
         </>
       }

@@ -56,7 +56,7 @@ export default function HighlightsCard({
       busiestDay,
       activeAthletes,
     };
-  }, [athletes, chartData]);
+  }, [athletes, chartData, stats]);
 
   return (
     <Card

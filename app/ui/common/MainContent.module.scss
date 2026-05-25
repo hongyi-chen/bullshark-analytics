@@ -1,0 +1,23 @@
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px 0;
+}
+
+.skeletonCard {
+  height: 200px;
+  background: var(--panel);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}

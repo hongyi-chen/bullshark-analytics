@@ -1,3 +1,7 @@
+.searchContainer {
+  display: inline-block;
+}
+
 .searchInput {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.02);
@@ -13,8 +17,12 @@
   }
 
   &:focus {
-    outline: none;
     border-color: rgba(34, 197, 94, 0.5);
     background: rgba(255, 255, 255, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }

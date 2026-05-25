@@ -12,7 +12,6 @@
   background: rgba(231, 237, 246, 0.05);
   border: 1px solid var(--border);
   border-radius: 8px;
-  outline: none;
   transition: all 0.2s ease;
 
   &::placeholder {
@@ -22,6 +21,11 @@
   &:focus {
     background: rgba(231, 237, 246, 0.08);
     border-color: rgba(231, 237, 246, 0.2);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }
 
@@ -54,12 +58,17 @@
   flex-direction: column;
   gap: 6px;
 
-  &:hover {
+  &:hover,
+  &.highlighted {
     background: rgba(231, 237, 246, 0.08);
   }
 
   &.selected {
     background: rgba(34, 197, 94, 0.15);
+  }
+
+  &.highlighted.selected {
+    background: rgba(34, 197, 94, 0.25);
   }
 }
 

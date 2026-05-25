@@ -3,19 +3,27 @@ import css from "./ErrorCard.module.scss";
 
 interface ErrorCardProps {
   errorMessage: string;
+  title?: string;
+  subtitle?: string;
 }
 
-export default function ErrorCard({ errorMessage }: ErrorCardProps) {
+export default function ErrorCard({ 
+  errorMessage, 
+  title = "Couldn't load data",
+  subtitle = "Check that the API endpoints are working."
+}: ErrorCardProps) {
   return (
     <Card
       header={
         <>
-          <div className="bold">Couldn’t load dashboard</div>
-          <div className="muted">Check that the API endpoints are working.</div>
+          <h2 className="bold">{title}</h2>
+          <div className="muted">{subtitle}</div>
         </>
       }
     >
-      <pre className={css.errorMessage}>{errorMessage}</pre>
+      <div role="alert" aria-live="assertive">
+        <pre className={css.errorMessage}>{errorMessage}</pre>
+      </div>
     </Card>
   );
 }

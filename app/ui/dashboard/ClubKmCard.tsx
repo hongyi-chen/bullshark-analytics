@@ -31,9 +31,9 @@ export default function ClubKmCard({
       header={
         <>
           <div>
-            <div className="bold">
+            <h2 className="bold">
               Club km per {aggregation === "daily" ? "day" : "week"}
-            </div>
+            </h2>
             <div className="muted">
               Total distance {aggregation === "daily" ? "per day" : "per week"}{" "}
               (this {timeFilter})

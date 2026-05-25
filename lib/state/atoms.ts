@@ -135,6 +135,12 @@ export const activityStatsAtom = atom((get) => {
     { athleteName: "", runs: 0 }
   );
 
+  // Find the most recent activity date for lastFetchedAt
+  const mostRecentDate = runs.reduce((latest, run) => {
+    const runDate = new Date(run.date).getTime();
+    return runDate > latest ? runDate : latest;
+  }, 0);
+
   return {
     overall: {
       totalRuns: runs.length,
@@ -144,7 +150,7 @@ export const activityStatsAtom = atom((get) => {
       mostRuns: mostRuns.runs > 0 ? mostRuns : null,
     },
     athletes,
-    lastFetchedAt: runs[0]?.date || null,
+    lastFetchedAt: mostRecentDate > 0 ? new Date(mostRecentDate).toISOString() : null,
   };
 });
 

@@ -57,14 +57,20 @@ async function fetchWithCache<T>(endpoint: string, validate: (x: unknown) => T):
   }
 
   const p = (async () => {
-    const res = await fetch(endpoint);
-    if (!res.ok) {
-      throw new Error(`Failed to fetch ${endpoint}: ${res.status}`);
+    try {
+      const res = await fetch(endpoint);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch ${endpoint}: ${res.status}`);
+      }
+      const raw = await res.json();
+      const data = validate(raw);
+      cache.set(key, { ts: Date.now(), data });
+      return data;
+    } catch (error) {
+      // On failure, delete the cache entry so the next request can retry
+      cache.delete(key);
+      throw error;
     }
-    const raw = await res.json();
-    const data = validate(raw);
-    cache.set(key, { ts: Date.now(), data });
-    return data;
   })();
 
   cache.set(key, { ts: now, promise: p });
