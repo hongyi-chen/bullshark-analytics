@@ -47,7 +47,8 @@ export default function LatestRunsCard({
 
     return {
       runs,
-      lastPoll: activities[0]?.date || null,
+      // Use the most recent run's date (runs are already sorted by date descending)
+      lastPoll: runs[0]?.fetchedAt ?? null,
     };
   }, [activities]);
 
@@ -56,7 +57,7 @@ export default function LatestRunsCard({
       header={
         <>
           <div>
-            <div className="bold">Latest runs</div>
+            <h2 className="bold">Latest runs</h2>
             <div className="muted">
               {latestRuns?.lastPoll && now !== null
                 ? `Last poll: ${timeAgoFromNow(latestRuns.lastPoll, now)}`
@@ -77,6 +78,7 @@ export default function LatestRunsCard({
                 background: getAthleteEmojiAndBackground(run.athleteName)
                   .background,
               }}
+              aria-hidden="true"
             >
               {getAthleteEmojiAndBackground(run.athleteName).emoji}
             </div>

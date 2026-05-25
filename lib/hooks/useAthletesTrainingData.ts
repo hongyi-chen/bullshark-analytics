@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { athletesTrainingDataState, dataLoadingState, dataErrorState } from '@/lib/state/atoms';
 import { fetchAthletesTrainingData, hasFreshAthletesTrainingDataCache } from '@/lib/state/api';
@@ -7,8 +7,11 @@ export function useAthletesTrainingData() {
   const [athletesTrainingData, setAthletesTrainingData] = useAtom(athletesTrainingDataState);
   const setLoading = useSetAtom(dataLoadingState);
   const setError = useSetAtom(dataErrorState);
+  const abortedRef = useRef(false);
 
   useEffect(() => {
+    abortedRef.current = false;
+
     async function load() {
       const hasFresh = hasFreshAthletesTrainingDataCache();
 
@@ -17,18 +20,28 @@ export function useAthletesTrainingData() {
 
       try {
         const data = await fetchAthletesTrainingData();
-        setAthletesTrainingData(data);
+        if (!abortedRef.current) {
+          setAthletesTrainingData(data);
+        }
       } catch (e: unknown) {
-        setError((prev) => ({
-          ...prev,
-          athletesTrainingData: e instanceof Error ? e.message : String(e)
-        }));
+        if (!abortedRef.current) {
+          setError((prev) => ({
+            ...prev,
+            athletesTrainingData: e instanceof Error ? e.message : String(e)
+          }));
+        }
       } finally {
-        setLoading((prev) => ({ ...prev, athletesTrainingData: false }));
+        if (!abortedRef.current) {
+          setLoading((prev) => ({ ...prev, athletesTrainingData: false }));
+        }
       }
     }
 
     load();
+
+    return () => {
+      abortedRef.current = true;
+    };
   }, [setAthletesTrainingData, setLoading, setError]);
 
   return athletesTrainingData;

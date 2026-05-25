@@ -5,7 +5,7 @@ export default function DisclaimerCard() {
   return (
     <Card className={css.disclaimerCard}>
       <div className={css.content}>
-        <div className={css.iconContainer}>
+        <div className={css.iconContainer} aria-hidden="true">
           <svg
             className={css.icon}
             width="24"

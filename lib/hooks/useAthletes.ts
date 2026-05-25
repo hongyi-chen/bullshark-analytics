@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { athletesState, dataLoadingState, dataErrorState } from '@/lib/state/atoms';
 import { fetchAthletes, hasFreshAthletesCache } from '@/lib/state/api';
@@ -7,8 +7,11 @@ export function useAthletes() {
   const [athletes, setAthletes] = useAtom(athletesState);
   const setLoading = useSetAtom(dataLoadingState);
   const setError = useSetAtom(dataErrorState);
+  const abortedRef = useRef(false);
 
   useEffect(() => {
+    abortedRef.current = false;
+
     async function load() {
       const hasFresh = hasFreshAthletesCache();
 
@@ -17,18 +20,28 @@ export function useAthletes() {
 
       try {
         const data = await fetchAthletes();
-        setAthletes(data);
+        if (!abortedRef.current) {
+          setAthletes(data);
+        }
       } catch (e: unknown) {
-        setError((prev) => ({
-          ...prev,
-          athletes: e instanceof Error ? e.message : String(e)
-        }));
+        if (!abortedRef.current) {
+          setError((prev) => ({
+            ...prev,
+            athletes: e instanceof Error ? e.message : String(e)
+          }));
+        }
       } finally {
-        setLoading((prev) => ({ ...prev, athletes: false }));
+        if (!abortedRef.current) {
+          setLoading((prev) => ({ ...prev, athletes: false }));
+        }
       }
     }
 
     load();
+
+    return () => {
+      abortedRef.current = true;
+    };
   }, [setAthletes, setLoading, setError]);
 
   return athletes;

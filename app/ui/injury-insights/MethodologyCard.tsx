@@ -26,6 +26,7 @@ export default function MethodologyCard() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={css.link}
+                aria-label="Learn more about SSRD30 research (opens in new tab)"
               >
                 Learn more
               </a>

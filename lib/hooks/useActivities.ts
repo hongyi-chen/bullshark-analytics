@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom, useSetAtom } from 'jotai';
 import { activitiesState, dataLoadingState, dataErrorState } from '@/lib/state/atoms';
 import { fetchActivities, hasFreshActivitiesCache } from '@/lib/state/api';
@@ -8,8 +8,11 @@ export function useActivities(timeFilter: TimeFilter) {
   const [activities, setActivities] = useAtom(activitiesState);
   const setLoading = useSetAtom(dataLoadingState);
   const setError = useSetAtom(dataErrorState);
+  const abortedRef = useRef(false);
 
   useEffect(() => {
+    abortedRef.current = false;
+
     async function load() {
       const hasFresh = hasFreshActivitiesCache(timeFilter);
 
@@ -18,18 +21,29 @@ export function useActivities(timeFilter: TimeFilter) {
 
       try {
         const data = await fetchActivities(timeFilter);
-        setActivities(data);
+        // Only update state if the effect hasn't been cleaned up
+        if (!abortedRef.current) {
+          setActivities(data);
+        }
       } catch (e: unknown) {
-        setError((prev) => ({
-          ...prev,
-          activities: e instanceof Error ? e.message : String(e)
-        }));
+        if (!abortedRef.current) {
+          setError((prev) => ({
+            ...prev,
+            activities: e instanceof Error ? e.message : String(e)
+          }));
+        }
       } finally {
-        setLoading((prev) => ({ ...prev, activities: false }));
+        if (!abortedRef.current) {
+          setLoading((prev) => ({ ...prev, activities: false }));
+        }
       }
     }
 
     load();
+
+    return () => {
+      abortedRef.current = true;
+    };
   }, [timeFilter, setActivities, setLoading, setError]);
 
   return activities;
