@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import Card from "../common/Card";
-import { getAthleteColour, getChartColor } from "@/app/utils/athleteStyles";
+import { getChartColor } from "@/app/utils/athleteStyles";
 import css from "./TeamPerformanceCard.module.scss";
 
 interface TooltipPayloadEntry {
@@ -27,7 +27,6 @@ interface TeamPerformanceCardProps {
   viewMode: 'comparison' | 'bulls-breakdown' | 'sharks-breakdown';
   chartData: TeamComparisonChartData[] | AthleteBreakdownChartData[];
   athleteNames?: string[];
-  team?: 'bulls' | 'sharks';
   totalBullsKm: number;
   totalSharksKm: number;
 }
@@ -36,7 +35,6 @@ export default function TeamPerformanceCard({
   viewMode,
   chartData,
   athleteNames,
-  team,
   totalBullsKm,
   totalSharksKm,
 }: TeamPerformanceCardProps) {

@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --bg: #0b0f14;
   --panel: #0f1620;
   --panel-2: #111a25;
@@ -7,6 +7,7 @@
   --muted: #a6b1c2;
   --border: rgba(231, 237, 246, 0.12);
   --accent: #22c55e; /* green */
+  --focus-ring: rgba(34, 197, 94, 0.7);
 }
 
 * {
@@ -86,4 +87,52 @@ a:hover {
   padding: 6px 10px;
   color: var(--muted);
   font-size: 12px;
+}
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background: var(--panel);
+  color: var(--text);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Global focus-visible styles for keyboard accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Screen reader only utility class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

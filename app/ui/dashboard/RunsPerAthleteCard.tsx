@@ -30,6 +30,12 @@ export default function RunsPerAthleteCard({
       .map((a) => ({ athlete: a.athleteName, runs: a.runs }));
   }, [athletes]);
 
+  const chartSummary = useMemo(() => {
+    if (runsBarData.length === 0) return "No data available.";
+    const topRunner = runsBarData[0];
+    return `Bar chart showing top ${runsBarData.length} athletes by run count. Leader: ${topRunner.athlete} with ${topRunner.runs} runs.`;
+  }, [runsBarData]);
+
   return (
     <Card
       header={
@@ -39,7 +45,8 @@ export default function RunsPerAthleteCard({
         </div>
       }
     >
-      <div className={css.chart}>
+      <div className={css.chart} role="img" aria-label="Runs per athlete bar chart">
+        <span className="sr-only">{chartSummary}</span>
         <ResponsiveContainer>
           <BarChart
             data={runsBarData}
