@@ -147,10 +147,9 @@ export default function TrainingView() {
         </Card>
       ) : null}
 
-      <div style={{ opacity: loading.athletesTrainingData ? 0.7 : 1 }}>
+      <div style={{ opacity: loading.athletesTrainingData ? 0.7 : 1 }} aria-busy={loading.athletesTrainingData}>
         <TrainingChartCard
           athletes={filteredAthletes}
-          loading={loading.athletesTrainingData}
         />
       </div>
     </>

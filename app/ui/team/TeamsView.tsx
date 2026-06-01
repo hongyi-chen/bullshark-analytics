@@ -252,12 +252,6 @@ export default function TeamsView() {
     return undefined;
   }, [viewMode, bullsAthletes, sharksAthletes]);
 
-  const displayTeam = useMemo(() => {
-    if (viewMode === "bulls-breakdown") return "bulls";
-    if (viewMode === "sharks-breakdown") return "sharks";
-    return undefined;
-  }, [viewMode]);
-
   const totalBullsKm = useMemo(() => {
     return bullsAthletes.reduce((sum, athlete) => sum + athlete.totalKm, 0);
   }, [bullsAthletes]);
@@ -343,7 +337,6 @@ export default function TeamsView() {
           viewMode={viewMode}
           chartData={displayChartData}
           athleteNames={displayAthleteNames}
-          team={displayTeam}
           totalBullsKm={totalBullsKm}
           totalSharksKm={totalSharksKm}
         />

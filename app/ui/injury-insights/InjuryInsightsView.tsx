@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useId } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   injurySelectedAthleteIdState,
@@ -23,6 +23,7 @@ export default function InjuryInsightsView() {
   const loading = useAtomValue(dataLoadingState);
   const err = useAtomValue(dataErrorState);
   const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
+  const athleteSelectorLabelId = useId();
 
   const athletesTrainingData = useAthletesTrainingData();
   const stats = useActivityStats();
@@ -62,13 +63,14 @@ export default function InjuryInsightsView() {
 
       <Card>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>
+          <span id={athleteSelectorLabelId} style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>
             Select Athlete
-          </label>
+          </span>
           <AthleteSelector
             athletes={athletesTrainingData}
             selectedAthleteId={selectedAthleteId}
             onSelectAthlete={setSelectedAthleteId}
+            labelId={athleteSelectorLabelId}
           />
         </div>
       </Card>
@@ -81,10 +83,9 @@ export default function InjuryInsightsView() {
 
       {selectedAthlete && (
         <>
-          <div style={{ opacity: loading.athletesTrainingData ? 0.7 : 1 }}>
+          <div style={{ opacity: loading.athletesTrainingData ? 0.7 : 1 }} aria-busy={loading.athletesTrainingData}>
             <InjuryVolumeChart
               athlete={selectedAthlete}
-              loading={loading.athletesTrainingData}
               riskyWeeks={riskyWeeksData}
             />
           </div>

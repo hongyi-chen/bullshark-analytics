@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
+import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
@@ -8,7 +8,6 @@ import css from './InjuryVolumeChart.module.scss';
 
 interface InjuryVolumeChartProps {
   athlete: AthleteWithTrainingData;
-  loading: boolean;
   riskyWeeks?: Map<string, { riskCount: number; risks: string[] }>;
 }
 
@@ -17,6 +16,12 @@ interface ChartDataPoint {
   kilometers: number;
   isRisky?: boolean;
   riskData?: { riskCount: number; risks: string[] };
+}
+
+interface DotProps {
+  cx?: number;
+  cy?: number;
+  payload?: ChartDataPoint;
 }
 
 interface TooltipProps {
@@ -73,7 +78,7 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
   );
 }
 
-export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: InjuryVolumeChartProps) {
+export default function InjuryVolumeChart({ athlete, riskyWeeks }: InjuryVolumeChartProps) {
   const chartData = useMemo(() => {
     const data: ChartDataPoint[] = Object.entries(athlete.trainingData.weeklyKilometers)
       .map(([weekStart, kilometers]) => {
@@ -167,8 +172,9 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: DotProps) => {
                 const { cx, cy, payload } = props;
+                if (cx == null || cy == null || payload == null) return null;
                 const isRisky = payload.isRisky;
 
                 return (

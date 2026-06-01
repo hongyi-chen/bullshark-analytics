@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useAtom } from "jotai";
 import {
   timeFilterState,
@@ -86,7 +86,7 @@ export default function DashboardView() {
 
       {err != null ? <ErrorCard errorMessage={err} /> : null}
 
-      <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
+      <div className="row" style={{ opacity: loading ? 0.7 : 1 }} aria-busy={loading}>
         <LeaderboardCard
           title="Top athletes"
           subtitle={`By total distance (this ${timeFilter})`}
@@ -112,7 +112,7 @@ export default function DashboardView() {
 
       <Divider size={12} />
 
-      <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
+      <div className="row" style={{ opacity: loading ? 0.7 : 1 }} aria-busy={loading}>
         <RunsPerAthleteCard
           athletes={filteredAthletes}
           timeFilter={timeFilter}

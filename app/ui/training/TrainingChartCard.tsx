@@ -16,7 +16,6 @@ import css from './TrainingChartCard.module.scss';
 
 interface TrainingChartCardProps {
   athletes: AthleteWithTrainingData[];
-  loading: boolean;
 }
 
 interface TrainingChartData {
@@ -107,7 +106,7 @@ function AthleteLegend({
   );
 }
 
-export default function TrainingChartCard({ athletes, loading }: TrainingChartCardProps) {
+export default function TrainingChartCard({ athletes }: TrainingChartCardProps) {
   const [focusedAthleteName, setFocusedAthleteName] = useState<string | null>(null);
 
   useEffect(() => {
