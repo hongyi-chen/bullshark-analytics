@@ -48,15 +48,17 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const fullText = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      title={fullText}
+      aria-label={fullText}
     >
-      {event}
+      <span aria-hidden="true">{event}</span>
     </span>
   );
 }
@@ -87,8 +89,12 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
-      {label}
+    <span
+      className={clsx(css.statusChip, className)}
+      title={tooltip}
+      aria-label={tooltip}
+    >
+      <span aria-hidden="true">{label}</span>
     </span>
   );
 }
@@ -98,15 +104,17 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const fullName = team === "bulls" ? "Bulls Team" : "Sharks Team";
   return (
     <span
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      title={fullName}
+      aria-label={fullName}
     >
-      {team}
+      <span aria-hidden="true">{team}</span>
     </span>
   );
 }
@@ -152,33 +160,32 @@ export default function LeaderboardCard({
     return teamMap;
   }, [chipDataSources?.athleteMetadata]);
 
-  // Render column headers
   const renderHeaders = () => {
     return columns.map((col, idx) => {
       switch (col.type) {
         case "rank":
           return (
-            <th key={idx} style={{ width: 42 }}>
-              #
+            <th key={idx} scope="col" style={{ width: 42 }}>
+              <span aria-label="Rank">#</span>
             </th>
           );
         case "athlete":
-          return <th key={idx}>Athlete</th>;
+          return <th key={idx} scope="col">Athlete</th>;
         case "runs":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Runs
             </th>
           );
         case "distance":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
-              Km
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
+              <span aria-label="Distance in kilometers">Km</span>
             </th>
           );
         case "streak":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Streak
             </th>
           );
@@ -258,8 +265,9 @@ export default function LeaderboardCard({
       <div
         className={clsx(css.tableScroll, css.tableScrollFixed, "flexFill")}
         style={{ opacity: loading ? 0.7 : 1 }}
+        aria-busy={loading}
       >
-        <table className={css.table}>
+        <table className={css.table} aria-label={`${title} - ${subtitle}`}>
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>
@@ -271,7 +279,7 @@ export default function LeaderboardCard({
             ))}
             {!loading && athletes.length === 0 && (
               <tr>
-                <td colSpan={columns.length} className="muted">
+                <td colSpan={columns.length} className="muted" role="status">
                   {emptyMessage}
                 </td>
               </tr>

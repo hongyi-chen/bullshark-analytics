@@ -11,9 +11,29 @@ import WeeklyWinnersView from "../weekly-winners/WeeklyWinnersView";
 export default function MainContent() {
   const [activeTab] = useAtom(activeTabState);
 
-  if (activeTab === "dashboard") return <DashboardView />;
-  if (activeTab === "teams") return <TeamsView />;
-  if (activeTab === "injury") return <InjuryInsightsView />;
-  if (activeTab === "weekly-winners") return <WeeklyWinnersView />;
-  return <TrainingView />;
+  const content = (() => {
+    switch (activeTab) {
+      case "dashboard":
+        return <DashboardView />;
+      case "teams":
+        return <TeamsView />;
+      case "injury":
+        return <InjuryInsightsView />;
+      case "weekly-winners":
+        return <WeeklyWinnersView />;
+      default:
+        return <TrainingView />;
+    }
+  })();
+
+  return (
+    <main
+      id="main-content"
+      role="tabpanel"
+      aria-labelledby={`tab-${activeTab}`}
+      tabIndex={-1}
+    >
+      {content}
+    </main>
+  );
 }
