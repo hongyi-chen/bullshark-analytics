@@ -86,7 +86,15 @@ export default function DashboardView() {
 
       {err != null ? <ErrorCard errorMessage={err} /> : null}
 
-      <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
+      <div
+        aria-live="polite"
+        aria-busy={loading}
+        className="sr-only"
+      >
+        {loading ? "Loading dashboard data..." : "Dashboard data loaded"}
+      </div>
+
+      <div className="row" style={{ opacity: loading ? 0.7 : 1 }} aria-busy={loading}>
         <LeaderboardCard
           title="Top athletes"
           subtitle={`By total distance (this ${timeFilter})`}

@@ -39,7 +39,7 @@ export default function RunsPerAthleteCard({
         </div>
       }
     >
-      <div className={css.chart}>
+      <div className={css.chart} role="img" aria-label={`Bar chart showing top 10 athletes by run count this ${timeFilter}. ${runsBarData.length > 0 ? `Leader: ${runsBarData[0]?.athlete} with ${runsBarData[0]?.runs} runs.` : ''}`}>
         <ResponsiveContainer>
           <BarChart
             data={runsBarData}

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
+import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
@@ -132,7 +132,7 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
           </div>
         </div>
       </div>
-      <div className="flexFill">
+      <div className="flexFill" role="img" aria-label={`Line chart showing ${athlete.name}'s weekly training volume. Average: ${fmtKm(stats.average)} km, Max: ${fmtKm(stats.max)} km across ${stats.totalWeeks} weeks.`}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
             <defs>
@@ -167,12 +167,12 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
-                const { cx, cy, payload } = props;
-                const isRisky = payload.isRisky;
+              dot={(props: { cx?: number; cy?: number; payload?: ChartDataPoint }) => {
+                const { cx = 0, cy = 0, payload } = props;
+                const isRisky = payload?.isRisky ?? false;
 
                 return (
-                  <g>
+                  <g aria-hidden="true">
                     <circle
                       cx={cx}
                       cy={cy}
