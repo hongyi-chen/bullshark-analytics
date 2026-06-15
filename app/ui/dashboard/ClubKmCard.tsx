@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import ChartTooltip from "../common/ChartTooltip";
 import Card from "../common/Card";
+import AccessibleChart from "../common/AccessibleChart";
 
 interface ClubKmCardProps {
   aggregation: Aggregation;
@@ -44,30 +45,35 @@ export default function ClubKmCard({
       }
     >
       <div className="flexFill">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
-            <XAxis
-              dataKey="day"
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-            />
-            <YAxis
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-              width={34}
-            />
-            <Tooltip content={<ChartTooltip metricLabel="Club km" />} />
-            <Line
-              type="monotone"
-              dataKey="km"
-              stroke="var(--accent)"
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <AccessibleChart 
+          title={`Club kilometers per ${aggregation === "daily" ? "day" : "week"} chart`}
+          description={`Line chart showing total distance ${aggregation === "daily" ? "per day" : "per week"} for this ${timeFilter}. Total: ${fmtKm(totalKm)} kilometers.`}
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
+              <XAxis
+                dataKey="day"
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+                width={34}
+              />
+              <Tooltip content={<ChartTooltip metricLabel="Club km" />} />
+              <Line
+                type="monotone"
+                dataKey="km"
+                stroke="var(--accent)"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </AccessibleChart>
       </div>
     </Card>
   );

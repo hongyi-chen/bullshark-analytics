@@ -16,6 +16,7 @@ import ErrorCard from "@/app/ui/common/ErrorCard";
 import TeamPerformanceCard from "@/app/ui/team/TeamPerformanceCard";
 import LeaderboardCard from "@/app/ui/common/LeaderboardCard";
 import { fmtKm } from "@/app/utils/fmtKm";
+import LoadingAnnouncer from "@/app/ui/common/LoadingAnnouncer";
 import css from "@/app/ui/dashboard/Filters.module.scss";
 import { AthleteBreakdownChartData } from "@/lib/types/dashboard";
 
@@ -278,6 +279,11 @@ export default function TeamsView() {
 
   return (
     <>
+      <LoadingAnnouncer 
+        isLoading={loading} 
+        loadingMessage="Loading team statistics"
+        loadedMessage="Team statistics loaded"
+      />
       <div className={css.card}>
         <div className={css.group}>
           <span className={css.label}>View</span>
