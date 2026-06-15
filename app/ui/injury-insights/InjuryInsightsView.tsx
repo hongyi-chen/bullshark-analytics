@@ -12,6 +12,7 @@ import { useAthletesTrainingData, useActivityStats } from '@/lib/hooks';
 import Card from '@/app/ui/common/Card';
 import ErrorCard from '@/app/ui/common/ErrorCard';
 import Divider from '@/app/ui/common/Divider';
+import LoadingAnnouncer from '@/app/ui/common/LoadingAnnouncer';
 import DisclaimerCard from '@/app/ui/injury-insights/DisclaimerCard';
 import AthleteSelector from '@/app/ui/injury-insights/AthleteSelector';
 import InjuryVolumeChart from '@/app/ui/injury-insights/InjuryVolumeChart';
@@ -56,6 +57,11 @@ export default function InjuryInsightsView() {
 
   return (
     <>
+      <LoadingAnnouncer 
+        isLoading={loading.athletesTrainingData} 
+        loadingMessage="Loading injury insights data"
+        loadedMessage="Injury insights data loaded"
+      />
       <DisclaimerCard />
 
       <Divider size={16} />

@@ -17,6 +17,7 @@ import TrainingChartCard from '@/app/ui/training/TrainingChartCard';
 import Divider from '@/app/ui/common/Divider';
 import ErrorCard from '@/app/ui/common/ErrorCard';
 import Card from '@/app/ui/common/Card';
+import LoadingAnnouncer from '@/app/ui/common/LoadingAnnouncer';
 import css from '@/app/ui/dashboard/Filters.module.scss';
 
 export default function TrainingView() {
@@ -59,14 +60,20 @@ export default function TrainingView() {
 
   return (
     <>
+      <LoadingAnnouncer 
+        isLoading={loading.athletesTrainingData} 
+        loadingMessage="Loading training data"
+        loadedMessage="Training data loaded"
+      />
       {/* Search and Filters - Separate Row */}
       <div className={css.card}>
         <div className={css.group}>
-          <span className={css.label}>Search Athletes</span>
+          <span className={css.label} id="search-athletes-label">Search Athletes</span>
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Type athlete name..."
+            label="Search athletes by name"
           />
         </div>
 

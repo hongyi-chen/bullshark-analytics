@@ -8,6 +8,7 @@ import {
   YAxis,
 } from "recharts";
 import ChartTooltip from "../common/ChartTooltip";
+import AccessibleChart from "../common/AccessibleChart";
 import { AthleteStats } from "@/lib/types/dashboard";
 import { TimeFilter } from "../types";
 import { useMemo } from "react";
@@ -40,31 +41,36 @@ export default function RunsPerAthleteCard({
       }
     >
       <div className={css.chart}>
-        <ResponsiveContainer>
-          <BarChart
-            data={runsBarData}
-            layout="vertical"
-            margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid stroke="rgba(231,237,246,0.08)" horizontal={false} />
-            <XAxis
-              type="number"
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-            />
-            <YAxis
-              type="category"
-              dataKey="athlete"
-              width={120}
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-            />
-            <Tooltip content={<ChartTooltip metricLabel="Runs" />} />
-            <Bar
-              dataKey="runs"
-              fill="rgba(34, 197, 94, 0.45)"
-              stroke="rgba(34, 197, 94, 0.85)"
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <AccessibleChart 
+          title="Runs per athlete chart"
+          description={`Horizontal bar chart showing top 10 athletes by run count this ${timeFilter}.`}
+        >
+          <ResponsiveContainer>
+            <BarChart
+              data={runsBarData}
+              layout="vertical"
+              margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke="rgba(231,237,246,0.08)" horizontal={false} />
+              <XAxis
+                type="number"
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+              />
+              <YAxis
+                type="category"
+                dataKey="athlete"
+                width={120}
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+              />
+              <Tooltip content={<ChartTooltip metricLabel="Runs" />} />
+              <Bar
+                dataKey="runs"
+                fill="rgba(34, 197, 94, 0.45)"
+                stroke="rgba(34, 197, 94, 0.85)"
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </AccessibleChart>
       </div>
     </Card>
   );
