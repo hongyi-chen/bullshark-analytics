@@ -62,13 +62,17 @@ export default function InjuryInsightsView() {
 
       <Card>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>
+          <label
+            id="athlete-selector-label"
+            style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}
+          >
             Select Athlete
           </label>
           <AthleteSelector
             athletes={athletesTrainingData}
             selectedAthleteId={selectedAthleteId}
             onSelectAthlete={setSelectedAthleteId}
+            aria-labelledby="athlete-selector-label"
           />
         </div>
       </Card>

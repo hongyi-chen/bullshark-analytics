@@ -54,12 +54,17 @@
   flex-direction: column;
   gap: 6px;
 
-  &:hover {
+  &:hover,
+  &.highlighted {
     background: rgba(231, 237, 246, 0.08);
   }
 
   &.selected {
     background: rgba(34, 197, 94, 0.15);
+
+    &.highlighted {
+      background: rgba(34, 197, 94, 0.25);
+    }
   }
 }
 

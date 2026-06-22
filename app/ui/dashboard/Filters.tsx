@@ -76,12 +76,16 @@ export default function Filters({
 
 interface FilterGroupProps extends React.PropsWithChildren {
   title: string;
+  id?: string;
 }
 
-function FilterGroup({ children, title }: FilterGroupProps) {
+function FilterGroup({ children, title, id }: FilterGroupProps) {
+  const groupId = id || title.toLowerCase().replace(/\s+/g, '-');
+  const labelId = `${groupId}-label`;
+  
   return (
-    <div className={css.group}>
-      <span className={css.label}>{title}</span>
+    <div className={css.group} role="group" aria-labelledby={labelId}>
+      <span className={css.label} id={labelId}>{title}</span>
       <div className={css.pillRow}>{children}</div>
     </div>
   );

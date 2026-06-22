@@ -4,8 +4,8 @@ import css from './DisclaimerCard.module.scss';
 export default function DisclaimerCard() {
   return (
     <Card className={css.disclaimerCard}>
-      <div className={css.content}>
-        <div className={css.iconContainer}>
+      <div className={css.content} role="alert">
+        <div className={css.iconContainer} aria-hidden="true">
           <svg
             className={css.icon}
             width="24"
@@ -13,6 +13,8 @@ export default function DisclaimerCard() {
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
           >
             <path
               d="M12 2L2 20h20L12 2z"

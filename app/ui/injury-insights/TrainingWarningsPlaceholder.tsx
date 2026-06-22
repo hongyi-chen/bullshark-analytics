@@ -39,8 +39,8 @@ export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: Tra
           <div className={css.warningsList}>
             {riskyWeeksArray.map(({ week, riskCount, risks }) => (
               <div key={week} className={`${css.warningItem} ${getRiskSeverityClass(riskCount)}`}>
-                <div className={css.warningIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <div className={css.warningIcon} aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
                     <path
                       d="M12 2L2 20h20L12 2z"
                       stroke="currentColor"
@@ -81,13 +81,15 @@ export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: Tra
           </div>
         ) : (
           <div className={css.placeholder}>
-            <div className={css.icon}>
+            <div className={css.icon} aria-hidden="true">
               <svg
                 width="32"
                 height="32"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                focusable="false"
               >
                 <path
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"

@@ -15,50 +15,65 @@ export default function Header() {
           <p className={css.subtitle}>{lastUpdatedText}</p>
         </div>
       </div>
-      <nav className={css.actions} aria-label="Primary">
-        <div className={css.navGroup} role="tablist" aria-label="Views">
+      <nav className={css.actions} aria-label="Main navigation">
+        <div className={css.navGroup} role="tablist" aria-label="Dashboard views">
           <button
             className={`${css.navPill} ${activeTab === "dashboard" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "dashboard" ? "page" : undefined}
+            aria-selected={activeTab === "dashboard"}
             onClick={() => setActiveTab('dashboard')}
             role="tab"
             type="button"
+            id="tab-dashboard"
+            aria-controls="tabpanel-main"
+            tabIndex={activeTab === "dashboard" ? 0 : -1}
           >
             Dashboard
           </button>
           <button
             className={`${css.navPill} ${activeTab === "teams" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "teams" ? "page" : undefined}
+            aria-selected={activeTab === "teams"}
             onClick={() => setActiveTab('teams')}
             role="tab"
             type="button"
+            id="tab-teams"
+            aria-controls="tabpanel-main"
+            tabIndex={activeTab === "teams" ? 0 : -1}
           >
             Teams
           </button>
           <button
             className={`${css.navPill} ${activeTab === "training" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "training" ? "page" : undefined}
+            aria-selected={activeTab === "training"}
             onClick={() => setActiveTab('training')}
             role="tab"
             type="button"
+            id="tab-training"
+            aria-controls="tabpanel-main"
+            tabIndex={activeTab === "training" ? 0 : -1}
           >
             Training Volume
           </button>
           <button
             className={`${css.navPill} ${activeTab === "injury" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "injury" ? "page" : undefined}
+            aria-selected={activeTab === "injury"}
             onClick={() => setActiveTab('injury')}
             role="tab"
             type="button"
+            id="tab-injury"
+            aria-controls="tabpanel-main"
+            tabIndex={activeTab === "injury" ? 0 : -1}
           >
             Injury Insights (Beta)
           </button>
           <button
             className={`${css.navPill} ${activeTab === "weekly-winners" ? css.navPillActive : ""}`}
-            aria-current={activeTab === "weekly-winners" ? "page" : undefined}
+            aria-selected={activeTab === "weekly-winners"}
             onClick={() => setActiveTab('weekly-winners')}
             role="tab"
             type="button"
+            id="tab-weekly-winners"
+            aria-controls="tabpanel-main"
+            tabIndex={activeTab === "weekly-winners" ? 0 : -1}
           >
             Weekly Winners
           </button>
