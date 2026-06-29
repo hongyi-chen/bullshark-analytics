@@ -43,7 +43,11 @@ export default function ClubKmCard({
         </>
       }
     >
-      <div className="flexFill">
+      <div
+        className="flexFill"
+        role="img"
+        aria-label={`Line chart showing club kilometers ${aggregation === "daily" ? "per day" : "per week"} for the current ${timeFilter}. Total: ${fmtKm(totalKm)} kilometers.`}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}

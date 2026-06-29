@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart, Line } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
@@ -17,6 +17,12 @@ interface ChartDataPoint {
   kilometers: number;
   isRisky?: boolean;
   riskData?: { riskCount: number; risks: string[] };
+}
+
+interface DotProps {
+  cx?: number;
+  cy?: number;
+  payload?: ChartDataPoint;
 }
 
 interface TooltipProps {
@@ -41,7 +47,7 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
       </div>
       {riskData && (
         <div className={css.tooltipRisk}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
             <path
               d="M12 2L2 20h20L12 2z"
               stroke="currentColor"
@@ -132,7 +138,11 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
           </div>
         </div>
       </div>
-      <div className="flexFill">
+      <div
+        className="flexFill"
+        role="img"
+        aria-label={`Line chart showing ${athlete.name}'s weekly training volume over ${stats.totalWeeks} weeks. Average: ${fmtKm(stats.average)} km, Maximum: ${fmtKm(stats.max)} km.${riskyWeeks && riskyWeeks.size > 0 ? ` ${riskyWeeks.size} weeks with potential injury risks highlighted.` : ''}`}
+      >
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
             <defs>
@@ -167,9 +177,10 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: DotProps) => {
                 const { cx, cy, payload } = props;
-                const isRisky = payload.isRisky;
+                if (cx === undefined || cy === undefined) return <g />;
+                const isRisky = payload?.isRisky;
 
                 return (
                   <g>

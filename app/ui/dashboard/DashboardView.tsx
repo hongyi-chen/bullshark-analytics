@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useAtom } from "jotai";
 import {
   timeFilterState,
@@ -8,9 +8,8 @@ import {
   errorState,
   dashboardAggregationState,
   dashboardMinRunsState,
-  lastUpdatedTextState,
 } from "@/lib/state/atoms";
-import { useActivities, useAthletes, useTimeseries, useActivityStats } from "@/lib/hooks";
+import { useActivities, useAthletes, useTimeseries, useActivityStats, useLastUpdatedText } from "@/lib/hooks";
 import Filters from "./Filters";
 import ErrorCard from "../common/ErrorCard";
 import LeaderboardCard from "../common/LeaderboardCard";
@@ -35,6 +34,9 @@ export default function DashboardView() {
   const athletes = useAthletes();
   const timeseries = useTimeseries();
   const stats = useActivityStats();
+
+  // Update header "last updated" text
+  useLastUpdatedText(stats?.lastFetchedAt);
 
   const chartData = useMemo(() => {
     const pts = timeseries;
@@ -61,16 +63,6 @@ export default function DashboardView() {
   const filteredAthletes = useMemo(() => {
     return (stats?.athletes ?? []).filter((a) => a.runs >= minRuns);
   }, [stats, minRuns]);
-
-  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
-
-  useEffect(() => {
-    if (!stats?.lastFetchedAt) {
-      setLastUpdatedText("No data yet");
-    } else {
-      setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
-    }
-  }, [stats?.lastFetchedAt, setLastUpdatedText]);
 
   return (
     <>
