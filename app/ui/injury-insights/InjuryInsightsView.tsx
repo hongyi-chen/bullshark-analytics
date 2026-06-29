@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   injurySelectedAthleteIdState,
   dataLoadingState,
   dataErrorState,
-  lastUpdatedTextState,
 } from '@/lib/state/atoms';
-import { useAthletesTrainingData, useActivityStats } from '@/lib/hooks';
+import { useAthletesTrainingData, useActivityStats, useLastUpdatedText } from '@/lib/hooks';
 import Card from '@/app/ui/common/Card';
 import ErrorCard from '@/app/ui/common/ErrorCard';
 import Divider from '@/app/ui/common/Divider';
@@ -22,18 +21,12 @@ export default function InjuryInsightsView() {
   const [selectedAthleteId, setSelectedAthleteId] = useAtom(injurySelectedAthleteIdState);
   const loading = useAtomValue(dataLoadingState);
   const err = useAtomValue(dataErrorState);
-  const [, setLastUpdatedText] = useAtom(lastUpdatedTextState);
 
   const athletesTrainingData = useAthletesTrainingData();
   const stats = useActivityStats();
 
-  useEffect(() => {
-    if (!stats?.lastFetchedAt) {
-      setLastUpdatedText("No data yet");
-    } else {
-      setLastUpdatedText(`Last updated: ${new Date(stats.lastFetchedAt).toLocaleString()}`);
-    }
-  }, [stats?.lastFetchedAt, setLastUpdatedText]);
+  // Update header "last updated" text
+  useLastUpdatedText(stats?.lastFetchedAt);
 
   const selectedAthlete = useMemo(() => {
     if (!selectedAthleteId) return null;

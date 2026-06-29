@@ -57,7 +57,13 @@ export default function TeamPerformanceCard({
         </>
       }
     >
-      <div className="flexFill">
+      <div
+        className="flexFill"
+        role="img"
+        aria-label={viewMode === 'comparison'
+          ? `Line chart comparing team performance. Bulls total: ${fmtKm(totalBullsKm)} km, Sharks total: ${fmtKm(totalSharksKm)} km.`
+          : `Stacked area chart showing ${viewMode === 'bulls-breakdown' ? 'Bulls' : 'Sharks'} team breakdown by athlete.`}
+      >
         <ResponsiveContainer width="100%" height="100%">
           {viewMode === 'comparison' ? (
             <LineChart
