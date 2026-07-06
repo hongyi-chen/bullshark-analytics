@@ -56,14 +56,14 @@ export default function HighlightsCard({
       busiestDay,
       activeAthletes,
     };
-  }, [athletes, chartData]);
+  }, [athletes, chartData, stats]);
 
   return (
     <Card
       header={
         <div>
-          <div className="bold">Highlights</div>
-          <div className="muted">Notable stats (this {timeFilter})</div>
+          <h2 className="bold">Highlights</h2>
+          <p className="muted">Notable stats (this {timeFilter})</p>
         </div>
       }
     >

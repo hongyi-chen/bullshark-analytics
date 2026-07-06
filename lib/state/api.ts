@@ -48,7 +48,6 @@ async function fetchWithCache<T>(endpoint: string, validate: (x: unknown) => T):
   let entry = cache.get(key) as CacheEntry<T> | undefined;
 
   if (entry && entry.data && now - entry.ts < CACHE_TTL_MS) {
-    // Fresh data
     return entry.data as T;
   }
 
@@ -57,14 +56,19 @@ async function fetchWithCache<T>(endpoint: string, validate: (x: unknown) => T):
   }
 
   const p = (async () => {
-    const res = await fetch(endpoint);
-    if (!res.ok) {
-      throw new Error(`Failed to fetch ${endpoint}: ${res.status}`);
+    try {
+      const res = await fetch(endpoint);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch ${endpoint}: ${res.status}`);
+      }
+      const raw = await res.json();
+      const data = validate(raw);
+      cache.set(key, { ts: Date.now(), data });
+      return data;
+    } catch (error) {
+      cache.delete(key);
+      throw error;
     }
-    const raw = await res.json();
-    const data = validate(raw);
-    cache.set(key, { ts: Date.now(), data });
-    return data;
   })();
 
   cache.set(key, { ts: now, promise: p });

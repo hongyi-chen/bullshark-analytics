@@ -7,7 +7,8 @@ import { startOfWeek, format } from 'date-fns';
 export const timeFilterState = atom<TimeFilter>('week');
 
 // Active tab state for SPA navigation
-export const activeTabState = atom<'dashboard' | 'teams' | 'training' | 'injury' | 'weekly-winners'>('dashboard');
+export type TabType = 'dashboard' | 'teams' | 'training' | 'injury' | 'weekly-winners';
+export const activeTabState = atom<TabType>('dashboard');
 
 // Weekly Winners tab state - selected week (ISO date string of Monday)
 export const weeklyWinnersWeekState = atom<string>(

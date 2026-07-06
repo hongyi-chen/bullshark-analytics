@@ -8,6 +8,7 @@ interface CardProps extends React.PropsWithChildren {
   highlighted?: boolean;
   style?: CSSProperties;
   className?: string;
+  "aria-busy"?: boolean;
 }
 
 export default function Card({
@@ -17,6 +18,7 @@ export default function Card({
   highlighted = false,
   style,
   className,
+  "aria-busy": ariaBusy,
 }: CardProps) {
   return (
     <div
@@ -25,6 +27,7 @@ export default function Card({
         [css.highlighted]: highlighted,
       })}
       style={style}
+      aria-busy={ariaBusy}
     >
       {header != null && <div className={css.header}>{header}</div>}
       {children}
