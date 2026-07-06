@@ -1,4 +1,4 @@
-import { CSSProperties, useMemo } from "react";
+import { CSSProperties, useMemo, memo } from "react";
 import Card from "../common/Card";
 import { Athlete, Timeseries } from "../types";
 import clsx from "clsx";
@@ -41,75 +41,83 @@ export interface LeaderboardCardProps {
   emptyMessage?: string;
 }
 
-// === CHIP SUBCOMPONENTS ===
+// === CHIP SUBCOMPONENTS (memoized for performance) ===
 
 interface EventChipProps {
   event: "half" | "full";
 }
 
-function EventChip({ event }: EventChipProps) {
+const EventChip = memo(function EventChip({ event }: EventChipProps) {
+  const fullLabel = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      aria-label={fullLabel}
+      title={fullLabel}
     >
       {event}
     </span>
   );
-}
+});
 
 interface StatusChipProps {
   status: "today" | "recent" | "inactive";
 }
 
-function StatusChip({ status }: StatusChipProps) {
+const StatusChip = memo(function StatusChip({ status }: StatusChipProps) {
   const config = {
     today: {
       label: "ran today",
-      tooltip: "Ran today",
+      fullLabel: "Ran today",
       className: css.statusChipToday,
     },
     recent: {
       label: "recent",
-      tooltip: "Last run within the past 3 days",
+      fullLabel: "Last run within the past 3 days",
       className: css.statusChipRecent,
     },
     inactive: {
       label: "inactive",
-      tooltip: "No runs in the past 4+ days",
+      fullLabel: "No runs in the past 4+ days",
       className: css.statusChipInactive,
     },
   };
 
-  const { label, tooltip, className } = config[status];
+  const { label, fullLabel, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
+    <span
+      className={clsx(css.statusChip, className)}
+      aria-label={fullLabel}
+      title={fullLabel}
+    >
       {label}
     </span>
   );
-}
+});
 
 interface TeamChipProps {
   team: "bulls" | "sharks";
 }
 
-function TeamChip({ team }: TeamChipProps) {
+const TeamChip = memo(function TeamChip({ team }: TeamChipProps) {
+  const fullLabel = team === "bulls" ? "Team Bulls" : "Team Sharks";
   return (
     <span
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      aria-label={fullLabel}
+      title={fullLabel}
     >
       {team}
     </span>
   );
-}
+});
 
 // === MAIN COMPONENT ===
 
@@ -152,33 +160,36 @@ export default function LeaderboardCard({
     return teamMap;
   }, [chipDataSources?.athleteMetadata]);
 
-  // Render column headers
   const renderHeaders = () => {
     return columns.map((col, idx) => {
       switch (col.type) {
         case "rank":
           return (
-            <th key={idx} style={{ width: 42 }}>
+            <th key={col.type} scope="col" style={{ width: 42 }} aria-label="Rank">
               #
             </th>
           );
         case "athlete":
-          return <th key={idx}>Athlete</th>;
+          return (
+            <th key={col.type} scope="col">
+              Athlete
+            </th>
+          );
         case "runs":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={col.type} scope="col" style={TEXT_ALIGN_RIGHT}>
               Runs
             </th>
           );
         case "distance":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={col.type} scope="col" style={TEXT_ALIGN_RIGHT}>
               Km
             </th>
           );
         case "streak":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={col.type} scope="col" style={TEXT_ALIGN_RIGHT}>
               Streak
             </th>
           );
@@ -230,8 +241,8 @@ export default function LeaderboardCard({
           const streakCount = athlete.streak ?? 0;
           return (
             <td key={colIdx} style={TEXT_ALIGN_RIGHT}>
-              <span className={css.streakBadge}>
-                <span className={css.streakIcon}>🔥</span>
+              <span className={css.streakBadge} aria-label={`${streakCount} week streak`}>
+                <span className={css.streakIcon} aria-hidden="true">🔥</span>
                 {streakCount}
               </span>
             </td>
@@ -245,8 +256,8 @@ export default function LeaderboardCard({
       header={
         <>
           <div>
-            <div className="bold">{title}</div>
-            <div className="muted">{subtitle}</div>
+            <h2 className="bold">{title}</h2>
+            <p className="muted">{subtitle}</p>
           </div>
           <div className="badge">
             {badgeLabel}: {badgeValue}
