@@ -32,21 +32,26 @@ export default function WeekSelector({ selectedWeek, onWeekChange }: WeekSelecto
 
   return (
     <div className={css.card}>
-      <div className={css.group}>
-        <span className={css.label}>Week Selection</span>
-        <div className={css.pillRow}>
+      <fieldset className={css.group} style={{ border: 'none', margin: 0, padding: 0 }}>
+        <legend className={css.label}>Week Selection</legend>
+        <div className={css.pillRow} role="group" aria-label="Week navigation">
           <button
             className={css.pill}
             onClick={handlePrevious}
             type="button"
+            aria-label={`Go to previous week`}
           >
             ← Previous Week
           </button>
-          <div style={{
-            padding: '8px 16px',
-            fontWeight: 600,
-            color: 'var(--text)'
-          }}>
+          <div 
+            style={{
+              padding: '8px 16px',
+              fontWeight: 600,
+              color: 'var(--text)'
+            }}
+            aria-live="polite"
+            aria-atomic="true"
+          >
             Week of {weekLabel}
           </div>
           <button
@@ -54,12 +59,13 @@ export default function WeekSelector({ selectedWeek, onWeekChange }: WeekSelecto
             onClick={handleNext}
             type="button"
             disabled={isCurrentWeek}
+            aria-label={isCurrentWeek ? "Next week (current week reached)" : "Go to next week"}
             style={{ opacity: isCurrentWeek ? 0.5 : 1, cursor: isCurrentWeek ? 'not-allowed' : 'pointer' }}
           >
             Next Week →
           </button>
         </div>
-      </div>
+      </fieldset>
     </div>
   );
 }

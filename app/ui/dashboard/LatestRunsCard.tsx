@@ -69,16 +69,16 @@ export default function LatestRunsCard({
       style={{ opacity: loading ? 0.7 : 1 }}
     >
       <div className={css.latestRunsGrid}>
-        {latestRuns?.runs.map((run, idx) => (
+        {latestRuns?.runs.map((run, idx) => {
+          const { emoji, background } = getAthleteEmojiAndBackground(run.athleteName);
+          return (
           <div key={idx} className={css.latestRunItem}>
             <div
               className={css.latestRunIcon}
-              style={{
-                background: getAthleteEmojiAndBackground(run.athleteName)
-                  .background,
-              }}
+              style={{ background }}
+              aria-hidden="true"
             >
-              {getAthleteEmojiAndBackground(run.athleteName).emoji}
+              {emoji}
             </div>
             <div className={css.latestRunInfo}>
               <div style={{ fontWeight: 600 }}>{run.athleteName}</div>
@@ -93,7 +93,8 @@ export default function LatestRunsCard({
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
         {!loading && (!latestRuns?.runs || latestRuns.runs.length === 0) && (
           <div className="muted" style={{ padding: "20px 0" }}>
             No recent runs
