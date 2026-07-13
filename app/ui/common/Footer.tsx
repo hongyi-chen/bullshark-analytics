@@ -24,7 +24,7 @@ export default function Footer() {
             className="muted"
             href="https://warp.dev/careers"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
           >
             warp.dev/careers
           </a>

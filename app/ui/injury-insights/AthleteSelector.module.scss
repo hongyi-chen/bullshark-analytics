@@ -49,17 +49,29 @@
   padding: 10px 12px;
   cursor: pointer;
   border-radius: 6px;
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, outline 0.15s ease;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
 
   &:hover {
     background: rgba(231, 237, 246, 0.08);
   }
 
+  &.active {
+    background: rgba(231, 237, 246, 0.12);
+    outline-color: var(--accent);
+  }
+
   &.selected {
     background: rgba(34, 197, 94, 0.15);
+  }
+
+  &.active.selected {
+    background: rgba(34, 197, 94, 0.25);
+    outline-color: var(--accent);
   }
 }
 

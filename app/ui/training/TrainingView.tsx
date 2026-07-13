@@ -10,8 +10,7 @@ import {
   dataErrorState,
   lastUpdatedTextState,
 } from '@/lib/state/atoms';
-import { useAthletesTrainingData } from '@/lib/hooks';
-import { useActivityStats } from '@/lib/hooks';
+import { useAthletesTrainingData, useActivityStats } from '@/lib/hooks';
 import SearchBar from '@/app/ui/training/SearchBar';
 import TrainingChartCard from '@/app/ui/training/TrainingChartCard';
 import Divider from '@/app/ui/common/Divider';
@@ -67,6 +66,7 @@ export default function TrainingView() {
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Type athlete name..."
+            ariaLabel="Search athletes by name"
           />
         </div>
 
