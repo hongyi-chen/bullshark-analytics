@@ -19,6 +19,7 @@ import RunsPerAthleteCard from "./RunsPerAthleteCard";
 import HighlightsCard from "./HighlightsCard";
 import LatestRunsCard from "./LatestRunsCard";
 import Divider from "../common/Divider";
+import LoadingAnnouncer from "../common/LoadingAnnouncer";
 
 export default function DashboardView() {
   // Global state
@@ -74,6 +75,11 @@ export default function DashboardView() {
 
   return (
     <>
+      <LoadingAnnouncer 
+        isLoading={loading} 
+        loadingMessage="Loading dashboard data"
+        loadedMessage="Dashboard data loaded"
+      />
       <Filters
         aggregation={aggregation}
         minRuns={minRuns}

@@ -1,6 +1,7 @@
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { formatRiskType } from '@/app/utils/formatRiskType';
 import Card from '@/app/ui/common/Card';
+import { WarningIcon, CheckIcon } from '@/app/ui/common/icons';
 import css from './TrainingWarningsPlaceholder.module.scss';
 
 interface TrainingWarningsPlaceholderProps {
@@ -27,35 +28,32 @@ export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: Tra
     <Card>
       <div className={css.container}>
         <div className={css.header}>
-          <h3>Training Warnings</h3>
+          <h3 id="training-warnings-heading">Training Warnings</h3>
           {hasWarnings && (
-            <span className={css.warningCount}>
+            <span className={css.warningCount} aria-label={`${riskyWeeksArray.length} weeks with warnings`}>
               {riskyWeeksArray.length} {riskyWeeksArray.length === 1 ? 'Week' : 'Weeks'}
             </span>
           )}
         </div>
 
         {hasWarnings ? (
-          <div className={css.warningsList}>
+          <ul 
+            className={css.warningsList} 
+            aria-labelledby="training-warnings-heading"
+            role="list"
+          >
             {riskyWeeksArray.map(({ week, riskCount, risks }) => (
-              <div key={week} className={`${css.warningItem} ${getRiskSeverityClass(riskCount)}`}>
-                <div className={css.warningIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path
-                      d="M12 2L2 20h20L12 2z"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <path
-                      d="M12 9v4M12 17h.01"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+              <li 
+                key={week} 
+                className={`${css.warningItem} ${getRiskSeverityClass(riskCount)}`}
+                aria-label={`Week of ${new Date(week).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric', 
+                  year: 'numeric'
+                })}: ${riskCount} ${riskCount === 1 ? 'risk' : 'risks'}`}
+              >
+                <div className={css.warningIcon} aria-hidden="true">
+                  <WarningIcon size={20} title="" />
                 </div>
                 <div className={css.warningContent}>
                   <div className={css.warningHeader}>
@@ -70,34 +68,19 @@ export default function TrainingWarningsPlaceholder({ athlete, riskyWeeks }: Tra
                       {riskCount} {riskCount === 1 ? 'Risk' : 'Risks'}
                     </span>
                   </div>
-                  <ul className={css.risksList}>
+                  <ul className={css.risksList} aria-label="Risk details">
                     {risks.map((risk, idx) => (
                       <li key={idx}>{formatRiskType(risk)}</li>
                     ))}
                   </ul>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         ) : (
-          <div className={css.placeholder}>
-            <div className={css.icon}>
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  opacity="0.3"
-                />
-              </svg>
+          <div className={css.placeholder} role="status">
+            <div className={css.icon} aria-hidden="true">
+              <CheckIcon size={32} title="" />
             </div>
             <p className={css.message}>
               No training warnings detected for {athlete.name}.
