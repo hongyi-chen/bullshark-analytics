@@ -19,7 +19,7 @@ export default function Filters({
   timeFilter,
 }: FiltersProps) {
   return (
-    <div className={css.card}>
+    <div className={css.card} role="group" aria-label="Dashboard filters">
       <FilterGroup title="Time Period">
         <button
           className={css.pill}
@@ -39,7 +39,7 @@ export default function Filters({
         </button>
       </FilterGroup>
 
-      <div className={css.divider} />
+      <div className={css.divider} aria-hidden="true" />
 
       <FilterGroup title="Chart View">
         {(["daily", "weekly"] as const).map((agg) => (
@@ -55,7 +55,7 @@ export default function Filters({
         ))}
       </FilterGroup>
 
-      <div className={css.divider} />
+      <div className={css.divider} aria-hidden="true" />
 
       <FilterGroup title="Min Runs">
         {[0, 3, 5, 10].map((m) => (
@@ -80,9 +80,11 @@ interface FilterGroupProps extends React.PropsWithChildren {
 
 function FilterGroup({ children, title }: FilterGroupProps) {
   return (
-    <div className={css.group}>
-      <span className={css.label}>{title}</span>
-      <div className={css.pillRow}>{children}</div>
-    </div>
+    <fieldset className={css.group}>
+      <legend className={css.label}>{title}</legend>
+      <div className={css.pillRow} role="group">
+        {children}
+      </div>
+    </fieldset>
   );
 }

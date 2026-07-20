@@ -1,5 +1,6 @@
 import { CSSProperties, useMemo } from "react";
 import Card from "../common/Card";
+import Tooltip from "../common/Tooltip";
 import { Athlete, Timeseries } from "../types";
 import clsx from "clsx";
 import css from "./LeaderboardCard.module.scss";
@@ -48,16 +49,21 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const label = event === "half" ? "half" : "full";
+  const fullLabel = event === "half" ? "Half Marathon" : "Full Marathon";
+  
   return (
-    <span
-      className={clsx(
-        css.eventChip,
-        event === "half" ? css.eventChipHalf : css.eventChipFull
-      )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
-    >
-      {event}
-    </span>
+    <Tooltip content={fullLabel}>
+      <span
+        className={clsx(
+          css.eventChip,
+          event === "half" ? css.eventChipHalf : css.eventChipFull
+        )}
+        aria-label={fullLabel}
+      >
+        {label}
+      </span>
+    </Tooltip>
   );
 }
 
@@ -87,9 +93,11 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
-      {label}
-    </span>
+    <Tooltip content={tooltip}>
+      <span className={clsx(css.statusChip, className)} aria-label={tooltip}>
+        {label}
+      </span>
+    </Tooltip>
   );
 }
 
@@ -98,16 +106,20 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const teamName = team === "bulls" ? "Bulls" : "Sharks";
+  
   return (
-    <span
-      className={clsx(
-        css.teamChip,
-        team === "bulls" ? css.teamChipBulls : css.teamChipSharks
-      )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
-    >
-      {team}
-    </span>
+    <Tooltip content={`Team ${teamName}`}>
+      <span
+        className={clsx(
+          css.teamChip,
+          team === "bulls" ? css.teamChipBulls : css.teamChipSharks
+        )}
+        aria-label={`Team ${teamName}`}
+      >
+        {team}
+      </span>
+    </Tooltip>
   );
 }
 
@@ -259,7 +271,11 @@ export default function LeaderboardCard({
         className={clsx(css.tableScroll, css.tableScrollFixed, "flexFill")}
         style={{ opacity: loading ? 0.7 : 1 }}
       >
-        <table className={css.table}>
+        <table 
+          className={css.table} 
+          aria-busy={loading}
+          aria-label={`${title} - ${subtitle}`}
+        >
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>
