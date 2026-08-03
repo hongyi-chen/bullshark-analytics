@@ -62,8 +62,9 @@ export default function TrainingView() {
       {/* Search and Filters - Separate Row */}
       <div className={css.card}>
         <div className={css.group}>
-          <span className={css.label}>Search Athletes</span>
+          <label htmlFor="athlete-search" className={css.label}>Search Athletes</label>
           <SearchBar
+            id="athlete-search"
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Type athlete name..."
@@ -148,10 +149,7 @@ export default function TrainingView() {
       ) : null}
 
       <div style={{ opacity: loading.athletesTrainingData ? 0.7 : 1 }}>
-        <TrainingChartCard
-          athletes={filteredAthletes}
-          loading={loading.athletesTrainingData}
-        />
+        <TrainingChartCard athletes={filteredAthletes} />
       </div>
     </>
   );

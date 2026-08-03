@@ -11,9 +11,32 @@ import WeeklyWinnersView from "../weekly-winners/WeeklyWinnersView";
 export default function MainContent() {
   const [activeTab] = useAtom(activeTabState);
 
-  if (activeTab === "dashboard") return <DashboardView />;
-  if (activeTab === "teams") return <TeamsView />;
-  if (activeTab === "injury") return <InjuryInsightsView />;
-  if (activeTab === "weekly-winners") return <WeeklyWinnersView />;
-  return <TrainingView />;
+  const getActiveTabId = () => {
+    switch (activeTab) {
+      case "dashboard": return "tab-dashboard";
+      case "teams": return "tab-teams";
+      case "training": return "tab-training";
+      case "injury": return "tab-injury";
+      case "weekly-winners": return "tab-weekly-winners";
+      default: return "tab-training";
+    }
+  };
+
+  const renderContent = () => {
+    if (activeTab === "dashboard") return <DashboardView />;
+    if (activeTab === "teams") return <TeamsView />;
+    if (activeTab === "injury") return <InjuryInsightsView />;
+    if (activeTab === "weekly-winners") return <WeeklyWinnersView />;
+    return <TrainingView />;
+  };
+
+  return (
+    <div
+      id="main-content"
+      role="tabpanel"
+      aria-labelledby={getActiveTabId()}
+    >
+      {renderContent()}
+    </div>
+  );
 }

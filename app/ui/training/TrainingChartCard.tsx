@@ -16,7 +16,6 @@ import css from './TrainingChartCard.module.scss';
 
 interface TrainingChartCardProps {
   athletes: AthleteWithTrainingData[];
-  loading: boolean;
 }
 
 interface TrainingChartData {
@@ -107,7 +106,7 @@ function AthleteLegend({
   );
 }
 
-export default function TrainingChartCard({ athletes, loading }: TrainingChartCardProps) {
+export default function TrainingChartCard({ athletes }: TrainingChartCardProps) {
   const [focusedAthleteName, setFocusedAthleteName] = useState<string | null>(null);
 
   useEffect(() => {
@@ -160,7 +159,7 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
         onToggle={(athleteName) => setFocusedAthleteName(prev => (prev === athleteName ? null : athleteName))}
         onClear={() => setFocusedAthleteName(null)}
       />
-      <div className={`flexFill ${css.chartArea}`}>
+      <div className={`flexFill ${css.chartArea}`} role="img" aria-label={`Line chart showing weekly training kilometers for ${athletes.length} athlete${athletes.length !== 1 ? 's' : ''}`}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
             <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />

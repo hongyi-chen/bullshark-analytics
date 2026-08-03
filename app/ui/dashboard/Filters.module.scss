@@ -40,6 +40,11 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s ease;
+
+    &:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
 }
 
 .pill:hover {
