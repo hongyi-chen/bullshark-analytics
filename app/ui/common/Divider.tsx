@@ -3,5 +3,5 @@ interface DividerProps {
 }
 
 export default function Divider({ size }: DividerProps) {
-  return <div style={{ height: size }} />;
+  return <div style={{ height: size }} aria-hidden="true" />;
 }

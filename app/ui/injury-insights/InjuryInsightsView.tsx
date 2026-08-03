@@ -84,7 +84,6 @@ export default function InjuryInsightsView() {
           <div style={{ opacity: loading.athletesTrainingData ? 0.7 : 1 }}>
             <InjuryVolumeChart
               athlete={selectedAthlete}
-              loading={loading.athletesTrainingData}
               riskyWeeks={riskyWeeksData}
             />
           </div>

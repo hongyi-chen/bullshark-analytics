@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
+import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
@@ -8,7 +8,6 @@ import css from './InjuryVolumeChart.module.scss';
 
 interface InjuryVolumeChartProps {
   athlete: AthleteWithTrainingData;
-  loading: boolean;
   riskyWeeks?: Map<string, { riskCount: number; risks: string[] }>;
 }
 
@@ -73,7 +72,7 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
   );
 }
 
-export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: InjuryVolumeChartProps) {
+export default function InjuryVolumeChart({ athlete, riskyWeeks }: InjuryVolumeChartProps) {
   const chartData = useMemo(() => {
     const data: ChartDataPoint[] = Object.entries(athlete.trainingData.weeklyKilometers)
       .map(([weekStart, kilometers]) => {
@@ -132,7 +131,7 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
           </div>
         </div>
       </div>
-      <div className="flexFill">
+      <div className="flexFill" role="img" aria-label={`Line chart showing weekly training volume for ${athlete.name}. Average: ${fmtKm(stats.average)} km, Max: ${fmtKm(stats.max)} km, ${stats.totalWeeks} weeks of data`}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
             <defs>

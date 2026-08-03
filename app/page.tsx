@@ -10,7 +10,9 @@ export default function HomePage() {
   return (
     <div className="container">
       <Header />
-      <MainContent />
+      <main>
+        <MainContent />
+      </main>
       <Footer />
     </div>
   );

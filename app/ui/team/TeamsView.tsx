@@ -10,7 +10,7 @@ import {
   timeFilterState,
   lastUpdatedTextState,
 } from "@/lib/state/atoms";
-import { useActivities, useAthletes, useTimeseries, useTeamStats, useActivityStats } from "@/lib/hooks";
+import { useAthletes, useTimeseries, useTeamStats, useActivityStats } from "@/lib/hooks";
 import Divider from "@/app/ui/common/Divider";
 import ErrorCard from "@/app/ui/common/ErrorCard";
 import TeamPerformanceCard from "@/app/ui/team/TeamPerformanceCard";
@@ -27,7 +27,6 @@ export default function TeamsView() {
   const [timeFilter] = useAtom(timeFilterState);
 
   // Data fetching hooks (now respecting global timeFilter instead of hardcoding 'week')
-  const activities = useActivities(timeFilter);
   const athletes = useAthletes();
   const timeseries = useTimeseries();
   const teamStats = useTeamStats();
@@ -252,12 +251,6 @@ export default function TeamsView() {
     return undefined;
   }, [viewMode, bullsAthletes, sharksAthletes]);
 
-  const displayTeam = useMemo(() => {
-    if (viewMode === "bulls-breakdown") return "bulls";
-    if (viewMode === "sharks-breakdown") return "sharks";
-    return undefined;
-  }, [viewMode]);
-
   const totalBullsKm = useMemo(() => {
     return bullsAthletes.reduce((sum, athlete) => sum + athlete.totalKm, 0);
   }, [bullsAthletes]);
@@ -343,7 +336,6 @@ export default function TeamsView() {
           viewMode={viewMode}
           chartData={displayChartData}
           athleteNames={displayAthleteNames}
-          team={displayTeam}
           totalBullsKm={totalBullsKm}
           totalSharksKm={totalSharksKm}
         />
