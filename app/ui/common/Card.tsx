@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import css from "./Card.module.scss";
-import { CSSProperties } from "react";
+import { CSSProperties, HTMLAttributes } from "react";
 
-interface CardProps extends React.PropsWithChildren {
+interface CardProps extends React.PropsWithChildren, Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style'> {
   fixedTall?: boolean;
   header?: React.JSX.Element;
   highlighted?: boolean;
@@ -17,6 +17,7 @@ export default function Card({
   highlighted = false,
   style,
   className,
+  ...rest
 }: CardProps) {
   return (
     <div
@@ -25,6 +26,7 @@ export default function Card({
         [css.highlighted]: highlighted,
       })}
       style={style}
+      {...rest}
     >
       {header != null && <div className={css.header}>{header}</div>}
       {children}

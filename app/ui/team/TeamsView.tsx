@@ -18,6 +18,7 @@ import LeaderboardCard from "@/app/ui/common/LeaderboardCard";
 import { fmtKm } from "@/app/utils/fmtKm";
 import css from "@/app/ui/dashboard/Filters.module.scss";
 import { AthleteBreakdownChartData } from "@/lib/types/dashboard";
+import LoadingAnnouncer from "@/app/ui/common/LoadingAnnouncer";
 
 export default function TeamsView() {
   const [loading] = useAtom(teamLoadingState);
@@ -278,6 +279,11 @@ export default function TeamsView() {
 
   return (
     <>
+      <LoadingAnnouncer
+        isLoading={loading}
+        loadingMessage="Loading team data..."
+        loadedMessage="Team data loaded"
+      />
       <div className={css.card}>
         <div className={css.group}>
           <span className={css.label}>View</span>

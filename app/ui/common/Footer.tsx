@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import css from "./Footer.module.scss";
+import ExternalLink from "./ExternalLink";
 
 export default function Footer() {
   const [year, setYear] = useState("");
@@ -14,21 +15,16 @@ export default function Footer() {
     <footer className={css.footer}>
       <div className={css.content}>
         <div className={css.brand}>
-          <span className={css.shark}>🦈</span>
+          <span className={css.shark} role="img" aria-label="shark">🦈</span>
           <span>Bullshark Analytics</span>
         </div>
         <div className={css.links}>
           <span className="muted">Powered by Bullsharks Server</span>
-          <span className={css.divider}>·</span>
-          <a
-            className="muted"
-            href="https://warp.dev/careers"
-            target="_blank"
-            rel="noreferrer"
-          >
+          <span className={css.divider} aria-hidden="true">·</span>
+          <ExternalLink href="https://warp.dev/careers" className="muted">
             warp.dev/careers
-          </a>
-          <span className={css.divider}>·</span>
+          </ExternalLink>
+          <span className={css.divider} aria-hidden="true">·</span>
           <span className="muted">© {year}</span>
         </div>
       </div>

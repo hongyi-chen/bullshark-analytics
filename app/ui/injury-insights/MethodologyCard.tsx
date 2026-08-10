@@ -1,12 +1,13 @@
 import Card from '@/app/ui/common/Card';
+import ExternalLink from '@/app/ui/common/ExternalLink';
 import css from './MethodologyCard.module.scss';
 
 export default function MethodologyCard() {
   return (
     <Card>
-      <div className={css.container} id="methodology-card">
+      <section className={css.container} aria-labelledby="methodology-heading">
         <div className={css.header}>
-          <h3>Risk Types</h3>
+          <h3 id="methodology-heading">Risk Types</h3>
         </div>
         <div className={css.content}>
           <ul className={css.list}>
@@ -21,18 +22,13 @@ export default function MethodologyCard() {
               to your longest run in the past 30 days. Research shows that when a single run exceeds 10%
               of your longest recent run, injury risk increases significantly. Spikes of 10-30% show a
               64% increased injury rate, while spikes over 100% show a 128% increased rate.{' '}
-              <a
-                href="https://bjsm.bmj.com/content/59/17/1203"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={css.link}
-              >
+              <ExternalLink href="https://bjsm.bmj.com/content/59/17/1203" className={css.link}>
                 Learn more
-              </a>
+              </ExternalLink>
             </li>
           </ul>
         </div>
-      </div>
+      </section>
     </Card>
   );
 }

@@ -3,6 +3,7 @@ import './globals.css';
 import JotaiProvider from '@/lib/providers/JotaiProvider';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import ErrorBoundary from './ui/common/ErrorBoundary';
 
 function getMetadataBase(): URL | undefined {
   const raw = process.env.APP_BASE_URL;
@@ -43,7 +44,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <JotaiProvider>{children}</JotaiProvider>
+        <JotaiProvider>
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </JotaiProvider>
         <Analytics />
         <SpeedInsights />
       </body>
