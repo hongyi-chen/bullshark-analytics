@@ -1,0 +1,57 @@
+.errorCard {
+  padding: 32px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.iconContainer {
+  color: #ef4444;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.message {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0;
+  max-width: 400px;
+}
+
+.resetButton {
+  margin-top: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0b0f14;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:focus {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+}

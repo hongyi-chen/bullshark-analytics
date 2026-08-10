@@ -87,3 +87,27 @@ a:hover {
   color: var(--muted);
   font-size: 12px;
 }
+
+/* Focus visible styles for better keyboard navigation */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users but keep for keyboard */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Screen reader only utility class */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

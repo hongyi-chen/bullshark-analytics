@@ -48,15 +48,17 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const fullLabel = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      title={fullLabel}
+      aria-label={fullLabel}
     >
-      {event}
+      <span aria-hidden="true">{event}</span>
     </span>
   );
 }
@@ -69,26 +71,30 @@ function StatusChip({ status }: StatusChipProps) {
   const config = {
     today: {
       label: "ran today",
-      tooltip: "Ran today",
+      fullLabel: "Ran today",
       className: css.statusChipToday,
     },
     recent: {
       label: "recent",
-      tooltip: "Last run within the past 3 days",
+      fullLabel: "Last run within the past 3 days",
       className: css.statusChipRecent,
     },
     inactive: {
       label: "inactive",
-      tooltip: "No runs in the past 4+ days",
+      fullLabel: "No runs in the past 4+ days",
       className: css.statusChipInactive,
     },
   };
 
-  const { label, tooltip, className } = config[status];
+  const { label, fullLabel, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
-      {label}
+    <span
+      className={clsx(css.statusChip, className)}
+      title={fullLabel}
+      aria-label={fullLabel}
+    >
+      <span aria-hidden="true">{label}</span>
     </span>
   );
 }
@@ -98,15 +104,17 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const fullLabel = team === "bulls" ? "Team Bulls" : "Team Sharks";
   return (
     <span
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      title={fullLabel}
+      aria-label={fullLabel}
     >
-      {team}
+      <span aria-hidden="true">{team}</span>
     </span>
   );
 }
@@ -152,33 +160,32 @@ export default function LeaderboardCard({
     return teamMap;
   }, [chipDataSources?.athleteMetadata]);
 
-  // Render column headers
   const renderHeaders = () => {
     return columns.map((col, idx) => {
       switch (col.type) {
         case "rank":
           return (
-            <th key={idx} style={{ width: 42 }}>
-              #
+            <th key={idx} scope="col" style={{ width: 42 }}>
+              <span aria-label="Rank">#</span>
             </th>
           );
         case "athlete":
-          return <th key={idx}>Athlete</th>;
+          return <th key={idx} scope="col">Athlete</th>;
         case "runs":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Runs
             </th>
           );
         case "distance":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
-              Km
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
+              <span aria-label="Kilometers">Km</span>
             </th>
           );
         case "streak":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Streak
             </th>
           );
@@ -240,6 +247,8 @@ export default function LeaderboardCard({
     });
   };
 
+  const tableCaption = `${title}: ${subtitle}`;
+
   return (
     <Card
       header={
@@ -258,8 +267,9 @@ export default function LeaderboardCard({
       <div
         className={clsx(css.tableScroll, css.tableScrollFixed, "flexFill")}
         style={{ opacity: loading ? 0.7 : 1 }}
+        aria-busy={loading}
       >
-        <table className={css.table}>
+        <table className={css.table} aria-label={tableCaption}>
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>
