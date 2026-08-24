@@ -41,7 +41,7 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
       </div>
       {riskData && (
         <div className={css.tooltipRisk}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
             <path
               d="M12 2L2 20h20L12 2z"
               stroke="currentColor"
@@ -167,12 +167,12 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
-                const { cx, cy, payload } = props;
-                const isRisky = payload.isRisky;
+              dot={(props: { cx?: number; cy?: number; payload?: ChartDataPoint }) => {
+                const { cx = 0, cy = 0, payload } = props;
+                const isRisky = payload?.isRisky ?? false;
 
                 return (
-                  <g>
+                  <g aria-hidden="true">
                     <circle
                       cx={cx}
                       cy={cy}
