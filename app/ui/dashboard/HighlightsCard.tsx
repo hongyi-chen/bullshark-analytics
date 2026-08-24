@@ -22,10 +22,8 @@ export default function HighlightsCard({
     const totalRuns = stats?.overall.totalRuns ?? 0;
     const totalKm = stats?.overall.totalKm ?? 0;
 
-    // Average run distance
     const avgRunKm = totalRuns > 0 ? totalKm / totalRuns : 0;
 
-    // Most dedicated: highest avg km per run (min 3 runs to qualify)
     const qualifiedAthletes = athletes.filter((a) => a.runs >= 3);
     const mostDedicated =
       qualifiedAthletes.length > 0
@@ -36,13 +34,11 @@ export default function HighlightsCard({
           })
         : null;
 
-    // Busiest day from chart data
     const busiestDay =
       chartData.length > 0
         ? chartData.reduce((best, d) => (d.km > best.km ? d : best))
         : null;
 
-    // Active athletes count
     const activeAthletes = athletes.length;
 
     return {
@@ -56,7 +52,7 @@ export default function HighlightsCard({
       busiestDay,
       activeAthletes,
     };
-  }, [athletes, chartData]);
+  }, [athletes, chartData, stats]);
 
   return (
     <Card
