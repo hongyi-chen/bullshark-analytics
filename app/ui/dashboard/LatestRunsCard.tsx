@@ -1,4 +1,5 @@
 import { fmtKm } from "@/app/utils/fmtKm";
+import { timeAgo } from "@/app/utils/timeAgo";
 import { getAthleteEmojiAndBackground } from "@/app/utils/athleteStyles";
 import { ServerActivity } from "@/lib/server-api";
 import { useEffect, useMemo, useState } from "react";
@@ -8,19 +9,6 @@ import css from "./LatestRunsCard.module.scss";
 interface LatestRunsCardProps {
   activities: ServerActivity[];
   loading: boolean;
-}
-
-function timeAgoFromNow(dateStr: string, now: number): string {
-  const then = new Date(dateStr).getTime();
-  const diffMs = now - then;
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  return `${diffDays}d ago`;
 }
 
 export default function LatestRunsCard({
@@ -59,7 +47,7 @@ export default function LatestRunsCard({
             <div className="bold">Latest runs</div>
             <div className="muted">
               {latestRuns?.lastPoll && now !== null
-                ? `Last poll: ${timeAgoFromNow(latestRuns.lastPoll, now)}`
+                ? `Last poll: ${timeAgo(latestRuns.lastPoll)}`
                 : "Recent activity from the club feed"}
             </div>
           </div>
@@ -77,6 +65,7 @@ export default function LatestRunsCard({
                 background: getAthleteEmojiAndBackground(run.athleteName)
                   .background,
               }}
+              aria-hidden="true"
             >
               {getAthleteEmojiAndBackground(run.athleteName).emoji}
             </div>
@@ -89,7 +78,7 @@ export default function LatestRunsCard({
             <div className={css.latestRunStats}>
               <div style={{ fontWeight: 600 }}>{fmtKm(run.km)} km</div>
               <div className="muted" style={{ fontSize: 12 }}>
-                {now !== null ? timeAgoFromNow(run.fetchedAt, now) : ""}
+                {now !== null ? timeAgo(run.fetchedAt) : ""}
               </div>
             </div>
           </div>

@@ -14,23 +14,24 @@ export default function Footer() {
     <footer className={css.footer}>
       <div className={css.content}>
         <div className={css.brand}>
-          <span className={css.shark}>🦈</span>
+          <span className={css.shark} aria-hidden="true">🦈</span>
           <span>Bullshark Analytics</span>
         </div>
-        <div className={css.links}>
+        <nav className={css.links} aria-label="Footer navigation">
           <span className="muted">Powered by Bullsharks Server</span>
-          <span className={css.divider}>·</span>
+          <span className={css.divider} aria-hidden="true">·</span>
           <a
             className="muted"
             href="https://warp.dev/careers"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
           >
-            warp.dev/careers
+            Careers at Warp
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
-          <span className={css.divider}>·</span>
+          <span className={css.divider} aria-hidden="true">·</span>
           <span className="muted">© {year}</span>
-        </div>
+        </nav>
       </div>
     </footer>
   );
