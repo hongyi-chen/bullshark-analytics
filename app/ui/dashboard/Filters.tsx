@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Aggregation, TimeFilter } from "../types";
 import css from "./Filters.module.scss";
 
@@ -19,8 +20,8 @@ export default function Filters({
   timeFilter,
 }: FiltersProps) {
   return (
-    <div className={css.card}>
-      <FilterGroup title="Time Period">
+    <section className={css.card} aria-label="Dashboard filters">
+      <FilterGroup title="Time Period" groupId="time-period">
         <button
           className={css.pill}
           aria-pressed={timeFilter === "week"}
@@ -39,9 +40,9 @@ export default function Filters({
         </button>
       </FilterGroup>
 
-      <div className={css.divider} />
+      <div className={css.divider} aria-hidden="true" />
 
-      <FilterGroup title="Chart View">
+      <FilterGroup title="Chart View" groupId="chart-view">
         {(["daily", "weekly"] as const).map((agg) => (
           <button
             key={agg}
@@ -55,9 +56,9 @@ export default function Filters({
         ))}
       </FilterGroup>
 
-      <div className={css.divider} />
+      <div className={css.divider} aria-hidden="true" />
 
-      <FilterGroup title="Min Runs">
+      <FilterGroup title="Min Runs" groupId="min-runs">
         {[0, 3, 5, 10].map((m) => (
           <button
             key={m}
@@ -70,18 +71,20 @@ export default function Filters({
           </button>
         ))}
       </FilterGroup>
-    </div>
+    </section>
   );
 }
 
 interface FilterGroupProps extends React.PropsWithChildren {
   title: string;
+  groupId: string;
 }
 
-function FilterGroup({ children, title }: FilterGroupProps) {
+function FilterGroup({ children, title, groupId }: FilterGroupProps) {
+  const labelId = useId();
   return (
-    <div className={css.group}>
-      <span className={css.label}>{title}</span>
+    <div className={css.group} role="group" aria-labelledby={`${groupId}-${labelId}`}>
+      <span className={css.label} id={`${groupId}-${labelId}`}>{title}</span>
       <div className={css.pillRow}>{children}</div>
     </div>
   );

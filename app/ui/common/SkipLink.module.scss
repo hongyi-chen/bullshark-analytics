@@ -1,0 +1,27 @@
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 1000;
+  padding: 12px 24px;
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  border: 2px solid var(--accent);
+  border-radius: 4px;
+  font-weight: 600;
+
+  &:focus {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}

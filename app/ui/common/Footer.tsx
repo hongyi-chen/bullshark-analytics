@@ -1,36 +1,29 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import css from "./Footer.module.scss";
 
 export default function Footer() {
-  const [year, setYear] = useState("");
-
-  useEffect(() => {
-    setYear(new Date().getFullYear().toString());
-  }, []);
-
   return (
-    <footer className={css.footer}>
+    <footer className={css.footer} role="contentinfo">
       <div className={css.content}>
         <div className={css.brand}>
-          <span className={css.shark}>🦈</span>
+          <span className={css.shark} role="img" aria-label="shark">🦈</span>
           <span>Bullshark Analytics</span>
         </div>
-        <div className={css.links}>
+        <nav className={css.links} aria-label="Footer navigation">
           <span className="muted">Powered by Bullsharks Server</span>
-          <span className={css.divider}>·</span>
+          <span className={css.divider} aria-hidden="true">·</span>
           <a
             className="muted"
             href="https://warp.dev/careers"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
+            aria-label="Warp careers (opens in new tab)"
           >
             warp.dev/careers
+            <span className={css.visuallyHidden}> (opens in new tab)</span>
           </a>
-          <span className={css.divider}>·</span>
-          <span className="muted">© {year}</span>
-        </div>
+          <span className={css.divider} aria-hidden="true">·</span>
+          <span className="muted">© {new Date().getFullYear()}</span>
+        </nav>
       </div>
     </footer>
   );
