@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import Card from "../common/Card";
-import { getAthleteColour, getChartColor } from "@/app/utils/athleteStyles";
+import { getChartColor } from "@/app/utils/athleteStyles";
 import css from "./TeamPerformanceCard.module.scss";
 
 interface TooltipPayloadEntry {
