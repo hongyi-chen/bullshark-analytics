@@ -161,9 +161,13 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
         onClear={() => setFocusedAthleteName(null)}
       />
       <div className={`flexFill ${css.chartArea}`}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
-            <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
+        <figure 
+          role="img" 
+          aria-label={`Line chart showing weekly training kilometers for ${athletes.length} athlete${athletes.length !== 1 ? 's' : ''}. ${focusedAthleteName ? `Currently focused on ${focusedAthleteName}.` : 'Click on legend to focus on a specific athlete.'}`}
+        >
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
+              <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
             <XAxis
               dataKey="weekStart"
               tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
@@ -176,29 +180,27 @@ export default function TrainingChartCard({ athletes, loading }: TrainingChartCa
                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
                width={40}
              />
-             <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
-             {athletes.map((athlete, idx) => {
-
-               const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
-               return (
-                 <Line
-                   key={athlete.name}
-                   type="monotone"
-                   dataKey={athlete.name}
-                   stroke={getChartColor(idx)}
-                   strokeWidth={isFocused ? 2.5 : 2}
-                   strokeOpacity={isFocused ? 1 : 0.15}
-                   dot={false}
-                   activeDot={{ r: 6 }}
-                   onClick={() => setFocusedAthleteName(athlete.name)}
-                   name={athlete.name}
-                 />
-
-               );
-             })}
-
-          </LineChart>
-        </ResponsiveContainer>
+            <Tooltip content={<TrainingTooltip focusedAthleteName={focusedAthleteName} />} />
+            {athletes.map((athlete, idx) => {
+              const isFocused = focusedAthleteName == null || focusedAthleteName === athlete.name;
+              return (
+                <Line
+                  key={athlete.name}
+                  type="monotone"
+                  dataKey={athlete.name}
+                  stroke={getChartColor(idx)}
+                  strokeWidth={isFocused ? 2.5 : 2}
+                  strokeOpacity={isFocused ? 1 : 0.15}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                  onClick={() => setFocusedAthleteName(athlete.name)}
+                  name={athlete.name}
+                />
+              );
+            })}
+            </LineChart>
+          </ResponsiveContainer>
+        </figure>
       </div>
     </Card>
   );

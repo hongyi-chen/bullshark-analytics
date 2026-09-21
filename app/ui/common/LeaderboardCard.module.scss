@@ -139,8 +139,8 @@
 
 /* === TOOLTIP STYLES === */
 
-.chip[data-tooltip]::after {
-    content: attr(data-tooltip);
+.chip[title]::after {
+    content: attr(title);
     position: absolute;
     bottom: calc(100% + 6px);
     left: 50%;
@@ -159,7 +159,7 @@
     z-index: 10;
 }
 
-.chip[data-tooltip]::before {
+.chip[title]::before {
     content: '';
     position: absolute;
     bottom: calc(100% + 2px);
@@ -173,7 +173,12 @@
     z-index: 9;
 }
 
-.chip[data-tooltip]:hover::after,
-.chip[data-tooltip]:hover::before {
+.chip[title]:hover::after,
+.chip[title]:hover::before {
+    opacity: 1;
+}
+
+.chip[title]:focus::after,
+.chip[title]:focus::before {
     opacity: 1;
 }

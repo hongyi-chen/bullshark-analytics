@@ -44,30 +44,32 @@ export default function ClubKmCard({
       }
     >
       <div className="flexFill">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
-          >
-            <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
-            <XAxis
-              dataKey="day"
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-            />
-            <YAxis
-              tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
-              width={34}
-            />
-            <Tooltip content={<ChartTooltip metricLabel="Club km" />} />
-            <Line
-              type="monotone"
-              dataKey="km"
-              stroke="var(--accent)"
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <figure role="img" aria-label={`Line chart showing club kilometers per ${aggregation === "daily" ? "day" : "week"} for this ${timeFilter}. Total: ${fmtKm(totalKm)} kilometers.`}>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 8, right: 18, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid stroke="rgba(231,237,246,0.08)" vertical={false} />
+              <XAxis
+                dataKey="day"
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: "rgba(231,237,246,0.7)" }}
+                width={34}
+              />
+              <Tooltip content={<ChartTooltip metricLabel="Club km" />} />
+              <Line
+                type="monotone"
+                dataKey="km"
+                stroke="var(--accent)"
+                strokeWidth={2}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </figure>
       </div>
     </Card>
   );
