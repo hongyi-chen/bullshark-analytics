@@ -19,6 +19,12 @@ interface ChartDataPoint {
   riskData?: { riskCount: number; risks: string[] };
 }
 
+interface DotProps {
+  cx?: number;
+  cy?: number;
+  payload?: ChartDataPoint;
+}
+
 interface TooltipProps {
   active?: boolean;
   payload?: Array<{ value: number; color: string; payload?: ChartDataPoint }>;
@@ -167,8 +173,11 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: DotProps) => {
                 const { cx, cy, payload } = props;
+                if (cx === undefined || cy === undefined || !payload) {
+                  return <g />;
+                }
                 const isRisky = payload.isRisky;
 
                 return (
