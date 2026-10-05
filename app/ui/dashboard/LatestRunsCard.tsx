@@ -1,7 +1,8 @@
 import { fmtKm } from "@/app/utils/fmtKm";
+import { timeAgo } from "@/app/utils/timeAgo";
 import { getAthleteEmojiAndBackground } from "@/app/utils/athleteStyles";
 import { ServerActivity } from "@/lib/server-api";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Card from "../common/Card";
 import css from "./LatestRunsCard.module.scss";
 
@@ -10,29 +11,10 @@ interface LatestRunsCardProps {
   loading: boolean;
 }
 
-function timeAgoFromNow(dateStr: string, now: number): string {
-  const then = new Date(dateStr).getTime();
-  const diffMs = now - then;
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-
-  if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  return `${diffDays}d ago`;
-}
-
 export default function LatestRunsCard({
   activities,
   loading,
 }: LatestRunsCardProps) {
-  const [now, setNow] = useState<number | null>(null);
-
-  useEffect(() => {
-    setNow(Date.now());
-  }, []);
-
   const latestRuns = useMemo(() => {
     const runs = activities
       .filter((a) => a.sport_type === "Run")
@@ -58,8 +40,8 @@ export default function LatestRunsCard({
           <div>
             <div className="bold">Latest runs</div>
             <div className="muted">
-              {latestRuns?.lastPoll && now !== null
-                ? `Last poll: ${timeAgoFromNow(latestRuns.lastPoll, now)}`
+              {latestRuns?.lastPoll
+                ? `Last poll: ${timeAgo(latestRuns.lastPoll)}`
                 : "Recent activity from the club feed"}
             </div>
           </div>
@@ -89,7 +71,7 @@ export default function LatestRunsCard({
             <div className={css.latestRunStats}>
               <div style={{ fontWeight: 600 }}>{fmtKm(run.km)} km</div>
               <div className="muted" style={{ fontSize: 12 }}>
-                {now !== null ? timeAgoFromNow(run.fetchedAt, now) : ""}
+                {timeAgo(run.fetchedAt)}
               </div>
             </div>
           </div>

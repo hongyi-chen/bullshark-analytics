@@ -1,4 +1,4 @@
-import { CSSProperties, useMemo } from "react";
+import { CSSProperties, useMemo, useId } from "react";
 import Card from "../common/Card";
 import { Athlete, Timeseries } from "../types";
 import clsx from "clsx";
@@ -41,6 +41,31 @@ export interface LeaderboardCardProps {
   emptyMessage?: string;
 }
 
+// === ACCESSIBLE TOOLTIP CHIP ===
+
+interface TooltipChipProps {
+  label: string;
+  tooltip: string;
+  className?: string;
+}
+
+function TooltipChip({ label, tooltip, className }: TooltipChipProps) {
+  const tooltipId = useId();
+  return (
+    <span
+      className={className}
+      aria-describedby={tooltipId}
+      tabIndex={0}
+      role="note"
+    >
+      {label}
+      <span id={tooltipId} className={css.srOnly}>
+        {tooltip}
+      </span>
+    </span>
+  );
+}
+
 // === CHIP SUBCOMPONENTS ===
 
 interface EventChipProps {
@@ -48,16 +73,17 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const label = event;
+  const tooltip = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
-    <span
+    <TooltipChip
+      label={label}
+      tooltip={tooltip}
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
-    >
-      {event}
-    </span>
+    />
   );
 }
 
@@ -87,9 +113,11 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
-      {label}
-    </span>
+    <TooltipChip
+      label={label}
+      tooltip={tooltip}
+      className={clsx(css.statusChip, className)}
+    />
   );
 }
 
@@ -98,16 +126,17 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const label = team;
+  const tooltip = team === "bulls" ? "Bulls" : "Sharks";
   return (
-    <span
+    <TooltipChip
+      label={label}
+      tooltip={tooltip}
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
-    >
-      {team}
-    </span>
+    />
   );
 }
 
@@ -258,8 +287,14 @@ export default function LeaderboardCard({
       <div
         className={clsx(css.tableScroll, css.tableScrollFixed, "flexFill")}
         style={{ opacity: loading ? 0.7 : 1 }}
+        role="region"
+        aria-label={`${title} table`}
+        tabIndex={0}
       >
-        <table className={css.table}>
+        <table className={css.table} aria-describedby="leaderboard-desc">
+          <caption className={css.tableCaption} id="leaderboard-desc">
+            {title}: {subtitle}
+          </caption>
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>
