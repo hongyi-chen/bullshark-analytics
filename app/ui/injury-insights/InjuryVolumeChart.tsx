@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart, Line } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
@@ -17,6 +17,12 @@ interface ChartDataPoint {
   kilometers: number;
   isRisky?: boolean;
   riskData?: { riskCount: number; risks: string[] };
+}
+
+interface CustomDotProps {
+  cx?: number;
+  cy?: number;
+  payload?: ChartDataPoint;
 }
 
 interface TooltipProps {
@@ -167,12 +173,14 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
-                const { cx, cy, payload } = props;
-                const isRisky = payload.isRisky;
+              dot={(props) => {
+                const { cx, cy, payload } = props as CustomDotProps;
+                if (cx === undefined || cy === undefined) return <g />;
+                const dataPayload = payload as ChartDataPoint | undefined;
+                const isRisky = dataPayload?.isRisky;
 
                 return (
-                  <g>
+                  <g role="img" aria-label={`Week of ${dataPayload?.weekStart}: ${fmtKm(dataPayload?.kilometers ?? 0)} km${isRisky ? ' (risk detected)' : ''}`}>
                     <circle
                       cx={cx}
                       cy={cy}
@@ -183,6 +191,7 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
                     />
                     {isRisky && (
                       <g transform={`translate(${cx - 10}, ${cy - 24})`}>
+                        <title>Risk indicator</title>
                         <path
                           d="M10 1L1 17h18L10 1z"
                           fill="#ef4444"
