@@ -8,12 +8,26 @@ import TrainingView from "../training/TrainingView";
 import InjuryInsightsView from "../injury-insights/InjuryInsightsView";
 import WeeklyWinnersView from "../weekly-winners/WeeklyWinnersView";
 
+const TAB_COMPONENTS = {
+  dashboard: DashboardView,
+  teams: TeamsView,
+  training: TrainingView,
+  injury: InjuryInsightsView,
+  'weekly-winners': WeeklyWinnersView,
+} as const;
+
 export default function MainContent() {
   const [activeTab] = useAtom(activeTabState);
+  const Component = TAB_COMPONENTS[activeTab];
 
-  if (activeTab === "dashboard") return <DashboardView />;
-  if (activeTab === "teams") return <TeamsView />;
-  if (activeTab === "injury") return <InjuryInsightsView />;
-  if (activeTab === "weekly-winners") return <WeeklyWinnersView />;
-  return <TrainingView />;
+  return (
+    <main
+      role="tabpanel"
+      id={`tabpanel-${activeTab}`}
+      aria-labelledby={`tab-${activeTab}`}
+      tabIndex={0}
+    >
+      <Component />
+    </main>
+  );
 }
