@@ -3,6 +3,18 @@
   width: 100%;
 }
 
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .input {
   width: 100%;
   padding: 10px 14px;
@@ -21,7 +33,8 @@
 
   &:focus {
     background: rgba(231, 237, 246, 0.08);
-    border-color: rgba(231, 237, 246, 0.2);
+    border-color: rgba(34, 197, 94, 0.5);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
   }
 }
 
@@ -54,12 +67,17 @@
   flex-direction: column;
   gap: 6px;
 
-  &:hover {
+  &:hover,
+  &.active {
     background: rgba(231, 237, 246, 0.08);
   }
 
   &.selected {
     background: rgba(34, 197, 94, 0.15);
+  }
+
+  &.active.selected {
+    background: rgba(34, 197, 94, 0.25);
   }
 }
 

@@ -62,11 +62,12 @@ export default function TrainingView() {
       {/* Search and Filters - Separate Row */}
       <div className={css.card}>
         <div className={css.group}>
-          <span className={css.label}>Search Athletes</span>
+          <span className={css.label} aria-hidden="true">Search Athletes</span>
           <SearchBar
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Type athlete name..."
+            label="Search athletes"
           />
         </div>
 

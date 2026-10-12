@@ -15,7 +15,9 @@ export default function ErrorCard({ errorMessage }: ErrorCardProps) {
         </>
       }
     >
-      <pre className={css.errorMessage}>{errorMessage}</pre>
+      <div role="alert" aria-live="assertive">
+        <pre className={css.errorMessage}>{errorMessage}</pre>
+      </div>
     </Card>
   );
 }

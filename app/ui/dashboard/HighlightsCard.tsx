@@ -69,7 +69,6 @@ export default function HighlightsCard({
     >
       <div className={css.container}>
         <Card highlighted={true} style={{ padding: 12 }}>
-          {" "}
           <div className="muted">Longest run</div>
           <div className={css.highlightValue}>
             {stats?.overall.longest
