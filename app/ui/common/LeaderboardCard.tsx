@@ -48,13 +48,17 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const label = event === "half" ? "Half Marathon" : "Full Marathon";
   return (
     <span
       className={clsx(
         css.eventChip,
         event === "half" ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
+      data-tooltip={label}
+      role="note"
+      tabIndex={0}
+      aria-label={`Event: ${label}`}
     >
       {event}
     </span>
@@ -87,7 +91,13 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
+    <span
+      className={clsx(css.statusChip, className)}
+      data-tooltip={tooltip}
+      role="note"
+      tabIndex={0}
+      aria-label={`Status: ${tooltip}`}
+    >
       {label}
     </span>
   );
@@ -98,13 +108,17 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const label = team === "bulls" ? "Bulls" : "Sharks";
   return (
     <span
       className={clsx(
         css.teamChip,
         team === "bulls" ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
+      data-tooltip={label}
+      role="note"
+      tabIndex={0}
+      aria-label={`Team: ${label}`}
     >
       {team}
     </span>
@@ -152,33 +166,38 @@ export default function LeaderboardCard({
     return teamMap;
   }, [chipDataSources?.athleteMetadata]);
 
-  // Render column headers
   const renderHeaders = () => {
     return columns.map((col, idx) => {
       switch (col.type) {
         case "rank":
           return (
-            <th key={idx} style={{ width: 42 }}>
-              #
+            <th key={idx} scope="col" style={{ width: 42 }}>
+              <span className="sr-only">Rank</span>
+              <span aria-hidden="true">#</span>
             </th>
           );
         case "athlete":
-          return <th key={idx}>Athlete</th>;
+          return (
+            <th key={idx} scope="col">
+              Athlete
+            </th>
+          );
         case "runs":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Runs
             </th>
           );
         case "distance":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
-              Km
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
+              <span className="sr-only">Distance in kilometers</span>
+              <span aria-hidden="true">Km</span>
             </th>
           );
         case "streak":
           return (
-            <th key={idx} style={TEXT_ALIGN_RIGHT}>
+            <th key={idx} scope="col" style={TEXT_ALIGN_RIGHT}>
               Streak
             </th>
           );
@@ -258,8 +277,14 @@ export default function LeaderboardCard({
       <div
         className={clsx(css.tableScroll, css.tableScrollFixed, "flexFill")}
         style={{ opacity: loading ? 0.7 : 1 }}
+        role="region"
+        aria-label={`${title} table`}
+        tabIndex={0}
       >
-        <table className={css.table}>
+        <table className={css.table} aria-describedby={`${title.toLowerCase().replace(/\s+/g, '-')}-caption`}>
+          <caption className="sr-only" id={`${title.toLowerCase().replace(/\s+/g, '-')}-caption`}>
+            {subtitle}
+          </caption>
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>
