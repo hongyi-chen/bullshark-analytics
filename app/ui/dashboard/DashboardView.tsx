@@ -84,6 +84,10 @@ export default function DashboardView() {
       />
       <Divider size={16} />
 
+      <div role="status" aria-live="polite" className="sr-only">
+        {loading ? "Loading dashboard data..." : "Dashboard data loaded"}
+      </div>
+
       {err != null ? <ErrorCard errorMessage={err} /> : null}
 
       <div className="row" style={{ opacity: loading ? 0.7 : 1 }}>
