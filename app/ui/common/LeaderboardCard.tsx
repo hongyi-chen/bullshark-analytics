@@ -1,4 +1,4 @@
-import { CSSProperties, useMemo } from "react";
+import { CSSProperties, useMemo, useId } from "react";
 import Card from "../common/Card";
 import { Athlete, Timeseries } from "../types";
 import clsx from "clsx";
@@ -41,6 +41,36 @@ export interface LeaderboardCardProps {
   emptyMessage?: string;
 }
 
+// === ACCESSIBLE TOOLTIP COMPONENT ===
+
+interface TooltipChipProps {
+  label: string;
+  tooltip: string;
+  className: string;
+}
+
+function TooltipChip({ label, tooltip, className }: TooltipChipProps) {
+  const tooltipId = useId();
+  
+  return (
+    <span
+      className={className}
+      aria-describedby={tooltipId}
+      tabIndex={0}
+      role="text"
+    >
+      {label}
+      <span 
+        id={tooltipId} 
+        className={css.tooltipText}
+        role="tooltip"
+      >
+        {tooltip}
+      </span>
+    </span>
+  );
+}
+
 // === CHIP SUBCOMPONENTS ===
 
 interface EventChipProps {
@@ -48,16 +78,16 @@ interface EventChipProps {
 }
 
 function EventChip({ event }: EventChipProps) {
+  const isHalf = event === "half";
   return (
-    <span
+    <TooltipChip
+      label={event}
+      tooltip={isHalf ? "Half Marathon" : "Full Marathon"}
       className={clsx(
         css.eventChip,
-        event === "half" ? css.eventChipHalf : css.eventChipFull
+        isHalf ? css.eventChipHalf : css.eventChipFull
       )}
-      data-tooltip={event === "half" ? "Half Marathon" : "Full Marathon"}
-    >
-      {event}
-    </span>
+    />
   );
 }
 
@@ -87,9 +117,11 @@ function StatusChip({ status }: StatusChipProps) {
   const { label, tooltip, className } = config[status];
 
   return (
-    <span className={clsx(css.statusChip, className)} data-tooltip={tooltip}>
-      {label}
-    </span>
+    <TooltipChip
+      label={label}
+      tooltip={tooltip}
+      className={clsx(css.statusChip, className)}
+    />
   );
 }
 
@@ -98,16 +130,16 @@ interface TeamChipProps {
 }
 
 function TeamChip({ team }: TeamChipProps) {
+  const isBulls = team === "bulls";
   return (
-    <span
+    <TooltipChip
+      label={team}
+      tooltip={isBulls ? "Bulls Team" : "Sharks Team"}
       className={clsx(
         css.teamChip,
-        team === "bulls" ? css.teamChipBulls : css.teamChipSharks
+        isBulls ? css.teamChipBulls : css.teamChipSharks
       )}
-      data-tooltip={team === "bulls" ? "Bulls" : "Sharks"}
-    >
-      {team}
-    </span>
+    />
   );
 }
 

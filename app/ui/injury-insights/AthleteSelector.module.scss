@@ -21,7 +21,9 @@
 
   &:focus {
     background: rgba(231, 237, 246, 0.08);
-    border-color: rgba(231, 237, 246, 0.2);
+    border-color: rgba(34, 197, 94, 0.5);
+    outline: 2px solid rgba(34, 197, 94, 0.3);
+    outline-offset: 2px;
   }
 }
 
@@ -54,12 +56,17 @@
   flex-direction: column;
   gap: 6px;
 
-  &:hover {
+  &:hover,
+  &.highlighted {
     background: rgba(231, 237, 246, 0.08);
   }
 
   &.selected {
     background: rgba(34, 197, 94, 0.15);
+  }
+
+  &.highlighted.selected {
+    background: rgba(34, 197, 94, 0.25);
   }
 }
 

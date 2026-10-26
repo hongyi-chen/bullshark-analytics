@@ -137,10 +137,9 @@
     line-height: 1;
 }
 
-/* === TOOLTIP STYLES === */
+/* === ACCESSIBLE TOOLTIP STYLES === */
 
-.chip[data-tooltip]::after {
-    content: attr(data-tooltip);
+.tooltipText {
     position: absolute;
     bottom: calc(100% + 6px);
     left: 50%;
@@ -151,29 +150,36 @@
     border-radius: 6px;
     padding: 6px 8px;
     font-size: 11px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
     white-space: nowrap;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.12s ease;
+    visibility: hidden;
+    transition: opacity 0.12s ease, visibility 0.12s ease;
     z-index: 10;
 }
 
-.chip[data-tooltip]::before {
+.tooltipText::before {
     content: '';
     position: absolute;
-    bottom: calc(100% + 2px);
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
     border-width: 6px 6px 0 6px;
     border-style: solid;
     border-color: var(--border) transparent transparent transparent;
-    opacity: 0;
-    transition: opacity 0.12s ease;
-    z-index: 9;
 }
 
-.chip[data-tooltip]:hover::after,
-.chip[data-tooltip]:hover::before {
+.chip:hover .tooltipText,
+.chip:focus .tooltipText {
     opacity: 1;
+    visibility: visible;
+}
+
+.chip:focus {
+    outline: 2px solid rgba(34, 197, 94, 0.5);
+    outline-offset: 2px;
 }
