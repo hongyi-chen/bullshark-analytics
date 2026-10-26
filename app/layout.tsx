@@ -3,6 +3,7 @@ import './globals.css';
 import JotaiProvider from '@/lib/providers/JotaiProvider';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import SkipLink from './ui/common/SkipLink';
 
 function getMetadataBase(): URL | undefined {
   const raw = process.env.APP_BASE_URL;
@@ -10,7 +11,6 @@ function getMetadataBase(): URL | undefined {
   try {
     return new URL(raw);
   } catch {
-    // Avoid crashing metadata generation if env is misconfigured.
     return undefined;
   }
 }
@@ -43,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <SkipLink />
         <JotaiProvider>{children}</JotaiProvider>
         <Analytics />
         <SpeedInsights />

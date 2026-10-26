@@ -1,6 +1,31 @@
 .tooltip {
     background: rgba(15, 22, 32, 0.95);
     border: 1px solid rgba(231, 237, 246, 0.12);
-    border-radius: 10;
-    padding: 10px 10px;
+    border-radius: 10px;
+    padding: 10px 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.value {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.metricRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.metricValue {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
 }

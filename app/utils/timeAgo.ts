@@ -1,5 +1,11 @@
-export function timeAgo(dateStr: string): string {
-  const now = Date.now();
+/**
+ * Formats a date string as a human-readable relative time (e.g., "5m ago", "2h ago").
+ * @param dateStr - ISO date string to compare against current time
+ * @param referenceTime - Optional reference timestamp (ms since epoch). Defaults to Date.now().
+ *                        Useful for consistent rendering during SSR/hydration.
+ */
+export function timeAgo(dateStr: string, referenceTime?: number): string {
+  const now = referenceTime ?? Date.now();
   const then = new Date(dateStr).getTime();
   const diffMs = now - then;
   const diffMins = Math.floor(diffMs / 60000);
