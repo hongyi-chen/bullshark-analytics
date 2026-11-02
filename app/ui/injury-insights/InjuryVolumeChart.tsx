@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, ComposedChart, Line } from 'recharts';
 import { AthleteWithTrainingData } from '@/app/ui/types';
 import { fmtKm } from '@/app/utils/fmtKm';
 import { formatRiskType } from '@/app/utils/formatRiskType';
@@ -19,6 +19,12 @@ interface ChartDataPoint {
   riskData?: { riskCount: number; risks: string[] };
 }
 
+interface CustomDotProps {
+  cx?: number;
+  cy?: number;
+  payload?: ChartDataPoint;
+}
+
 interface TooltipProps {
   active?: boolean;
   payload?: Array<{ value: number; color: string; payload?: ChartDataPoint }>;
@@ -31,7 +37,7 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
   const riskData = payload[0]?.payload?.riskData;
 
   return (
-    <div className={css.tooltip}>
+    <div className={css.tooltip} role="tooltip">
       <div className={css.tooltipWeek}>Week of {new Date(label).toLocaleDateString()}</div>
       <div className={css.tooltipEntry}>
         <div className={css.tooltipLabel}>Volume</div>
@@ -41,7 +47,14 @@ function VolumeTooltip({ active, payload, label }: TooltipProps) {
       </div>
       {riskData && (
         <div className={css.tooltipRisk}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <svg 
+            width="14" 
+            height="14" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            aria-hidden="true" 
+            focusable="false"
+          >
             <path
               d="M12 2L2 20h20L12 2z"
               stroke="currentColor"
@@ -167,12 +180,13 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: CustomDotProps) => {
                 const { cx, cy, payload } = props;
-                const isRisky = payload.isRisky;
+                if (cx === undefined || cy === undefined) return null;
+                const isRisky = payload?.isRisky;
 
                 return (
-                  <g>
+                  <g aria-hidden="true">
                     <circle
                       cx={cx}
                       cy={cy}
