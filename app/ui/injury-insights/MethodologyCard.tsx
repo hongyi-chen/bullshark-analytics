@@ -27,7 +27,7 @@ export default function MethodologyCard() {
                 rel="noopener noreferrer"
                 className={css.link}
               >
-                Learn more
+                Learn more<span className={css.visuallyHidden}> (opens in new tab)</span>
               </a>
             </li>
           </ul>
