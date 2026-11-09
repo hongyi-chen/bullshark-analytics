@@ -22,6 +22,8 @@
   &:focus {
     background: rgba(231, 237, 246, 0.08);
     border-color: rgba(231, 237, 246, 0.2);
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 }
 
@@ -37,9 +39,6 @@
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   z-index: 100;
-}
-
-.list {
   list-style: none;
   margin: 0;
   padding: 4px;
@@ -54,12 +53,17 @@
   flex-direction: column;
   gap: 6px;
 
-  &:hover {
+  &:hover,
+  &.highlighted {
     background: rgba(231, 237, 246, 0.08);
   }
 
   &.selected {
     background: rgba(34, 197, 94, 0.15);
+  }
+
+  &.highlighted.selected {
+    background: rgba(34, 197, 94, 0.25);
   }
 }
 

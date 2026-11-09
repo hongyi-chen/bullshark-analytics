@@ -7,6 +7,7 @@ interface TooltipPayloadItem {
 interface ChartTooltipProps {
   active?: boolean;
   label?: string | number;
+  labelTitle?: string;
   metricLabel: string;
   payload?: TooltipPayloadItem[];
 }
@@ -15,21 +16,20 @@ export default function ChartTooltip({
   active,
   payload,
   label,
+  labelTitle = "Date",
   metricLabel,
 }: ChartTooltipProps) {
   if (!active || !payload?.length) return null;
   const val = payload[0]?.value ?? 0;
   return (
-    <div className={css.tooltip}>
-      <div style={{ fontSize: 12, color: "var(--muted)", marginBottom: 4 }}>
-        Label
+    <div className={css.tooltip} role="tooltip">
+      <div className={css.labelTitle}>
+        {labelTitle}
       </div>
-      <div style={{ fontSize: 13, marginBottom: 8 }}>{label}</div>
-      <div
-        style={{ display: "flex", justifyContent: "space-between", gap: 12 }}
-      >
-        <div style={{ fontSize: 12, color: "var(--muted)" }}>{metricLabel}</div>
-        <div style={{ fontSize: 13 }}>{val}</div>
+      <div className={css.labelValue}>{label}</div>
+      <div className={css.metricRow}>
+        <div className={css.metricLabel}>{metricLabel}</div>
+        <div className={css.metricValue}>{val}</div>
       </div>
     </div>
   );

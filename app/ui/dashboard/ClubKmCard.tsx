@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { fmtKm } from "@/app/utils/fmtKm";
 import { Aggregation, ChartData, TimeFilter } from "../types";
 import {
@@ -19,12 +20,29 @@ interface ClubKmCardProps {
   totalKm: number;
 }
 
+function generateChartDescription(chartData: ChartData[], aggregation: Aggregation): string {
+  if (chartData.length === 0) return "No data available.";
+  
+  const maxPoint = chartData.reduce((max, d) => d.km > max.km ? d : max, chartData[0]);
+  const minPoint = chartData.reduce((min, d) => d.km < min.km ? d : min, chartData[0]);
+  
+  return `Line chart showing club kilometers per ${aggregation === "daily" ? "day" : "week"}. ` +
+    `${chartData.length} data points. ` +
+    `Highest: ${fmtKm(maxPoint.km)} km on ${maxPoint.day}. ` +
+    `Lowest: ${fmtKm(minPoint.km)} km on ${minPoint.day}.`;
+}
+
 export default function ClubKmCard({
   aggregation,
   chartData,
   timeFilter,
   totalKm,
 }: ClubKmCardProps) {
+  const chartDescription = useMemo(
+    () => generateChartDescription(chartData, aggregation),
+    [chartData, aggregation]
+  );
+
   return (
     <Card
       fixedTall={true}
@@ -43,7 +61,8 @@ export default function ClubKmCard({
         </>
       }
     >
-      <div className="flexFill">
+      <div className="flexFill" role="img" aria-label={chartDescription}>
+        <span className="sr-only">{chartDescription}</span>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}

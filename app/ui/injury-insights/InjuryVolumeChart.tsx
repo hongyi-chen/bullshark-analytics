@@ -19,6 +19,12 @@ interface ChartDataPoint {
   riskData?: { riskCount: number; risks: string[] };
 }
 
+interface DotProps {
+  cx?: number;
+  cy?: number;
+  payload: ChartDataPoint;
+}
+
 interface TooltipProps {
   active?: boolean;
   payload?: Array<{ value: number; color: string; payload?: ChartDataPoint }>;
@@ -90,10 +96,9 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
     return data;
   }, [athlete, riskyWeeks]);
 
-  // Calculate statistics
   const stats = useMemo(() => {
     if (chartData.length === 0) {
-      return { average: 0, max: 0, min: 0, totalWeeks: 0 };
+      return { average: 0, max: 0, min: 0, totalWeeks: 0, riskyWeeksCount: 0 };
     }
 
     const volumes = chartData.map(d => d.kilometers);
@@ -101,14 +106,29 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
     const average = total / volumes.length;
     const max = Math.max(...volumes);
     const min = Math.min(...volumes);
+    const riskyWeeksCount = chartData.filter(d => d.isRisky).length;
 
     return {
       average,
       max,
       min,
       totalWeeks: chartData.length,
+      riskyWeeksCount,
     };
   }, [chartData]);
+
+  const chartDescription = useMemo(() => {
+    if (chartData.length === 0) return `No training data available for ${athlete.name}.`;
+    
+    return `Training volume chart for ${athlete.name}. ` +
+      `${stats.totalWeeks} weeks of data. ` +
+      `Average: ${fmtKm(stats.average)} km per week. ` +
+      `Maximum: ${fmtKm(stats.max)} km. ` +
+      `Minimum: ${fmtKm(stats.min)} km. ` +
+      (stats.riskyWeeksCount > 0 
+        ? `${stats.riskyWeeksCount} week${stats.riskyWeeksCount === 1 ? '' : 's'} with injury risk detected.`
+        : 'No injury risks detected.');
+  }, [athlete.name, chartData.length, stats]);
 
   return (
     <Card fixedTall style={{ height: '500px' }}>
@@ -132,7 +152,8 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
           </div>
         </div>
       </div>
-      <div className="flexFill">
+      <div className="flexFill" role="img" aria-label={chartDescription}>
+        <span className="sr-only">{chartDescription}</span>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 8, right: 18, left: 0, bottom: 0 }}>
             <defs>
@@ -167,8 +188,9 @@ export default function InjuryVolumeChart({ athlete, loading, riskyWeeks }: Inju
               dataKey="kilometers"
               stroke="var(--accent)"
               strokeWidth={2}
-              dot={(props: any) => {
+              dot={(props: DotProps) => {
                 const { cx, cy, payload } = props;
+                if (cx === undefined || cy === undefined) return null;
                 const isRisky = payload.isRisky;
 
                 return (
