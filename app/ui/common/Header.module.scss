@@ -81,6 +81,11 @@
   text-decoration: none !important;
 }
 
+.navPill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .navPillActive {
   background: rgba(34, 197, 94, 0.12);
   color: var(--accent);
