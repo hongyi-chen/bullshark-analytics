@@ -8,12 +8,26 @@ import TrainingView from "../training/TrainingView";
 import InjuryInsightsView from "../injury-insights/InjuryInsightsView";
 import WeeklyWinnersView from "../weekly-winners/WeeklyWinnersView";
 
+const TAB_CONTENT: Record<string, React.ComponentType> = {
+  dashboard: DashboardView,
+  teams: TeamsView,
+  training: TrainingView,
+  injury: InjuryInsightsView,
+  'weekly-winners': WeeklyWinnersView,
+};
+
 export default function MainContent() {
   const [activeTab] = useAtom(activeTabState);
+  const Content = TAB_CONTENT[activeTab] ?? TrainingView;
 
-  if (activeTab === "dashboard") return <DashboardView />;
-  if (activeTab === "teams") return <TeamsView />;
-  if (activeTab === "injury") return <InjuryInsightsView />;
-  if (activeTab === "weekly-winners") return <WeeklyWinnersView />;
-  return <TrainingView />;
+  return (
+    <div
+      id={`tabpanel-${activeTab}`}
+      role="tabpanel"
+      aria-labelledby={`tab-${activeTab}`}
+      tabIndex={0}
+    >
+      <Content />
+    </div>
+  );
 }
